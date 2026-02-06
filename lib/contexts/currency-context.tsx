@@ -8,6 +8,8 @@ import {
   DEFAULT_CURRENCY,
 } from '@/lib/constants/currencies';
 import { trackEvent } from '@/lib/analytics/gtag';
+import { createClient } from '@/lib/supabase/client';
+import { getCurrencyPreference, setCurrencyPreference } from '@/lib/actions/user-preferences';
 
 const CURRENCY_LS_KEY = 'fairshare_currency';
 
@@ -25,7 +27,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrencyState] = useState<CurrencyConfig>(DEFAULT_CURRENCY);
   const [initialized, setInitialized] = useState(false);
 
-  // On mount: load from localStorage or auto-detect
+  // On mount: load from localStorage or auto-detect; then for logged-in users, sync from DB
   useEffect(() => {
     let savedCode: string | null = null;
 
@@ -51,16 +53,33 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    const detected = detectCurrencyFromLocale();
+    const resolvedCode = savedCode ?? detected.code;
     if (savedCode) {
       const config = getCurrencyByCode(savedCode);
       setCurrencyState(config);
     } else {
-      // Auto-detect from browser locale
-      const detected = detectCurrencyFromLocale();
       setCurrencyState(detected);
     }
 
     setInitialized(true);
+
+    let cancelled = false;
+    (async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || cancelled) return;
+      const result = await getCurrencyPreference();
+      if (cancelled || !result.success || !result.data) return;
+      const dbCode = result.data;
+      const isValid = typeof dbCode === 'string' && dbCode.length === 3 && /^[A-Z]{3}$/.test(dbCode);
+      if (isValid && dbCode !== resolvedCode && !cancelled) {
+        setCurrencyState(getCurrencyByCode(dbCode));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Persist to localStorage whenever currency changes (after init)
@@ -77,6 +96,11 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     const config = getCurrencyByCode(code);
     setCurrencyState(config);
     trackEvent('currency_changed', { currency_code: code });
+    createClient()
+      .auth.getUser()
+      .then(({ data: { user } }) => {
+        if (user) void setCurrencyPreference(code);
+      });
   }, []);
 
   return (

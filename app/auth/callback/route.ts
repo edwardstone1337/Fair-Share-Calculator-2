@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/utils/logger";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -18,7 +19,8 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.redirect(new URL("/dashboard", request.url));
-  } catch {
+  } catch (error) {
+    logger.error("auth/callback: code exchange failed", error);
     return NextResponse.redirect(new URL("/auth/error", request.url));
   }
 }

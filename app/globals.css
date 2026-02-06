@@ -437,6 +437,17 @@
   --faq-p-size: var(--font-size-md);
   --faq-hr-color: var(--color-neutral-300);
 
+  /* --- Footer --- */
+  --footer-bg: var(--surface-page);
+  --footer-text: var(--text-secondary);
+  --footer-link: var(--text-primary);
+  --footer-link-hover: var(--interactive-default);
+  --footer-max-width: var(--faq-max-width);
+  --footer-padding-y: var(--space-8);
+  --footer-padding-x: var(--space-4);
+  --footer-font-size: var(--font-size-sm);
+  --footer-divider: var(--color-neutral-300);
+
   /* --- Snackbar --- */
   --snackbar-padding: var(--space-4);
   --snackbar-min-width: 250px;
@@ -472,6 +483,10 @@ button[data-button-variant="secondary"]:hover {
 
 button[data-icon-button-variant="danger"]:hover {
   background: var(--icon-button-bg-danger-hover);
+}
+
+a.footer-link:hover {
+  color: var(--footer-link-hover);
 }
 
 /* Results cards responsive (≤430px) */

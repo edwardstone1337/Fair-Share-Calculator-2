@@ -16,6 +16,12 @@ import {
   bucketSplitRatio,
 } from "@/lib/analytics/gtag";
 import { useCurrency } from "@/lib/contexts/currency-context";
+import { createClient } from "@/lib/supabase/client";
+import {
+  saveConfiguration,
+  getConfiguration,
+} from "@/lib/actions/configurations";
+import { formatWithCommas } from "@/lib/utils/format";
 import { IncomeSection } from "./income-section";
 import { ExpensesSection } from "./expenses-section";
 import { NamesSection } from "./names-section";
@@ -24,6 +30,7 @@ import { Snackbar } from "@/components/ui/snackbar";
 import { logger } from "@/lib/utils/logger";
 
 const SNACKBAR_MESSAGE = "Calculation link copied to clipboard!";
+const authEnabled = process.env.NEXT_PUBLIC_AUTH_ENABLED === "true";
 
 export function CalculatorClient() {
   const pageLoadTime = useRef(Date.now());
@@ -46,6 +53,9 @@ export function CalculatorClient() {
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
   // Sync step with URL hash on mount
@@ -78,13 +88,14 @@ export function CalculatorClient() {
     }
   }, [state.step, result, dispatch]);
 
-  // URL param loading (?id= or legacy params) — runs after mount, overrides localStorage
+  // URL param loading (?config=, ?id=, or legacy params) — runs after mount, overrides localStorage
   useEffect(() => {
     let cancelled = false;
 
     const params = new URLSearchParams(
       typeof window !== "undefined" ? window.location.search : ""
     );
+    const configId = params.get("config");
     const id = params.get("id");
 
     const fireDataRestored = (payload: {
@@ -97,6 +108,69 @@ export function CalculatorClient() {
       returningUserRef.current = true;
       setDataRestored(true);
     };
+
+    const cleanConfigParam = () => {
+      if (typeof window === "undefined") return;
+      const url = new URL(window.location.href);
+      url.searchParams.delete("config");
+      const newUrl =
+        url.pathname + (url.search ? url.search : "") + url.hash;
+      window.history.replaceState(null, "", newUrl);
+    };
+
+    // ?config= takes precedence over ?id=
+    if (configId) {
+      getConfiguration(configId)
+        .then((result) => {
+          if (cancelled) return;
+          if (result.success && result.data) {
+            const detail = result.data;
+            const expenses: ExpenseInput[] =
+              detail.expenses.length > 0
+                ? detail.expenses.map((e) => ({
+                    id: e.id,
+                    label: e.label,
+                    amount: formatWithCommas(String(e.amount)),
+                  }))
+                : [{ id: crypto.randomUUID(), amount: "", label: "" }];
+            dispatch({
+              type: "RESTORE_STATE",
+              state: {
+                person1Name: detail.person1Name,
+                person2Name: detail.person2Name,
+                person1Salary: formatWithCommas(String(detail.person1Salary)),
+                person2Salary: formatWithCommas(String(detail.person2Salary)),
+                expenses,
+              },
+            });
+            dispatch({ type: "SET_STEP", step: "input" });
+            if (detail.currency) setCurrency(detail.currency);
+            const expensesWithAmount = expenses.filter(
+              (e) => e.amount.replace(/,/g, "").trim() !== ""
+            );
+            fireDataRestored({
+              has_names: !!(detail.person1Name?.trim() || detail.person2Name?.trim()),
+              has_salaries: true,
+              has_expenses: expensesWithAmount.length > 0,
+              expense_count: expensesWithAmount.length,
+            });
+          } else {
+            setErrorMessage(
+              !result.success ? (result.error ?? "Could not load configuration.") : null
+            );
+          }
+          cleanConfigParam();
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          logger.error("Failed to load configuration", err);
+          setErrorMessage("Could not load configuration. Please try again.");
+          cleanConfigParam();
+        });
+      return () => {
+        cancelled = true;
+      };
+    }
 
     if (id) {
       loadFromShareId(id)
@@ -268,11 +342,52 @@ export function CalculatorClient() {
   };
 
   const handleBackToEdit = () => {
+    setSaveState("idle");
     if (typeof history !== "undefined") {
       history.pushState({ step: "input" }, "", "#input");
     }
     dispatch({ type: "SET_STEP", step: "input" });
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSave = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      try {
+        localStorage.setItem("fairshare_pending_save", "true");
+      } catch {
+        // Ignore localStorage errors
+      }
+      window.location.href = "/login";
+      return;
+    }
+
+    setSaveState("saving");
+    const expensesPayload = state.expenses
+      .filter((e) => e.amount.replace(/,/g, "").trim() !== "" && (e.label || "").trim() !== "")
+      .map((e) => ({
+        label: (e.label || "Expense").trim(),
+        amount: parseFloat(e.amount.replace(/,/g, "")) || 0,
+      }));
+
+    const result = await saveConfiguration({
+      person1Name: state.person1Name,
+      person2Name: state.person2Name,
+      person1Salary: parseFloat(state.person1Salary.replace(/,/g, "")) || 0,
+      person2Salary: parseFloat(state.person2Salary.replace(/,/g, "")) || 0,
+      expenses: expensesPayload,
+      currency: currency.code,
+    });
+
+    if (result.success) {
+      setSaveState("saved");
+    } else {
+      setSaveState("error");
+      setErrorMessage(result.error ?? "Could not save configuration.");
+    }
   };
 
   const handleShare = async () => {
@@ -318,6 +433,8 @@ export function CalculatorClient() {
             result={resultWithCurrency}
             onBackToEdit={handleBackToEdit}
             onShare={handleShare}
+            onSave={authEnabled ? handleSave : undefined}
+            saveState={authEnabled ? saveState : "idle"}
             resultsHeadingRef={resultsHeadingRef}
           />
         </div>

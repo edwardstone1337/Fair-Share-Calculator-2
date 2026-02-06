@@ -6,12 +6,14 @@ import { formatCurrency } from "@/lib/calculator/compute";
 import { SummaryCard } from "./summary-card";
 import { BreakdownCard } from "./breakdown-card";
 import { ExplanationCard } from "./explanation-card";
-import { ResultsFooter } from "./results-footer";
+import { ResultsFooter, type SaveState } from "./results-footer";
 
 export interface ResultsViewProps {
   result: CalculatorResult;
   onBackToEdit: () => void;
   onShare: () => void;
+  onSave?: () => void;
+  saveState?: SaveState;
   resultsHeadingRef?: React.RefObject<HTMLHeadingElement | null>;
 }
 
@@ -19,6 +21,8 @@ export function ResultsView({
   result,
   onBackToEdit,
   onShare,
+  onSave,
+  saveState,
   resultsHeadingRef,
 }: ResultsViewProps) {
   const format = (n: number) => formatCurrency(n, result.currencySymbol);
@@ -60,7 +64,13 @@ export function ResultsView({
         combinedSalary={result.combinedSalary}
         currencySymbol={result.currencySymbol}
       />
-      <ResultsFooter onBackToEdit={onBackToEdit} onShare={onShare} />
+      <ResultsFooter
+        onBackToEdit={onBackToEdit}
+        onShare={onShare}
+        {...(onSave !== undefined && saveState !== undefined
+          ? { onSave, saveState }
+          : {})}
+      />
     </div>
   );
 }

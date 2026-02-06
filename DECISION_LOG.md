@@ -1,5 +1,65 @@
 # Decision Log
 
+## [2025-02-06] - Dashboard design preview route (temporary)
+
+**Context**: Need to iterate on dashboard layout and empty/full states without requiring auth or hitting real server actions.
+
+**Decision**: Add `/dashboard-preview` as a client page that renders the same layout as `/dashboard` with hardcoded `ConfigSummary[]`. Metadata (noindex, nofollow) in a separate `layout.tsx` so the page can use `useSearchParams` (client). Query params: `?empty=true` (empty state), `?full=true` (10 configs); default 5 configs. No Supabase, no redirect. Not linked from sitemap or nav. Remove when design is locked.
+
+**Rationale**: Designers and devs can preview all states (empty, 5, 10) without logging in. Load/Rename/Delete from cards call real actions and will fail; acceptable for visual-only iteration.
+
+**Consequences**: One extra route; Suspense wrapper required for `useSearchParams` in Next.js static generation.
+
+---
+
+## [2025-02-06] - localStorage migration + currency DB sync (Phase 6e)
+
+**Context**: Anonymous users who tap Save are sent to `/login` with `fairshare_pending_save` and form data in `fairshare_form`. After OAuth they land on `/dashboard` and need that data saved as a configuration. Separately, logged-in users should have currency preference in the DB so it follows them across devices.
+
+**Decision**: (1) **Pending-save migration**: On mount, `DashboardClient` checks `fairshare_pending_save === 'true'`; if so, reads and validates `fairshare_form`, maps to `SaveConfigInput`, calls `saveConfiguration`; on success re-fetches configs and shows success snackbar; always removes the flag (success or failure). (2) **Currency sync**: In `CurrencyProvider`, after init from localStorage/locale, if user is logged in call `getCurrencyPreference()` and use DB value when it differs (DB is source of truth). On `setCurrency`, keep writing to localStorage and fire-and-forget `setCurrencyPreference(code)` when logged in.
+
+**Rationale**: Migration on dashboard mount is the single place we know the user just completed OAuth and has a session; one-shot migration avoids polluting calculator or auth callback. Currency DB write is fire-and-forget so the UI never blocks on network; DB read on init ensures logged-in users see their saved preference.
+
+**Consequences**: Dashboard mount effect is async (IIFE inside useEffect). If user hits config limit (10), migration fails and snackbar shows the limit message. Currency context uses browser client for `getUser()` and server actions for get/set preference.
+
+---
+
+## [2025-02-06] - Gate Save button behind auth feature flag (Phase 6d-fix)
+
+**Context**: Auth is hidden in production via `NEXT_PUBLIC_AUTH_ENABLED` (set to `'true'` only in .env.local). The Save button on results redirects anonymous users to `/login`, which is a dead end when auth is disabled.
+
+**Decision**: Gate Save behind the flag. In `CalculatorClient`, set `authEnabled = process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true'`; pass `onSave` and `saveState` to `ResultsView` only when authEnabled (else `undefined` and `'idle'`). Make `onSave` and `saveState` optional on `ResultsView` and `ResultsFooter`; only pass them to the footer when both defined; only render the Save button when `onSave` is provided.
+
+**Rationale**: When the flag is unset (production), the Save button does not render at all, so anonymous users never see it or hit the login redirect. No server or dashboard changes; single source of truth for “auth UI on/off” at the client boundary.
+
+**Consequences**: Production builds without the env var have no Save button on results. Optional props on ResultsView/ResultsFooter keep types correct when Save is omitted.
+
+---
+
+## [2025-02-06] - Soft delete + config limit (Phase 6a)
+
+**Context**: Need to support "delete" without losing referential integrity or enabling unbounded config growth per household.
+
+**Decision**: Add `deleted_at TIMESTAMPTZ` to `configurations` and `expenses`; RLS SELECT policies exclude rows where `deleted_at IS NULL` is false. "Delete" in app = UPDATE setting `deleted_at = now()`. Enforce max 10 non-deleted configs per household via BEFORE INSERT trigger `check_config_limit()` (raises `check_violation` if count ≥ 10).
+
+**Rationale**: Soft delete allows undo/recovery and keeps expense FKs valid. Limit of 10 keeps UI and storage predictable; hard DELETE remains for future purge jobs.
+
+**Consequences**: Migration 002; app must use UPDATE … deleted_at for deletes. Listing queries only see non-deleted rows via RLS.
+
+---
+
+## [2025-02-06] - Salary/expense inputs: type="text" + inputMode="numeric"
+
+**Context**: Salary and expense amount fields need numeric entry, optional show/hide (salary), and minimal browser autofill interference.
+
+**Decision**: Use `type="text"` with `inputMode="numeric"` (and `autoComplete="off"`) for salary and expense amount inputs. Do not use `type="number"`.
+
+**Rationale**: `type="number"` can trigger unwanted autofill, inconsistent styling when hidden (e.g. with WebkitTextSecurity), and spinner UI. `type="text"` + `inputMode="numeric"` gives numeric keyboard on mobile, full control over formatting and visibility styling, and no browser number quirks. Validation is done in app (parseSalary, parseExpenseAmount).
+
+**Consequences**: All monetary inputs in the calculator follow this pattern; FormField/Input support the props. No change to validation or calculation logic.
+
+---
+
 ## [2025-02-06] - Auth error handling (Phase 5e)
 
 **Context**: Callback and login could throw (e.g. missing env, network, Supabase failure), leading to 500 or stuck loading with no user feedback.

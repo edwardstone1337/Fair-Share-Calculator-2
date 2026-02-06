@@ -8,15 +8,19 @@ app/
   auth/callback/route.ts    # GET; OAuth code exchange
   auth/error/page.tsx      # Auth error message + link to sign in
   login/page.tsx            # Continue with Google, link to calculator
-  dashboard/page.tsx       # Protected placeholder (welcome + back to calculator)
-  layout.tsx                # Root layout, metadata, fonts, analytics scripts
+  dashboard/page.tsx       # Protected; listConfigurations, config cards or empty state (DashboardClient, ConfigCard)
+  dashboard-preview/       # Temporary: layout.tsx (metadata), page.tsx (client, dummy data, ?empty/?full); not in sitemap/nav
+  privacy/page.tsx          # Privacy Policy (server-rendered, token-driven)
+  terms/page.tsx            # Terms of Service (server-rendered, token-driven)
+  layout.tsx                # Root layout, metadata, fonts, analytics scripts, NavBar, Footer
   sitemap.ts                # Dynamic sitemap (MetadataRoute.Sitemap)
   globals.css               # All design tokens (Layer 1–3)
 
 components/
-  nav/                      # NavBar (sticky full-width nav, logo, CurrencySelector, auth slot)
+  nav/                      # NavBar, Footer (logo, CurrencySelector, auth slot; Footer: Privacy, Terms links, copyright)
   ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton. Molecules: FormField
   calculator/               # Calculator organisms (IncomeSection, ExpensesSection, …)
+  dashboard/                # DashboardClient, ConfigCard (saved config list, rename, delete, load)
   faq-section.tsx           # FAQ accordion (below calculator)
 
 lib/
@@ -26,6 +30,7 @@ lib/
   hooks/                    # use-calculator.ts, use-input-tracking.ts
   utils/                    # cn.ts, format.ts, logger.ts
   env.ts                    # getServerEnv (server-only env; Supabase URL/anon key optional for client)
+  actions/                  # Server Actions: configurations.ts, user-preferences.ts
   analytics/                # gtag.ts
   supabase/                 # client.ts (browser), server.ts (Server/Route Handler), middleware.ts (session refresh)
 
@@ -61,12 +66,12 @@ supabase/
 - **Default**: Server Components. Use `"use client"` only when needed (state, hooks, event handlers).
 - **Calculator**: Client boundary at `CalculatorClient`; sections are client components that receive props and callbacks.
 - **Props**: Explicit interfaces (e.g. `IncomeSectionProps`); no inline only types for public components.
-- **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`. Calculator salary and expense amount inputs: use `autoComplete="off"` to reduce browser autofill suggestions.
+- **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`. Calculator salary and expense amount inputs: use `type="text"` with `inputMode="numeric"` (not `type="number"`) for security and visibility when toggling; use `autoComplete="off"` to reduce browser autofill suggestions.
 
 ## State & Data Flow
 
 - Calculator: single source of truth in `useCalculator` (reducer state). Dispatch actions; no direct localStorage in UI.
-- Currency: global UI preference in React context (`useCurrency`), not in calculator reducer. Persisted in `fairshare_currency` (and optionally in `fairshare_form.currency`). Share links and URL params carry currency; restore via `setCurrency(code)` when loading share.
+- Currency: global UI preference in React context (`useCurrency`), not in calculator reducer. Persisted in `fairshare_currency` (and optionally in `fairshare_form.currency`). Logged-in users: DB (`households.currency`) is source of truth on load; `setCurrency` also persists to DB (fire-and-forget). Share links and URL params carry currency; restore via `setCurrency(code)` when loading share.
 - Validation: run at Calculate time; errors stored in state and read via `getError(field)` / `hasError(field)`.
 - Prefilled: when state is restored (localStorage or share link), parent sets `dataRestored` and passes `prefilledSalaries` / `prefilledNames` / `prefilledExpenses` to sections so `useInputTracking` does not fire `input_started` for pre-filled fields.
 
@@ -85,13 +90,14 @@ supabase/
 
 - **Migrations**: `supabase/migrations/` (e.g. `001_foundation_schema.sql`). Run manually in Supabase SQL Editor; no automated runner in app.
 - **RLS**: All public tables have RLS enabled. Policies use `auth.uid()` and `public.user_household_ids()`; never bypass with service role in app code.
-- **Phase 5c**: App uses anon key only; no Server Actions or route handlers perform CRUD on households/configurations/expenses yet.
+- **CRUD**: Server Actions in `lib/actions/` (configurations, user-preferences) perform CRUD via anon key + RLS; no service role in app code.
 
 ## Auth (Supabase)
 
 - **Client choice**: Use `lib/supabase/client.ts` in Client Components; `lib/supabase/server.ts` (async `createClient()`) in Server Components, Server Actions, Route Handlers; `lib/supabase/middleware.ts` only inside root `middleware.ts`. Never use service role key in app code.
 - **Session**: Middleware refreshes session via `getUser()`; do not skip or cookies go stale. Protected routes: enforce in middleware (redirect); optional page-level `getUser()` + redirect for safety.
 - **No auth on `/`**: Calculator page has no auth check; anonymous and logged-in users both get full calculator.
+- **Auth feature flag**: `NEXT_PUBLIC_AUTH_ENABLED === 'true'` enables auth-dependent UI (e.g. Save Configuration on results). Set only in .env.local for dev; when unset (production), do not pass `onSave` (or pass `undefined`) so components like `ResultsFooter` do not render the Save button—avoids redirecting anonymous users to `/login` when auth is disabled.
 
 ## New Features
 

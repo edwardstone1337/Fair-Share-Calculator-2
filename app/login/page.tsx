@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/utils/logger";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/ui/error-message";
@@ -22,7 +23,8 @@ export default function LoginPage() {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-    } catch {
+    } catch (err) {
+      logger.error("login: signInWithOAuth failed", err);
       setErrorMessage("Sign-in failed. Please try again.");
     } finally {
       setLoading(false);

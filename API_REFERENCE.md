@@ -1,6 +1,6 @@
 # API Reference
 
-No HTTP API or Server Actions yet. This document covers the public programmatic API used by the app.
+Server Actions for configurations and user preferences live in `lib/actions/`. This document covers the public programmatic API used by the app.
 
 ---
 
@@ -146,8 +146,27 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 
 ### Context
 
-- **CurrencyProvider**: wraps app; on mount loads from `localStorage.getItem('fairshare_currency')` or `fairshare_form.currency`, else `detectCurrencyFromLocale()`. Persists on change. Fires `trackEvent('currency_changed', { currency_code })` on user change.
+- **CurrencyProvider**: wraps app; on mount loads from `localStorage.getItem('fairshare_currency')` or `fairshare_form.currency`, else `detectCurrencyFromLocale()`. For **logged-in users**, after that init it also calls `getCurrencyPreference()`; if the DB returns a valid currency code and it differs from the localStorage/detection value, the DB value is used (DB is source of truth when authenticated). On currency change: always writes to `fairshare_currency`; if the user is logged in, also calls `setCurrencyPreference(code)` (fire-and-forget). Fires `trackEvent('currency_changed', { currency_code })` on user change.
 - **useCurrency()**: returns `{ currency: CurrencyConfig; setCurrency: (code: string) => void }`.
+
+### Auth feature flag (client)
+
+- **NEXT_PUBLIC_AUTH_ENABLED**: When set to the string `'true'` (e.g. in .env.local), auth-dependent UI is shown: Save Configuration button on results, NavBar sign-in/avatar. When unset or not `'true'` (e.g. production), the Save button is not rendered and anonymous users are not sent to `/login`. `CalculatorClient` reads this once; `ResultsView`/`ResultsFooter` receive optional `onSave`/`saveState` and only show Save when provided.
+
+### localStorage keys (calculator / auth)
+
+- **fairshare_form**: Calculator form data (names, salaries, expenses); see ARCHITECTURE and `useCalculator`. Written by the hook on state change; read on mount and when restoring share/config.
+- **fairshare_pending_save**: Set to `'true'` when an anonymous user taps **Save Configuration** on the results screen (only when auth is enabled); client then redirects to `/login`. Form data remains in `fairshare_form` so the user can save after signing in (e.g. from dashboard or after returning to calculator).
+
+### fairshare_pending_save migration flow (dashboard)
+
+When the user lands on `/dashboard` after OAuth (e.g. following the Save → login redirect), `DashboardClient` runs a one-time migration on mount:
+
+1. **Check** `localStorage.getItem('fairshare_pending_save') === 'true'`.
+2. **Read** `localStorage.getItem('fairshare_form')` and parse as JSON. If the result is invalid or does not have at least one of `name1`, `name2`, `salary1`, `salary2`, clear `fairshare_pending_save` and exit.
+3. **Map** the parsed `SavedFormData` to `SaveConfigInput` (names, salaries parsed to numbers, expenses mapped, currency from form or `'USD'`).
+4. **Call** `saveConfiguration(input)`. On success: re-fetch configs via `listConfigurations()` and update local state, show snackbar "Configuration saved from your calculator session." On failure: show error snackbar with the action’s error message (e.g. config limit).
+5. **Clear** `fairshare_pending_save` from localStorage in both success and failure cases.
 
 ---
 
@@ -156,6 +175,7 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 ### Input
 
 - **prefix?: string** — Non-editable text shown inside the input on the left (e.g. `"$"`, `"£"`). When set, input is wrapped in a focusable container; use for currency-prefixed fields.
+- **type / inputMode**: Calculator salary and expense amount inputs use `type="text"` with `inputMode="numeric"` (not `type="number"`) for security and consistent visibility when toggling show/hide.
 - **autoComplete**: Calculator salary and expense amount inputs use `autoComplete="off"` to avoid inappropriate browser autofill suggestions.
 
 ### FormField
@@ -214,16 +234,75 @@ Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_
 
 **Response**: 302 redirect. No JSON.
 
+### App route: `/dashboard-preview` (temporary)
+
+**Auth**: None. Design-only; no Supabase, no redirect.  
+**Query**: `empty=true` → empty state (0 configs); `full=true` → 10 configs, "10 of 10 saved"; default → 5 configs, "5 of 10 saved".  
+**Behavior**: Client page; renders same layout as `/dashboard` with hardcoded `ConfigSummary[]`; `DashboardClient` receives `initialConfigs`. Load/Rename/Delete from cards call real actions and fail (expected). Not in sitemap or nav. Metadata: noindex, nofollow.
+
 ---
 
-## Database Schema (`supabase/migrations/001_foundation_schema.sql`)
+## Server Actions (`lib/actions/`)
 
-Run manually in Supabase SQL Editor. No app CRUD on these tables yet (auth-only Phase 5c).
+All actions use `createClient()` from `@/lib/supabase/server`. Return type is `ActionResult<T>`: either `{ success: true; data: T }` or `{ success: false; error: string }`. On Supabase errors, the client receives a user-friendly message; raw DB errors are logged and never exposed.
+
+### Configurations (`lib/actions/configurations.ts`)
+
+**Types**: `ConfigSummary`, `ConfigDetail`, `SaveConfigInput`, `ActionResult<T>`.
+
+#### `saveConfiguration(input: SaveConfigInput): Promise<ActionResult<{ id: string }>>`
+
+- **input**: `name?`, `person1Name`, `person2Name`, `person1Salary`, `person2Salary`, `expenses: { label, amount }[]`, `currency`. If `name` is omitted, defaults to current date formatted (e.g. "February 6, 2026").
+- **Returns**: On success, `data: { id: string }` (new configuration id). On failure, `error: string`.
+- **Error cases**: Not authenticated; household not found; configuration limit reached (max 10) — "Configuration limit reached (max 10). Delete a saved configuration to make room."; other DB errors → generic message.
+
+#### `listConfigurations(): Promise<ActionResult<ConfigSummary[]>>`
+
+- **Returns**: Array of config summaries (id, name, person1Name, person2Name, totalExpenses, expenseCount, currency, createdAt, updatedAt) for the user's household, non-deleted, ordered by `updated_at` DESC.
+- **Error cases**: Not authenticated; household not found; DB error → generic message.
+
+#### `getConfiguration(configId: string): Promise<ActionResult<ConfigDetail>>`
+
+- **configId**: UUID of the configuration.
+- **Returns**: Full detail (ConfigSummary fields plus person1Salary, person2Salary, expenses array with id, label, amount, sortOrder). Expenses ordered by sort_order.
+- **Error cases**: Not authenticated; household not found; configuration not found or not in household; DB error → generic message.
+
+#### `renameConfiguration(configId: string, newName: string): Promise<ActionResult>`
+
+- **newName**: Trimmed; must be non-empty and ≤ 100 characters.
+- **Returns**: `ActionResult` with no data on success.
+- **Error cases**: Validation (empty or > 100 chars); not authenticated; household not found; configuration not found; DB error → generic message.
+
+#### `deleteConfiguration(configId: string): Promise<ActionResult>`
+
+- **Behavior**: Soft delete — sets `deleted_at = now()` on the configuration and on all its expenses.
+- **Returns**: Success or failure.
+- **Error cases**: Not authenticated; household not found; configuration not found; DB error → generic message.
+
+### User preferences (`lib/actions/user-preferences.ts`)
+
+#### `getCurrencyPreference(): Promise<ActionResult<string>>`
+
+- **Returns**: The household's currency code (e.g. `"USD"`). Defaults to `"USD"` if column is null.
+- **Error cases**: Not authenticated; household not found; DB error → generic message.
+
+#### `setCurrencyPreference(currencyCode: string): Promise<ActionResult>`
+
+- **currencyCode**: Must be a string, exactly 3 characters, uppercase letters only (e.g. `"USD"`, `"GBP"`).
+- **Returns**: Success or failure.
+- **Error cases**: Validation ("Currency must be a 3-letter uppercase code (e.g. USD)."); not authenticated; household not found; DB error → generic message.
+
+---
+
+## Database Schema (`supabase/migrations/`)
+
+Run migrations manually in Supabase SQL Editor. Server Actions (Phase 6b) perform CRUD via RLS. Foundation: `001_foundation_schema.sql`; soft delete and config limit: `002_soft_delete_and_currency_pref.sql`.
 
 ### Tables
 
 **households**
-- `id` UUID PK, `name` TEXT DEFAULT 'My Household', `currency` TEXT DEFAULT 'USD', `created_at`, `updated_at`.
+- `id` UUID PK, `name` TEXT DEFAULT 'My Household', `currency` TEXT NOT NULL DEFAULT 'USD', `created_at`, `updated_at`.
+- Currency preference: use `households.currency` (no separate column).
 - RLS: SELECT/UPDATE/DELETE for members only; INSERT for any authenticated.
 
 **household_members**
@@ -231,12 +310,12 @@ Run manually in Supabase SQL Editor. No app CRUD on these tables yet (auth-only 
 - RLS: SELECT for members; INSERT/UPDATE/DELETE for owners only (same household).
 
 **configurations**
-- `id` UUID PK, `household_id` FK → households, `name`, `person_1_name`, `person_2_name`, `person_1_salary`, `person_2_salary` NUMERIC(12,2), `currency`, `created_at`, `updated_at`.
-- RLS: full CRUD for users who are members of the household.
+- `id` UUID PK, `household_id` FK → households, `name`, `person_1_name`, `person_2_name`, `person_1_salary`, `person_2_salary` NUMERIC(12,2), `currency`, `created_at`, `updated_at`, `deleted_at` TIMESTAMPTZ DEFAULT NULL (soft delete).
+- RLS: full CRUD for household members. SELECT policy excludes soft-deleted rows (`deleted_at IS NULL`). INSERT/UPDATE/DELETE unchanged — use UPDATE to set `deleted_at = now()` for soft delete; hard DELETE remains for future purge jobs.
 
 **expenses**
-- `id` UUID PK, `configuration_id` FK → configurations, `label`, `amount` NUMERIC(12,2), `sort_order`, `created_at`, `updated_at`.
-- RLS: full CRUD for users whose household owns the configuration.
+- `id` UUID PK, `configuration_id` FK → configurations, `label`, `amount` NUMERIC(12,2), `sort_order`, `created_at`, `updated_at`, `deleted_at` TIMESTAMPTZ DEFAULT NULL (soft delete).
+- RLS: full CRUD for users whose household owns the configuration. SELECT policy excludes soft-deleted rows (`expenses.deleted_at IS NULL`). INSERT/UPDATE/DELETE unchanged.
 
 ### Helper
 
@@ -250,6 +329,17 @@ Run manually in Supabase SQL Editor. No app CRUD on these tables yet (auth-only 
 ### Indexes
 
 - `idx_household_members_user_id`, `idx_configurations_household_id`, `idx_expenses_configuration_id`.
+- `idx_configurations_deleted_at_null` (partial: `WHERE deleted_at IS NULL`) — for efficient listing of non-deleted configs.
+
+### Soft delete (Phase 6a, migration 002)
+
+- **configurations** and **expenses** have `deleted_at TIMESTAMPTZ DEFAULT NULL`. Rows with `deleted_at` set are hidden from SELECT by RLS; INSERT/UPDATE/DELETE policies are unchanged.
+- **Soft delete in app**: run UPDATE and set `deleted_at = now()` instead of DELETE. Hard DELETE stays available for future purge jobs (e.g. cron).
+
+### Config limit trigger (Phase 6a, migration 002)
+
+- **`public.check_config_limit()`** — runs BEFORE INSERT on `configurations`. Counts non-deleted configs for the same household (`WHERE household_id = NEW.household_id AND deleted_at IS NULL`). If count ≥ 10, raises exception `Household configuration limit reached (max 10)` with `ERRCODE check_violation`.
+- **Trigger**: `trigger_check_config_limit` on `public.configurations`.
 
 ---
 
