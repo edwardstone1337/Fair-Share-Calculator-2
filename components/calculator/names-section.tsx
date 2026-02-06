@@ -39,7 +39,7 @@ export function NamesSection({
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--card-gap)" }}>
         <SectionHeader
           title="Names (Optional)"
-          description="Add names to personalize your results."
+          description="Add names to personalize your results, or leave blank to use \"Person 1\" and \"Person 2\"."
         />
         <div
           style={{

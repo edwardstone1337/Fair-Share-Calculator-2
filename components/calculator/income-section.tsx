@@ -46,7 +46,7 @@ export function IncomeSection({
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--card-gap)" }}>
         <SectionHeader
           title="Income for Bill Splitting"
-          description="Enter your after-tax income to calculate proportional bill splitting based on what each person earns."
+          description="Enter your after-tax income to calculate proportional bill splitting based on income."
         />
         <div
           style={{

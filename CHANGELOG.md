@@ -27,11 +27,11 @@
 
 ### Fixed
 
-- (None yet.)
+- Next.js upgraded to patch security vulnerability (^15.5.12).
 
 ### Security
 
-- (None yet.)
+- Next.js dependency updated to address security advisory.
 
 ### Removed
 

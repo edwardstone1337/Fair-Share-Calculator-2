@@ -8,7 +8,7 @@ Fair Share Calculator is an income-based bill split calculator for couples and r
 
 | Layer | Technology |
 |-------|------------|
-| **Framework** | Next.js 15 (App Router) |
+| **Framework** | Next.js 15.5.x (App Router); keep on patched line for security |
 | **Language** | TypeScript (strict) |
 | **Styling** | Tailwind CSS v4 + CSS variables in `app/globals.css` |
 | **State** | React (useReducer in `useCalculator`) — no external state library |

@@ -45,7 +45,7 @@ export function ExpensesSection({
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--card-gap)" }}>
         <SectionHeader
           title="Shared Bills & Expenses"
-          description="Enter rent, utilities, groceries, or any shared expenses below."
+          description="Enter rent, utilities, groceries, or any shared bills to split based on income."
         />
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
           <div
