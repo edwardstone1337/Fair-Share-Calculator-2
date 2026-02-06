@@ -86,7 +86,7 @@ Schema in `supabase/migrations/001_foundation_schema.sql` (run manually in Supab
 ## Dependencies & External Services
 
 - **Cloudflare Worker** — Share backend: `POST /share` (store state, return id), `GET /share/:id` (fetch state). Read-only share links; no auth.
-- **Vercel** — Hosting (planned; auto-deploy from `main`).
+- **Vercel** — Hosting (live; auto-deploy from `main`).
 - **Supabase** — Live. PostgreSQL + Auth (Google OAuth). Schema deployed (households, household_members, configurations, expenses, RLS, `on_auth_user_created` trigger). App uses anon key only; service role not used in Phase 5c.
 - **Analytics / Ads** — GA4 (G-TQZ0HGB3MT), Hotjar (hjid 4934822), Microsoft Clarity (kyx62gpbw4), Google AdSense (ca-pub-4075743460011014). Scripts in root layout via Next.js `Script` (strategy `afterInteractive`). Events via `lib/analytics/gtag.ts`; silent no-op if gtag unavailable.
 

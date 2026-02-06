@@ -104,7 +104,7 @@ export function IncomeSection({
               <Input
                 id="person1-salary"
                 prefix={currency.symbol}
-                type={person1SalaryVisible ? "text" : "password"}
+                type="text"
                 inputMode="numeric"
                 placeholder="0"
                 autoComplete="off"
@@ -120,7 +120,11 @@ export function IncomeSection({
                 error={!!person1Error}
                 style={
                   !person1SalaryVisible
-                    ? { letterSpacing: "0.1em", paddingRight: "var(--space-10)" }
+                    ? ({
+                        letterSpacing: "0.1em",
+                        paddingRight: "var(--space-10)",
+                        WebkitTextSecurity: "disc",
+                      } as React.CSSProperties)
                     : { paddingRight: "var(--space-10)" }
                 }
                 aria-label="Your salary"
@@ -158,7 +162,7 @@ export function IncomeSection({
               <Input
                 id="person2-salary"
                 prefix={currency.symbol}
-                type={person2SalaryVisible ? "text" : "password"}
+                type="text"
                 inputMode="numeric"
                 placeholder="0"
                 autoComplete="off"
@@ -174,7 +178,11 @@ export function IncomeSection({
                 error={!!person2Error}
                 style={
                   !person2SalaryVisible
-                    ? { letterSpacing: "0.1em", paddingRight: "var(--space-10)" }
+                    ? ({
+                        letterSpacing: "0.1em",
+                        paddingRight: "var(--space-10)",
+                        WebkitTextSecurity: "disc",
+                      } as React.CSSProperties)
                     : { paddingRight: "var(--space-10)" }
                 }
                 aria-label="Their salary"
