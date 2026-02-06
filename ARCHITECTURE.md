@@ -1,0 +1,63 @@
+# System Architecture
+
+## Overview
+
+Fair Share Calculator is an income-based bill split calculator for couples and roommates. This codebase is the V2 rebuild: Next.js (App Router) + TypeScript + Tailwind, with the calculator ported and localStorage persistence. Auth, Supabase, and saved configurations are planned (see `SYSTEM-ARCHITECTURE.md`).
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Framework** | Next.js 15 (App Router) |
+| **Language** | TypeScript (strict) |
+| **Styling** | Tailwind CSS v4 + CSS variables in `app/globals.css` |
+| **State** | React (useReducer in `useCalculator`) — no external state library |
+| **Persistence** | localStorage only (anonymous; Supabase planned) |
+
+## Data Model (Current)
+
+No database yet. In-memory + localStorage:
+
+- **Calculator form state** — `CalculatorFormState` in `lib/calculator/types.ts`: person names, salaries (strings), expenses array, step (`input` | `results`), validation errors.
+- **Saved form data** — `SavedFormData`: names, salary strings, expenses (amount + label). Stored under key `fairshare_form`. V1 backward compat: also reads legacy keys `name1`, `name2`, `salary1`, `salary2`, `expenses`.
+
+## Request Flow
+
+- **`/`** — Server-rendered shell (layout + calculator page) with metadata, H1, JSON-LD, FAQ. Client hydrates `CalculatorClient` which uses `useCalculator()` (reducer + localStorage restore on mount, debounced save on state change). URL hash (`#results`, `#input`) syncs step; URL params (`?id=`, `name1`, `salary1`, etc.) restore share links.
+- **Calculation** — Pure sync flow: `validateForm(state)` → `calculateShares(...)` in `lib/calculator/compute.ts`. No server round-trip.
+- **Share** — `shareViaBackend(state)` POSTs to Cloudflare Worker; returns short URL `?id=...`. Fallback: `buildLegacyShareUrl()` query-param URL. Load: `loadFromShareId(id)` GET fetches share by ID.
+
+## Design System
+
+- **Tokens** — Three layers in `app/globals.css`: Layer 1 `@theme` (primitives), Layer 2 `:root` (semantic), Layer 3 component tokens. 8px spacing grid.
+- **Components** — Atoms in `components/ui/` (Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar). Calculator organisms in `components/calculator/` (IncomeSection, ExpensesSection, NamesSection, CalculatorClient, ResultsView, SummaryCard, BreakdownCard, ExplanationCard, ResultsFooter). FAQ: `FaqSection`.
+- **Rule** — No magic numbers in components; use CSS variables. Tailwind for layout (flex, grid); tokens for color, typography, spacing, radius.
+
+## Key Files
+
+| Path | Purpose |
+|------|---------|
+| `app/(calculator)/page.tsx` | Calculator page: header, H1, `CalculatorClient`, `FaqSection`, JSON-LD |
+| `app/layout.tsx` | Root layout: fonts, metadata, canonical, OG |
+| `app/globals.css` | Design tokens (all 3 layers) |
+| `lib/calculator/compute.ts` | Pure calculation + parse + formatCurrency |
+| `lib/calculator/validation.ts` | validateForm (salaries, expenses, names) |
+| `lib/calculator/types.ts` | Form state, result, validation types |
+| `lib/hooks/use-calculator.ts` | Reducer, localStorage, calculate(), getError/hasError |
+| `components/calculator/calculator-client.tsx` | Orchestrates sections, step (input vs results), URL hash/params, share, snackbar |
+| `lib/calculator/share.ts` | shareViaBackend, buildLegacyShareUrl, loadFromShareId (Cloudflare Worker) |
+
+## Authentication & Backend
+
+Not implemented yet. No Supabase client in app code; `lib/env.ts` and `lib/supabase/` are placeholders for later phases. See `SYSTEM-ARCHITECTURE.md` for schema, RLS, and auth flow.
+
+## Dependencies & External Services
+
+- **Cloudflare Worker** — Share backend: `POST /share` (store state, return id), `GET /share/:id` (fetch state). Read-only share links; no auth.
+- **Vercel** — Hosting (planned; auto-deploy from `main`).
+- **Supabase** — Planned (PostgreSQL, Auth, RLS).
+- **Analytics / Ads** — Not integrated yet (GA4, Hotjar, Clarity, AdSense planned).
+
+## Deployment
+
+Current: local dev (`next dev`). Production deployment and DNS strategy described in `SYSTEM-ARCHITECTURE.md`.

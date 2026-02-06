@@ -1,0 +1,458 @@
+@import "tailwindcss";
+
+/* ============================================================
+   LAYER 1: PRIMITIVES
+   Raw, objective values. No UI meaning. Extremely stable.
+   ============================================================ */
+
+@theme {
+  /* --- Color Primitives (Palette) --- */
+  --color-teal-900: #092929;
+  --color-teal-800: #0e5252;
+  --color-teal-700: #112e2e;
+  --color-mint-50: #eafcf8;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-red-500: #f44336;
+  --color-red-600: #d32f2f;
+  --color-red-700: #a8071a;
+  --color-yellow-400: #ffa726;
+  --color-neutral-800: #333333;
+
+  /* Opacity-based neutrals (for overlays, borders, subtle fills) */
+  --color-black-alpha-2: rgba(0, 0, 0, 0.02);
+  --color-black-alpha-4: rgba(0, 0, 0, 0.04);
+  --color-black-alpha-8: rgba(0, 0, 0, 0.08);
+  --color-black-alpha-15: rgba(0, 0, 0, 0.15);
+  --color-black-alpha-25: rgba(0, 0, 0, 0.25);
+  --color-black-alpha-40: rgba(0, 0, 0, 0.40);
+  --color-black-alpha-50: rgba(0, 0, 0, 0.50);
+  --color-black-alpha-60: rgba(0, 0, 0, 0.60);
+  --color-black-alpha-70: rgba(0, 0, 0, 0.70);
+  --color-teal-alpha-2: rgba(17, 46, 46, 0.02);
+  --color-teal-alpha-3: rgba(17, 46, 46, 0.03);
+  --color-teal-alpha-5: rgba(17, 46, 46, 0.05);
+  --color-teal-alpha-10: rgba(17, 46, 46, 0.10);
+  --color-neutral-300: #cccccc;
+
+  /* --- Typography Primitives --- */
+  --font-family-heading: 'Josefin Sans', sans-serif;
+  --font-family-body: 'Assistant', sans-serif;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-2-5xl: 28px;
+  --font-size-3xl: 32px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.1;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.5;
+  --line-height-loose: 1.6;
+
+  /* --- Spacing Primitives (8px grid) --- */
+  --space-0: 0px;
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --- Radius Primitives --- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* --- Shadow Primitives --- */
+  --shadow-sm: 0 4px 4px rgba(22, 34, 51, 0.04);
+  --shadow-md: 0 4px 4px rgba(22, 34, 51, 0.04), 0 4px 24px rgba(22, 34, 51, 0.04);
+  --shadow-lg: 0 4px 4px rgba(22, 34, 51, 0.04), 0 4px 24px rgba(22, 34, 51, 0.04), 0 24px 24px rgba(22, 34, 51, 0.04);
+  --shadow-xl: 0 4px 4px rgba(22, 34, 51, 0.04), 0 4px 24px rgba(22, 34, 51, 0.04), 0 24px 24px rgba(22, 34, 51, 0.04), 0 32px 32px rgba(22, 34, 51, 0.04), 0 64px 64px rgba(22, 34, 51, 0.12);
+
+  /* --- Border Primitives --- */
+  --border-width-default: 1px;
+  --border-width-focus: 2px;
+}
+
+/* ============================================================
+   LAYER 2: SEMANTIC TOKENS
+   Intent-based. Describe roles, not appearance.
+   Reference primitives. Theming and a11y decisions live here.
+   ============================================================ */
+
+:root {
+  /* --- Text --- */
+  --text-primary: var(--color-teal-700);
+  --text-secondary: var(--color-black-alpha-60);
+  --text-tertiary: var(--color-black-alpha-50);
+  --text-placeholder: var(--color-black-alpha-40);
+  --text-on-primary: var(--color-white);
+  --text-error: var(--color-red-700);
+  --text-accent: var(--color-yellow-400);
+
+  /* --- Surfaces --- */
+  --surface-page: var(--color-teal-700);
+  --surface-app: var(--color-mint-50);
+  --surface-card: var(--color-white);
+  --surface-subtle: var(--color-teal-alpha-3);
+  --surface-hover: var(--color-teal-alpha-5);
+
+  /* --- Borders --- */
+  --border-default: var(--color-black-alpha-25);
+  --border-subtle: var(--color-black-alpha-8);
+  --border-strong: var(--color-teal-700);
+  --border-error: var(--color-red-700);
+  --border-focus: var(--color-black);
+
+  /* --- Dividers --- */
+  --divider-default: var(--color-black-alpha-15);
+  --divider-subtle: var(--color-black-alpha-8);
+
+  /* --- Interactive --- */
+  --interactive-default: var(--color-teal-700);
+  --interactive-hover: var(--color-teal-800);
+  --interactive-pressed: var(--color-teal-900);
+
+  /* --- Status --- */
+  --status-error: var(--color-red-700);
+
+  /* --- Focus Ring --- */
+  --focus-ring-color: var(--color-black);
+  --focus-ring-width: var(--border-width-focus);
+  --focus-ring-offset: var(--space-0-5);
+
+  /* --- Semantic Spacing (contextual) --- */
+  --space-section-gap: var(--space-4);
+  --space-card-padding: var(--space-6);
+  --space-card-padding-x: var(--space-4);
+  --space-inline-gap: var(--space-4);
+  --space-stack-sm: var(--space-2);
+  --space-stack-md: var(--space-4);
+  --space-stack-lg: var(--space-6);
+
+  /* --- Semantic Radius --- */
+  --radius-interactive: var(--radius-md);
+  --radius-card: var(--radius-xl);
+  --radius-pill: var(--radius-full);
+}
+
+/* ============================================================
+   LAYER 3: COMPONENT TOKENS
+   Scoped to individual components. Reference semantic tokens.
+   ============================================================ */
+
+:root {
+  /* --- Button --- */
+  --button-bg-default: var(--interactive-default);
+  --button-bg-hover: var(--interactive-hover);
+  --button-bg-pressed: var(--interactive-pressed);
+  --button-text: var(--text-on-primary);
+  --button-radius: var(--radius-interactive);
+  --button-padding-y: var(--space-4);
+  --button-padding-x: var(--space-4);
+  --button-font-family: var(--font-family-heading);
+  --button-font-size: var(--font-size-md);
+  --button-font-weight: var(--font-weight-regular);
+
+  --button-secondary-bg-default: transparent;
+  --button-secondary-bg-hover: var(--surface-hover);
+  --button-secondary-border: var(--border-strong);
+  --button-secondary-text: var(--text-primary);
+
+  /* --- Input --- */
+  --input-bg: var(--color-white);
+  --input-text: var(--color-black);
+  --input-border: var(--border-strong);
+  --input-border-hover: var(--interactive-hover);
+  --input-border-focus: var(--border-focus);
+  --input-border-error: var(--border-error);
+  --input-radius: var(--radius-interactive);
+  --input-padding-y: var(--space-3);
+  --input-padding-x: var(--space-4);
+  --input-font-family: var(--font-family-body);
+  --input-font-size: var(--font-size-lg);
+  --input-placeholder: var(--text-placeholder);
+
+  /* --- Card --- */
+  --card-bg: var(--surface-card);
+  --card-border: var(--border-default);
+  --card-radius: var(--radius-card);
+  --card-padding: var(--space-6);
+  --card-padding-x: var(--space-4);
+  --card-shadow: none;
+  --card-gap: var(--space-section-gap);
+
+  /* --- App Shell --- */
+  --app-max-width: 410px;
+  --app-bg: var(--surface-app);
+  --app-radius: var(--radius-2xl);
+  --app-padding-y: var(--space-6);
+  --app-padding-x: var(--space-4);
+
+  /* --- Results Summary --- */
+  --summary-amount-size: var(--font-size-3xl);
+  --summary-amount-weight: var(--font-weight-bold);
+  --summary-amount-family: var(--font-family-heading);
+
+  /* --- Expense Row --- */
+  --expense-item-bg: var(--surface-subtle);
+  --expense-item-border: var(--border-subtle);
+  --expense-item-radius: var(--radius-lg);
+  --expense-item-padding: var(--space-4);
+
+  /* --- Snackbar --- */
+  --snackbar-bg: var(--color-neutral-800);
+  --snackbar-error-bg: var(--status-error);
+  --snackbar-text: var(--color-white);
+  --snackbar-radius: var(--radius-interactive);
+
+  /* --- Add Expense Button --- */
+  --add-expense-bg: transparent;
+  --add-expense-border: var(--border-strong);
+  --add-expense-border-hover: var(--interactive-hover);
+  --add-expense-bg-hover: var(--surface-hover);
+  --add-expense-text: var(--text-primary);
+  --add-expense-font-family: var(--font-family-body);
+  --add-expense-font-size: var(--font-size-md);
+  --add-expense-font-weight: var(--font-weight-medium);
+  --add-expense-radius: var(--radius-interactive);
+  --add-expense-padding-y: var(--space-3);
+  --add-expense-padding-x: var(--space-4);
+
+  /* --- Salary Toggle --- */
+  --salary-toggle-size: var(--space-6);
+
+  /* --- Expense Headers --- */
+  --expense-header-font-size: var(--font-size-md);
+  --expense-header-font-weight: var(--font-weight-semibold);
+  --expense-header-text: var(--text-primary);
+
+  /* --- Delete Button --- */
+  --delete-button-size: var(--space-8);
+  --delete-button-bg: var(--color-red-500);
+  --delete-button-bg-hover: var(--color-red-600);
+  --delete-button-radius: var(--radius-sm);
+  --delete-button-icon-size: var(--font-size-md);
+  --delete-button-icon-color: var(--color-white);
+
+  /* --- Error Message --- */
+  --error-font-size: var(--font-size-xs);
+  --error-text: var(--status-error);
+
+  /* --- Label --- */
+  --label-font-size: var(--font-size-md);
+  --label-font-weight: var(--font-weight-semibold);
+  --label-text: var(--text-primary);
+
+  /* --- Section Header --- */
+  --section-title-size: var(--font-size-2xl);
+  --section-title-weight: var(--font-weight-bold);
+  --section-title-family: var(--font-family-heading);
+  --section-description-size: var(--font-size-sm);
+  --section-description-text: var(--text-primary);
+
+  /* --- Summary Card --- */
+  --summary-card-bg: var(--surface-card);
+  --summary-card-border: var(--border-default);
+  --summary-card-radius: var(--radius-card);
+  --summary-card-padding-y: var(--space-6);
+  --summary-card-padding-x: var(--space-4);
+
+  --summary-title-size: var(--font-size-2xl);
+  --summary-title-weight: var(--font-weight-bold);
+  --summary-title-family: var(--font-family-heading);
+
+  --summary-person-name-size: var(--font-size-md);
+  --summary-person-name-weight: var(--font-weight-semibold);
+  --summary-person-name-text: var(--text-primary);
+
+  --summary-percentage-size: var(--font-size-xs);
+  --summary-percentage-weight: var(--font-weight-medium);
+  --summary-percentage-text: var(--text-tertiary);
+
+  --summary-divider-color: var(--divider-default);
+
+  --summary-total-label-size: var(--font-size-sm);
+  --summary-total-label-weight: var(--font-weight-medium);
+  --summary-total-label-text: var(--text-secondary);
+
+  --summary-total-amount-size: var(--font-size-2-5xl);
+  --summary-total-amount-weight: var(--font-weight-bold);
+  --summary-total-amount-family: var(--font-family-heading);
+
+  --summary-explanation-size: var(--font-size-xs);
+  --summary-explanation-text: var(--text-tertiary);
+
+  --summary-contribution-divider-width: 1px;
+  --summary-contribution-divider-height: 60px;
+  --summary-contribution-divider-color: var(--divider-default);
+
+  /* --- Breakdown Card --- */
+  --breakdown-card-bg: var(--surface-card);
+  --breakdown-card-border: var(--border-default);
+  --breakdown-card-radius: var(--radius-card);
+  --breakdown-card-padding-y: var(--space-6);
+  --breakdown-card-padding-x: var(--space-4);
+
+  --breakdown-title-size: var(--font-size-xl);
+  --breakdown-title-weight: var(--font-weight-semibold);
+  --breakdown-title-family: var(--font-family-heading);
+
+  --breakdown-icon-size: var(--font-size-2xl);
+  --breakdown-icon-color: var(--text-primary);
+
+  --breakdown-item-bg: var(--color-teal-alpha-2);
+  --breakdown-item-radius: var(--radius-lg);
+  --breakdown-item-border: var(--border-subtle);
+  --breakdown-item-padding: var(--space-4);
+
+  --breakdown-expense-name-size: var(--font-size-sm);
+  --breakdown-expense-name-weight: var(--font-weight-medium);
+  --breakdown-expense-name-text: var(--color-black-alpha-70);
+
+  --breakdown-expense-total-size: var(--font-size-sm);
+  --breakdown-expense-total-weight: var(--font-weight-medium);
+  --breakdown-expense-total-text: var(--text-secondary);
+
+  --breakdown-share-amount-size: var(--font-size-xl);
+  --breakdown-share-amount-weight: var(--font-weight-bold);
+  --breakdown-share-amount-family: var(--font-family-heading);
+  --breakdown-share-amount-text: var(--text-primary);
+
+  --breakdown-person-name-size: var(--font-size-xs);
+  --breakdown-person-name-weight: var(--font-weight-medium);
+  --breakdown-person-name-text: var(--text-tertiary);
+
+  /* --- Explanation Card --- */
+  --explanation-card-bg: var(--surface-card);
+  --explanation-card-border: var(--border-default);
+  --explanation-card-radius: var(--radius-card);
+  --explanation-card-padding-y: var(--space-6);
+  --explanation-card-padding-x: var(--space-4);
+
+  --explanation-title-size: var(--font-size-xl);
+  --explanation-title-weight: var(--font-weight-semibold);
+  --explanation-title-family: var(--font-family-heading);
+
+  --explanation-icon-size: var(--font-size-2xl);
+  --explanation-icon-color: var(--text-accent);
+
+  --explanation-text-size: var(--font-size-md);
+  --explanation-text-color: var(--text-primary);
+  --explanation-text-line-height: var(--line-height-relaxed);
+
+  --explanation-example-bg: var(--surface-subtle);
+  --explanation-example-radius: var(--radius-lg);
+  --explanation-example-padding: var(--space-4);
+
+  --explanation-label-size: var(--font-size-sm);
+  --explanation-label-weight: var(--font-weight-semibold);
+  --explanation-label-text: var(--text-primary);
+
+  --explanation-math-size: var(--font-size-sm);
+  --explanation-math-weight: var(--font-weight-medium);
+  --explanation-math-text: var(--color-black-alpha-70);
+  --explanation-math-bg: var(--color-teal-alpha-10);
+  --explanation-math-radius: 6px;
+  --explanation-math-padding-y: var(--space-1);
+  --explanation-math-padding-x: var(--space-2);
+
+  --explanation-note-size: var(--font-size-sm);
+  --explanation-note-text: var(--text-secondary);
+
+  /* --- FAQ Section --- */
+  --faq-bg: var(--surface-app);
+  --faq-text: var(--text-primary);
+  --faq-max-width: 600px;
+  --faq-padding: var(--space-4);
+  --faq-title-size: var(--font-size-2xl);
+  --faq-title-weight: var(--font-weight-bold);
+  --faq-title-family: var(--font-family-heading);
+  --faq-h3-size: var(--font-size-lg);
+  --faq-h3-weight: var(--font-weight-bold);
+  --faq-h3-family: var(--font-family-body);
+  --faq-p-size: var(--font-size-md);
+  --faq-hr-color: var(--color-neutral-300);
+
+  /* --- Snackbar --- */
+  --snackbar-padding: var(--space-4);
+  --snackbar-min-width: 250px;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-body);
+  background: var(--surface-page);
+  color: var(--text-primary);
+}
+
+/* Focus ring utility */
+.focus-ring {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Button variant states (component token-driven) */
+button[data-button-variant="primary"]:hover {
+  background: var(--button-bg-hover);
+}
+button[data-button-variant="primary"]:active {
+  background: var(--button-bg-pressed);
+  transform: scale(0.98);
+}
+button[data-button-variant="secondary"]:hover {
+  background: var(--button-secondary-bg-hover);
+}
+
+button[data-delete-button]:hover {
+  background: var(--delete-button-bg-hover);
+}
+
+/* Results cards responsive (≤430px) */
+@media (max-width: 430px) {
+  .summary-contribution-row {
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .summary-divider-vertical {
+    display: none;
+  }
+  .breakdown-expense-header,
+  .breakdown-shares-row,
+  .breakdown-names-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+  .breakdown-share-amount-mobile {
+    font-size: var(--font-size-lg);
+  }
+}
