@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
   },
   icons: {
-    icon: "/lotus.png",
+    icon: "/images/lotus.png",
   },
   alternates: {
     canonical: "https://www.fairsharecalculator.com",
