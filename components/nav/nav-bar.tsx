@@ -125,7 +125,6 @@ export function NavBar() {
                   variant="ghost"
                   onClick={handleSignOut}
                   aria-label="Sign out"
-                  size="sm"
                 />
               </div>
             ) : (

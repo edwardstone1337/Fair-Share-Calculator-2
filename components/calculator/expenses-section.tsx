@@ -81,7 +81,7 @@ export function ExpensesSection({
             </div>
             <div
               style={{
-                width: "var(--space-8)",
+                width: "var(--icon-button-size)",
                 flexShrink: 0,
               }}
             />
@@ -117,7 +117,6 @@ export function ExpensesSection({
             fontSize: "var(--add-expense-font-size)",
             fontWeight: "var(--add-expense-font-weight)",
             borderRadius: "var(--add-expense-radius)",
-            padding: "var(--add-expense-padding-y) var(--add-expense-padding-x)",
           }}
           className="border-[var(--add-expense-border)] hover:border-[var(--add-expense-border-hover)] hover:bg-[var(--add-expense-bg-hover)]"
         >

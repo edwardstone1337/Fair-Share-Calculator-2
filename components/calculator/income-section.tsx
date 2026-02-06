@@ -132,7 +132,6 @@ export function IncomeSection({
               <IconButton
                 icon={person1SalaryVisible ? "visibility_off" : "visibility"}
                 variant="ghost"
-                size="sm"
                 onClick={handleToggle1}
                 aria-label={person1SalaryVisible ? "Hide salary" : "Show salary"}
                 style={{
@@ -190,7 +189,6 @@ export function IncomeSection({
               <IconButton
                 icon={person2SalaryVisible ? "visibility_off" : "visibility"}
                 variant="ghost"
-                size="sm"
                 onClick={handleToggle2}
                 aria-label={person2SalaryVisible ? "Hide salary" : "Show salary"}
                 style={{

@@ -47,6 +47,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           style={{
             display: "flex",
             alignItems: "center",
+            height: "var(--touch-target-min-height)",
             background: "var(--input-bg)",
             border: `var(--border-width-default) solid ${borderColor}`,
             borderRadius: "var(--input-radius)",
@@ -110,6 +111,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
         style={{
+          height: "var(--touch-target-min-height)",
           background: "var(--input-bg)",
           color: "var(--input-text)",
           border: "var(--border-width-default) solid " + borderColor,

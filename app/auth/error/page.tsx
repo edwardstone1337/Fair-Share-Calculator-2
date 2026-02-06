@@ -47,8 +47,9 @@ export default function AuthErrorPage() {
           href="/login"
           style={{
             display: "inline-flex",
-            justifyContent: "center",
             alignItems: "center",
+            justifyContent: "center",
+            height: "var(--touch-target-min-height)",
             padding: "var(--button-padding-y) var(--button-padding-x)",
             borderRadius: "var(--button-radius)",
             fontFamily: "var(--button-font-family)",

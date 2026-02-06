@@ -140,6 +140,9 @@
   --focus-ring-width: var(--border-width-focus);
   --focus-ring-offset: var(--space-0-5);
 
+  /* --- Touch target (all interactive elements) --- */
+  --touch-target-min-height: var(--space-12);
+
   /* --- Semantic Spacing (contextual) --- */
   --space-section-gap: var(--space-4);
   --space-card-padding: var(--space-6);
@@ -167,7 +170,8 @@
   --button-bg-pressed: var(--interactive-pressed);
   --button-text: var(--text-on-primary);
   --button-radius: var(--radius-interactive);
-  --button-padding-y: var(--space-4);
+  /* Vertical padding leaves 24px content height (48 - 12 - 12) for one line at 16px font */
+  --button-padding-y: var(--space-3);
   --button-padding-x: var(--space-4);
   --button-font-family: var(--font-family-heading);
   --button-font-size: var(--font-size-md);
@@ -235,8 +239,6 @@
   --add-expense-font-size: var(--font-size-md);
   --add-expense-font-weight: var(--font-weight-medium);
   --add-expense-radius: var(--radius-interactive);
-  --add-expense-padding-y: var(--space-3);
-  --add-expense-padding-x: var(--space-4);
 
   /* --- Icon --- */
   --icon-size-sm: var(--font-size-md);
@@ -244,10 +246,8 @@
   --icon-size-lg: var(--font-size-2xl);
 
   /* --- Icon Button --- */
-  --icon-button-size-sm: 32px;
-  --icon-button-size-md: 40px;
-  --icon-button-icon-size-sm: 18px;
-  --icon-button-icon-size-md: 20px;
+  --icon-button-size: var(--touch-target-min-height);
+  --icon-button-icon-size: 20px;
   --icon-button-radius-danger: var(--radius-md);
   --icon-button-radius-ghost: var(--radius-md);
   --icon-button-bg-danger: var(--color-red-500);
@@ -399,16 +399,29 @@
   /* --- Currency Selector --- */
   --currency-selector-bg: var(--input-bg);
   --currency-selector-border: var(--input-border);
-  --currency-selector-radius: var(--input-radius);
+  /* Fully rounded (pill) corners for dropdown appearance */
+  --currency-selector-radius: var(--radius-pill);
   --currency-selector-text: var(--input-text);
   --currency-selector-font-size: var(--input-font-size);
   --currency-selector-font-family: var(--input-font-family);
   --currency-selector-padding-y: var(--input-padding-y);
-  --currency-selector-padding-x: var(--input-padding-x);
+  --currency-selector-padding-inline-start: var(--space-4);
+  --currency-selector-padding-inline-end: var(--space-8);
+  --currency-selector-arrow-size: 20px;
   --currency-selector-focus-ring: var(--focus-ring-color);
 }
 
 .currency-selector {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-inline-start: var(--currency-selector-padding-inline-start);
+  padding-inline-end: var(--currency-selector-padding-inline-end);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23112e2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  /* Arrow (20px) sits entirely in padding-inline-end (32px): right edge 12px from right */
+  background-position: right var(--space-3) center;
+  background-size: var(--currency-selector-arrow-size);
   outline: none;
 }
 .currency-selector:focus-visible {

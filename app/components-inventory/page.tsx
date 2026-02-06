@@ -68,6 +68,16 @@ export default function ComponentsInventory() {
       <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--font-size-md)' }}>
         All components organized by atomic design level. For QA and design review only.
       </p>
+      <p style={{
+        color: 'var(--text-primary)',
+        fontSize: 'var(--font-size-sm)',
+        fontWeight: 'var(--font-weight-medium)',
+        padding: 'var(--space-3) var(--space-4)',
+        background: 'var(--surface-subtle)',
+        borderRadius: 'var(--radius-md)',
+      }}>
+        <strong>Touch target:</strong> All interactive components render at exactly 48px height (<code style={{ fontFamily: 'monospace' }}>height: var(--touch-target-min-height)</code>, <code style={{ fontFamily: 'monospace' }}>box-sizing: border-box</code>).
+      </p>
 
       {/* ========== ATOMS ========== */}
       <section>
@@ -90,6 +100,9 @@ export default function ComponentsInventory() {
             <h3 style={h3Style}>
               Button
             </h3>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+              Height 48px (--touch-target-min-height).
+            </p>
             <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap', alignItems: 'center' }}>
               <Button variant="primary" onClick={noop}>Primary Button</Button>
               <Button variant="secondary" onClick={noop}>Secondary Button</Button>
@@ -113,22 +126,17 @@ export default function ComponentsInventory() {
           {/* IconButton */}
           <div>
             <h3 style={h3Style}>IconButton</h3>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+              48px touch target (--icon-button-size). Variants: ghost and danger.
+            </p>
             <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
-                <IconButton icon="remove" variant="danger" size="sm" onClick={noop} aria-label="Delete" />
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>danger/sm</span>
+                <IconButton icon="remove" variant="danger" onClick={noop} aria-label="Delete" />
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>danger (48px)</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
-                <IconButton icon="remove" variant="danger" size="md" onClick={noop} aria-label="Delete" />
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>danger/md</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
-                <IconButton icon="visibility" variant="ghost" size="sm" onClick={noop} aria-label="Toggle" />
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>ghost/sm</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
-                <IconButton icon="visibility" variant="ghost" size="md" onClick={noop} aria-label="Toggle" />
-                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>ghost/md</span>
+                <IconButton icon="visibility" variant="ghost" onClick={noop} aria-label="Toggle" />
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>ghost (48px)</span>
               </div>
             </div>
           </div>
@@ -138,6 +146,9 @@ export default function ComponentsInventory() {
             <h3 style={h3Style}>
               Input
             </h3>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+              Height 48px (bare and prefixed).
+            </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', maxWidth: '300px' }}>
               <Input id="inv-input-1" placeholder="Default input" />
               <Input id="inv-input-2" placeholder="With prefix" prefix="$" />
@@ -193,6 +204,9 @@ export default function ComponentsInventory() {
             <h3 style={h3Style}>
               CurrencySelector
             </h3>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+              Height 48px.
+            </p>
             <CurrencySelector value={currencyValue} onChange={setCurrencyValue} />
           </div>
 
@@ -266,7 +280,6 @@ export default function ComponentsInventory() {
                   <IconButton
                     icon="visibility"
                     variant="ghost"
-                    size="sm"
                     onClick={noop}
                     aria-label="Toggle visibility"
                   />

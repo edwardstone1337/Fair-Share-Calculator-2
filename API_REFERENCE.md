@@ -189,7 +189,11 @@ When the user lands on `/dashboard` after OAuth (e.g. following the Save → log
 
 ### IconButton
 
-- **Props**: `icon` (Material Symbols name), `variant: "ghost" | "danger"`, `onClick`, `aria-label` (required), `size?: "sm" | "md"`, `className?`, `style?`. Uses tokens `--icon-button-size-*`, `--icon-button-bg-*`, `--icon-button-color-*`, etc.
+- **Props**: `icon` (Material Symbols name), `variant: "ghost" | "danger"`, `onClick`, `aria-label` (required), `className?`, `style?`. Single size 48px via `--icon-button-size` (references `--touch-target-min-height`); icon 20px via `--icon-button-icon-size`. Uses tokens `--icon-button-bg-*`, `--icon-button-color-*`, etc.
+
+### CurrencySelector
+
+- **Props**: `value`, `onChange`. Renders at 48px height (`--touch-target-min-height`). Styling: pill radius (`--currency-selector-radius: var(--radius-pill)`), custom dropdown arrow via CSS background (token `--currency-selector-arrow-size`), padding via `--currency-selector-padding-inline-start` / `-inline-end`.
 
 ### Card
 

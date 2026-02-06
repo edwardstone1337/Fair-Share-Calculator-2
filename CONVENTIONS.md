@@ -58,6 +58,7 @@ supabase/
 ## Styling
 
 - **Tokens only**: Use CSS variables for color, spacing, typography, radius, shadow. No magic numbers in components.
+- **Touch target**: All interactive elements (buttons, inputs, selects, icon buttons, link-as-button) must render at exactly 48px via `height: var(--touch-target-min-height)` (with `box-sizing: border-box` so padding/border are included). IconButton uses explicit size (48px via `--icon-button-size`). Ensures consistent tap targets for accessibility and mobile usability.
 - **Tailwind**: Use for layout (flex, grid, gap, display). Do not use Tailwind for colors/fonts that have tokens.
 - **Inline styles**: Acceptable for one-off token references (e.g. `style={{ gap: "var(--space-4)" }}`) when Tailwind doesn’t map to a token.
 
@@ -98,6 +99,10 @@ supabase/
 - **Session**: Middleware refreshes session via `getUser()`; do not skip or cookies go stale. Protected routes: enforce in middleware (redirect); optional page-level `getUser()` + redirect for safety.
 - **No auth on `/`**: Calculator page has no auth check; anonymous and logged-in users both get full calculator.
 - **Auth feature flag**: `NEXT_PUBLIC_AUTH_ENABLED === 'true'` enables auth-dependent UI (e.g. Save Configuration on results). Set only in .env.local for dev; when unset (production), do not pass `onSave` (or pass `undefined`) so components like `ResultsFooter` do not render the Save button—avoids redirecting anonymous users to `/login` when auth is disabled.
+
+## Development workflow
+
+- Use `npm run dev:clean` after any session that modifies `globals.css`, deletes files, or renames exports. This clears the `.next` cache and prevents stale module errors. Do not run `npm run build` while the dev server is running.
 
 ## New Features
 

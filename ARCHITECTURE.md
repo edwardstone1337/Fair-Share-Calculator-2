@@ -51,7 +51,7 @@ Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft
 
 - **Tokens** — Three layers in `app/globals.css`: Layer 1 `@theme` (primitives), Layer 2 `:root` (semantic), Layer 3 component tokens (including `--nav-*`, `--currency-selector-*`, `--footer-*`). 8px spacing grid.
 - **Components** — Layout: `NavBar`, `Footer` in `components/nav/` (NavBar: sticky, full-width nav; logo, `CurrencySelector`; Footer: links to Privacy, Terms, copyright). Atoms in `components/ui/` (Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton). Molecules: `FormField` (label + Input + ErrorMessage; optional prefix, labelSuffix). Calculator organisms in `components/calculator/` (IncomeSection, ExpensesSection, NamesSection, CalculatorClient, ResultsView, SummaryCard, BreakdownCard, ExplanationCard, ResultsFooter). Dashboard: `DashboardClient`, `ConfigCard` in `components/dashboard/`. FAQ: `FaqSection`. Input supports `prefix` (e.g. currency symbol) with token-driven focus ring.
-- **Rule** — No magic numbers in components; use CSS variables. Tailwind for layout (flex, grid); tokens for color, typography, spacing, radius.
+- **Rule** — No magic numbers in components; use CSS variables. Tailwind for layout (flex, grid); tokens for color, typography, spacing, radius. Interactive elements (Button, Input, CurrencySelector, IconButton, link-as-button) use a 48px touch target (`height: var(--touch-target-min-height)`); IconButton has a single 48px size (no size prop).
 
 ## Key Files
 

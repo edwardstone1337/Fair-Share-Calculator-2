@@ -17,11 +17,33 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth = false,
       children,
       className,
+      style: styleProp,
       ...props
     },
     ref
   ) => {
     const isPrimary = variant === "primary";
+    const baseStyle: React.CSSProperties = {
+      height: "var(--touch-target-min-height)",
+      padding: "var(--button-padding-y) var(--button-padding-x)",
+      borderRadius: "var(--button-radius)",
+      fontFamily: "var(--button-font-family)",
+      fontSize: "var(--button-font-size)",
+      fontWeight: "var(--button-font-weight)",
+      lineHeight: 1.25,
+      overflow: "hidden",
+      ...(isPrimary
+        ? {
+            background: "var(--button-bg-default)",
+            color: "var(--button-text)",
+          }
+        : {
+            background: "var(--button-secondary-bg-default)",
+            border: "var(--border-width-default) solid var(--button-secondary-border)",
+            color: "var(--button-secondary-text)",
+          }),
+      ...(fullWidth ? { width: "100%" } : {}),
+    };
     return (
       <button
         ref={ref}
@@ -31,24 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           "flex justify-center items-center focus:outline-none border-none focus-visible:[outline:var(--focus-ring-width)_solid_var(--focus-ring-color)] focus-visible:[outline-offset:var(--focus-ring-offset)]",
           fullWidth && "w-full"
         )}
-        style={{
-          padding: "var(--button-padding-y) var(--button-padding-x)",
-          borderRadius: "var(--button-radius)",
-          fontFamily: "var(--button-font-family)",
-          fontSize: "var(--button-font-size)",
-          fontWeight: "var(--button-font-weight)",
-          ...(isPrimary
-            ? {
-                background: "var(--button-bg-default)",
-                color: "var(--button-text)",
-              }
-            : {
-                background: "var(--button-secondary-bg-default)",
-                border: "var(--border-width-default) solid var(--button-secondary-border)",
-                color: "var(--button-secondary-text)",
-              }),
-          ...(fullWidth ? { width: "100%" } : {}),
-        }}
+        style={{ ...baseStyle, ...styleProp }}
         {...props}
       >
         {children}

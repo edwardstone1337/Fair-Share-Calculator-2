@@ -14,14 +14,16 @@ export function CurrencySelector({ value, onChange }: CurrencySelectorProps) {
       onChange={(e) => onChange(e.target.value)}
       aria-label="Select currency"
       style={{
-        background: "var(--currency-selector-bg)",
+        height: "var(--touch-target-min-height)",
+        backgroundColor: "var(--currency-selector-bg)",
         border: "1px solid var(--currency-selector-border)",
         borderRadius: "var(--currency-selector-radius)",
         color: "var(--currency-selector-text)",
         fontSize: "var(--currency-selector-font-size)",
         fontFamily: "var(--currency-selector-font-family)",
+        lineHeight: 1,
         padding:
-          "var(--currency-selector-padding-y) var(--currency-selector-padding-x)",
+          "var(--currency-selector-padding-y) var(--currency-selector-padding-inline-end) var(--currency-selector-padding-y) var(--currency-selector-padding-inline-start)",
         cursor: "pointer",
       }}
       className="currency-selector"

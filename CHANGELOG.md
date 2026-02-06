@@ -4,6 +4,18 @@
 
 ### Added
 
+- **dev:clean script**: `npm run dev:clean` runs `rm -rf .next && next dev`. Documented in CONVENTIONS (Development workflow): use after modifying globals.css, deleting files, or renaming exports to avoid stale .next cache; do not run `npm run build` while dev server is running.
+
+### Changed
+
+- **Fixed expense row alignment**: Delete button now aligns with input fields. Removed paddingTop from delete column (was compensating for FormField labels that don't exist in expense rows). Added ErrorMessage placeholder to label column for consistent column heights. Removed unused `--label-line-height` token.
+- **Simplified IconButton to single 48px size, removed size prop**: IconButton no longer has sm/md variants; all instances use `--icon-button-size` (48px) and `--icon-button-icon-size` (20px). Fixed expense row delete button alignment with input fields (paddingTop from label + gap tokens so delete column aligns with top of inputs).
+- **Consistent 48px touch target**: All interactive components (Button, Input, CurrencySelector, IconButton) enforce a minimum height of 48px via `--touch-target-min-height`. IconButton uses single size. Improves mobile usability and visual consistency.
+- **Fixed inconsistent component heights**: All interactive elements (Button, Input, CurrencySelector, auth error link) now use `height: var(--touch-target-min-height)` instead of `minHeight`, so they render at exactly 48px. With `box-sizing: border-box`, padding and border are absorbed into the 48px box; previously min-height was ineffective because natural heights already exceeded 48px.
+- **CurrencySelector**: Pill radius (`--radius-pill`), custom dropdown arrow via CSS background (`--currency-selector-arrow-size`), and logical padding tokens (`--currency-selector-padding-inline-start/end`) for consistent 48px height and appearance.
+
+### Added
+
 - **Dashboard design preview**: Route `/dashboard-preview` (temporary) renders the dashboard with hardcoded dummy data for design iteration without auth. No Supabase, no redirect. Metadata: `noindex`, `nofollow`. Query params: `?empty=true` (empty state), `?full=true` (10 configs, "10 of 10 saved"); default 5 configs. Banner: "Design Preview — actions won't work". Not in sitemap or nav; Load/Rename/Delete from cards will fail (expected).
 - **Phase 6e — localStorage migration + currency sync**: Dashboard: on mount, if `fairshare_pending_save` is `'true'`, read `fairshare_form`, validate (name1/name2/salary1/salary2 present), map to `SaveConfigInput`, call `saveConfiguration`; on success re-fetch configs and show "Configuration saved from your calculator session."; on error show error snackbar; always remove `fairshare_pending_save`. Currency context: for logged-in users, after init from localStorage/locale, call `getCurrencyPreference()` and use DB value when it differs (DB is source of truth); on `setCurrency`, persist to localStorage and fire-and-forget `setCurrencyPreference(code)` when user is logged in.
 - **Phase 6d — Save from results + load config**: Save button on results screen (visible to everyone): anonymous users get `fairshare_pending_save` set and redirect to `/login`; logged-in users call `saveConfiguration` with current form state (idle/saving/saved/error). Load saved config: dashboard "Load" goes to `/?config={id}`; `CalculatorClient` runs `getConfiguration(id)`, restores form and stays on input step, then removes `?config=` from URL. `?config=` takes precedence over `?id=`. ResultsFooter gains `onSave` and `saveState`; Save button (secondary) between Back to Edit and Share. No changes to server actions, dashboard, or use-calculator.
@@ -29,6 +41,7 @@
 
 ### Removed
 
+- **STYLE_AUDIT_REPORT.md** — Debugging artifact removed from repo root.
 - **lib/supabase/.gitkeep** (replaced by client, server, middleware modules).
 
 ---
@@ -37,7 +50,7 @@
 
 - **FormField** (`components/ui/form-field.tsx`): composite label + Input + ErrorMessage; optional `prefix`, `labelSuffix`. Used for consistent form layout.
 - **Icon** (`components/ui/icon.tsx`): Material Symbols wrapper (`material-symbols-outlined`); props: name, size, color, aria-hidden.
-- **IconButton** (`components/ui/icon-button.tsx`): accessible button with Icon; variants `ghost` | `danger`, sizes `sm` | `md`; tokens `--icon-button-*`.
+- **IconButton** (`components/ui/icon-button.tsx`): accessible button with Icon; variants `ghost` | `danger`; single 48px size; tokens `--icon-button-*`.
 - **Input prefix**: salary and expense amount inputs show currency symbol inside the field (e.g. `$`, `£`) via `Input` prop `prefix`; tokens and focus ring for prefixed wrapper in `globals.css`.
 - Component inventory page: molecules section (FormField), atoms updated (Icon, IconButton); showcases all UI primitives for QA.
 - Multi-currency support: user can select currency (USD, CAD, AUD, NZD, GBP, INR, PHP, SGD) via selector in nav. Currency is persisted in localStorage (`fairshare_currency`) and restored from `fairshare_form.currency` for backward compat. Share links and legacy URL params include and restore currency.

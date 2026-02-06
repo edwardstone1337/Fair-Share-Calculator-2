@@ -1,5 +1,65 @@
 # Decision Log
 
+## [2025-02-06] - dev:clean script for cache hygiene
+
+**Context**: After editing `globals.css`, deleting files, or renaming exports, Next.js can serve stale modules from `.next` until the cache is cleared, causing confusing build/runtime errors.
+
+**Decision**: Add `dev:clean` script (`rm -rf .next && next dev`) and document in CONVENTIONS: use it after sessions that touch globals.css, file deletions, or export renames; do not run `npm run build` while the dev server is running.
+
+**Rationale**: Single command avoids manual cache wipe + restart. Explicit convention prevents stale-cache debugging sessions.
+
+**Consequences**: One extra npm script; CONVENTIONS.md has a "Development workflow" section for the rule.
+
+---
+
+## [2025-02-06] - Removed paddingTop from expense row delete column
+
+**Context**: Expense row delete column had `paddingTop: calc(var(--label-line-height) * var(--label-font-size) + var(--space-1))` to align the delete button with inputs. Expense rows have no labels (unlike FormField layout), so this offset was compensating for non-existent label space.
+
+**Decision**: Removed paddingTop from the delete column wrapper entirely. Added ErrorMessage placeholder to the label column with `visible={false}` so both input columns have consistent height (label column matches amount column’s ErrorMessage slot). Removed `--label-line-height` token from globals.css as it was only used for the removed paddingTop calc.
+
+**Rationale**: Delete button should align with the top of the inputs; expense rows don’t use FormField, so no label offset is needed. ErrorMessage placeholder keeps column heights consistent when amount column shows an error.
+
+**Consequences**: Delete button top-aligns with both inputs; spacer row (first row) aligns with inputs; error state grows row downward while alignment holds.
+
+---
+
+## [2025-02-06] - Switched from min-height to height for touch-target enforcement
+
+**Context**: Touch targets were specified via `minHeight: var(--touch-target-min-height)` (48px). In practice, padding + content + border already exceeded 48px on Button, Input, and CurrencySelector, so min-height did nothing and rendered heights were inconsistent (e.g. Button ~56–58px, Input/CurrencySelector ~53px). Only IconButton was exactly 48px because it uses an explicit size token.
+
+**Decision**: Switched from min-height to height for `--touch-target-min-height` enforcement on Button, Input (bare and prefixed wrapper), CurrencySelector, and the auth error "Back to sign in" link. IconButton unchanged (already 48px). With `box-sizing: border-box`, `height: 48px` gives exactly 48px including padding and border; flex centering (Button) and native input/select centering handle vertical alignment.
+
+**Rationale**: Explicit height enforces consistent 48px across all interactive elements; min-height was ineffective when natural height already exceeded the floor.
+
+**Consequences**: All interactive components now render at exactly 48px height. Padding tokens unchanged; padding is absorbed into the 48px box.
+
+---
+
+## [2025-02-06] - Collapsed IconButton to single 48px size
+
+**Context**: IconButton sm and md were both 48px after touch-target standardization, making the size prop redundant.
+
+**Decision**: Collapsed IconButton sm/md into a single size (48px). Removed the `size` prop from IconButton. All IconButtons are now touch-target compliant via a single `--icon-button-size` token (`var(--touch-target-min-height)`). Icon visual size standardized to 20px (`--icon-button-icon-size`). Removed `--icon-button-size-sm`, `--icon-button-size-md`, and the corresponding icon-size tokens from globals.css.
+
+**Rationale**: One size simplifies the API and avoids confusion; top-alignment with inputs is correct intent for multi-line labels or varying error states.
+
+**Consequences**: All IconButton consumers no longer pass `size`. Expense row delete column uses `--icon-button-size` and paddingTop from label tokens for alignment with input fields.
+
+---
+
+## [2025-02-06] - Standardized 48px touch target (interactive components)
+
+**Context**: Mobile usability and visual consistency require a minimum touch-target height across all interactive elements.
+
+**Decision**: Standardized 48px touch target across Button, Input, CurrencySelector, and IconButton via a single semantic token `--touch-target-min-height: var(--space-12)`. IconButton sm and md both use 48px for the hit area; icon sizes (18px / 20px) remain unchanged for visual hierarchy. Removed `--add-expense-padding-y` and `--add-expense-padding-x`; Add Expense button inherits standard Button min-height and padding.
+
+**Rationale**: One token drives all interactive heights; WCAG and mobile best practices recommend ≥44–48px. Token-only approach keeps theming and future a11y overrides in one place.
+
+**Consequences**: Expense row delete column widens from 32px to 48px (layout shift). FormField labelSuffix IconButton and nav CurrencySelector/IconButton now 48px; nav already has 56px min-height. Auth error "Back to sign in" link uses same height (48px) and flex centering (later decision switched all to `height` from min-height).
+
+---
+
 ## [2025-02-06] - Dashboard design preview route (temporary)
 
 **Context**: Need to iterate on dashboard layout and empty/full states without requiring auth or hitting real server actions.

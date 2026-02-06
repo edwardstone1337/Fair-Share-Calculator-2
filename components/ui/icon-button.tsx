@@ -8,7 +8,6 @@ interface IconButtonProps {
   variant: "ghost" | "danger";
   onClick: () => void;
   "aria-label": string;
-  size?: "sm" | "md";
   className?: string;
   style?: React.CSSProperties;
 }
@@ -18,7 +17,6 @@ export function IconButton({
   variant,
   onClick,
   "aria-label": ariaLabel,
-  size = "md",
   className,
   style,
 }: IconButtonProps) {
@@ -39,10 +37,10 @@ export function IconButton({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: `var(--icon-button-size-${size})`,
-        height: `var(--icon-button-size-${size})`,
-        minWidth: `var(--icon-button-size-${size})`,
-        minHeight: `var(--icon-button-size-${size})`,
+        width: "var(--icon-button-size)",
+        height: "var(--icon-button-size)",
+        minWidth: "var(--icon-button-size)",
+        minHeight: "var(--icon-button-size)",
         borderRadius: isDanger
           ? "var(--icon-button-radius-danger)"
           : "var(--icon-button-radius-ghost)",
@@ -61,7 +59,7 @@ export function IconButton({
     >
       <Icon
         name={icon}
-        size={`var(--icon-button-icon-size-${size})`}
+        size="var(--icon-button-icon-size)"
       />
     </button>
   );

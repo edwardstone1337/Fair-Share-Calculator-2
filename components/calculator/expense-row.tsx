@@ -93,21 +93,24 @@ export function ExpenseRow({
           onKeyDown={onKeyDown}
           aria-label="Expense label"
         />
+        <ErrorMessage
+          id={`${labelId}-error`}
+          message=""
+          visible={false}
+        />
       </div>
       <div
         style={{
-          width: "var(--icon-button-size-sm)",
+          width: "var(--icon-button-size)",
           flexShrink: 0,
           display: "flex",
           alignItems: "flex-start",
-          marginTop: "var(--space-2)",
         }}
       >
         {showDelete ? (
           <IconButton
             icon="remove"
             variant="danger"
-            size="sm"
             onClick={onDelete}
             aria-label="Remove expense"
           />
@@ -115,10 +118,10 @@ export function ExpenseRow({
           <div
             role="presentation"
             style={{
-              width: "var(--icon-button-size-sm)",
-              height: "var(--icon-button-size-sm)",
-              minWidth: "var(--icon-button-size-sm)",
-              minHeight: "var(--icon-button-size-sm)",
+              width: "var(--icon-button-size)",
+              height: "var(--icon-button-size)",
+              minWidth: "var(--icon-button-size)",
+              minHeight: "var(--icon-button-size)",
             }}
           />
         )}

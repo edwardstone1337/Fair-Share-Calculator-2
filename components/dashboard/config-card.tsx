@@ -177,7 +177,6 @@ export function ConfigCard({ config, onDeleted, onError }: ConfigCardProps) {
           variant="danger"
           onClick={handleDelete}
           aria-label={`Delete ${config.name}`}
-          size="sm"
         />
       </div>
     </Card>
