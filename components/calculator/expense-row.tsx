@@ -58,6 +58,7 @@ export function ExpenseRow({
           type="text"
           inputMode="numeric"
           placeholder="0"
+          autoComplete="off"
           value={expense.amount}
           onChange={(e) => {
             const v = e.target.value;

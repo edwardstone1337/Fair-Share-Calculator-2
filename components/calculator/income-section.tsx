@@ -107,6 +107,7 @@ export function IncomeSection({
                 type={person1SalaryVisible ? "text" : "password"}
                 inputMode="numeric"
                 placeholder="0"
+                autoComplete="off"
                 value={person1Salary}
                 onChange={(e) => {
                   const v = e.target.value;
@@ -160,6 +161,7 @@ export function IncomeSection({
                 type={person2SalaryVisible ? "text" : "password"}
                 inputMode="numeric"
                 placeholder="0"
+                autoComplete="off"
                 value={person2Salary}
                 onChange={(e) => {
                   const v = e.target.value;
