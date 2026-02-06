@@ -1,11 +1,41 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import type { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 import { useCurrency } from '@/lib/contexts/currency-context';
 import { CurrencySelector } from '@/components/ui/currency-selector';
+import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 
 export function NavBar() {
   const { currency, setCurrency } = useCurrency();
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleSignOut() {
+    await createClient().auth.signOut();
+    router.refresh();
+  }
+
+  const firstInitial = user?.email?.[0]?.toUpperCase() ?? '?';
 
   return (
     <nav
@@ -21,8 +51,7 @@ export function NavBar() {
     >
       <div
         style={{
-          maxWidth: 'var(--nav-max-width)',
-          margin: '0 auto',
+          width: '100%',
           minHeight: 'var(--nav-height)',
           display: 'flex',
           alignItems: 'center',
@@ -64,7 +93,49 @@ export function NavBar() {
             value={currency.code}
             onChange={setCurrency}
           />
-          {/* Auth button slot — Phase 5 will add here */}
+          {process.env.NEXT_PUBLIC_AUTH_ENABLED === 'true' &&
+            (user ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-2)',
+                }}
+              >
+                <div
+                  style={{
+                    width: 'var(--space-6)',
+                    height: 'var(--space-6)',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'var(--surface-subtle)',
+                    color: 'var(--text-primary)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontWeight: 'var(--font-weight-semibold)',
+                    fontFamily: 'var(--font-family-heading)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  aria-hidden
+                >
+                  {firstInitial}
+                </div>
+                <IconButton
+                  icon="logout"
+                  variant="ghost"
+                  onClick={handleSignOut}
+                  aria-label="Sign out"
+                  size="sm"
+                />
+              </div>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => router.push('/login')}
+              >
+                Sign in
+              </Button>
+            ))}
         </div>
       </div>
     </nav>

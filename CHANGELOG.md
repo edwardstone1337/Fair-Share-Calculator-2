@@ -4,6 +4,24 @@
 
 ### Added
 
+- **Foundation DB schema (Phase 5b)**: Migration `supabase/migrations/001_foundation_schema.sql` — tables `households`, `household_members`, `configurations`, `expenses`; RLS on all; helper `user_household_ids(uuid)`; trigger `on_auth_user_created` (new user → one household + owner membership); `updated_at` triggers. Run manually in Supabase SQL Editor; no app CRUD on these tables yet.
+- **Supabase Auth (Phase 5c)**: Google OAuth sign-in. Packages: `@supabase/supabase-js`, `@supabase/ssr`. Three Supabase clients: `lib/supabase/client.ts` (browser), `lib/supabase/server.ts` (Server Components / Route Handlers), `lib/supabase/middleware.ts` (session refresh). Root `middleware.ts` refreshes session via `getUser()`, protects `/dashboard` (redirect to `/login`), redirects logged-in users from `/login` to `/dashboard`. No auth gate on `/` — calculator works anonymously.
+- **Auth routes**: `GET /auth/callback` (code exchange → `/dashboard` or `/auth/error`), `/auth/error` (error message + link to sign in), `/login` (Continue with Google, link to calculator), `/dashboard` (protected placeholder; welcome + “Back to calculator”).
+- **NavBar auth state**: Logged out → “Sign in” (navigates to `/login`). Logged in → avatar initial + sign-out IconButton; uses `getSession()` on mount and `onAuthStateChange`; sign-out calls `signOut()` then `router.refresh()`.
+- **Card** (`components/ui/card.tsx`): optional `style?: React.CSSProperties` for layout (e.g. auth/dashboard pages).
+
+### Changed
+
+- **.gitignore**: `.env.local` replaced with `.env*.local` to cover all env local files.
+
+### Removed
+
+- **lib/supabase/.gitkeep** (replaced by client, server, middleware modules).
+
+---
+
+### Added (earlier)
+
 - **FormField** (`components/ui/form-field.tsx`): composite label + Input + ErrorMessage; optional `prefix`, `labelSuffix`. Used for consistent form layout.
 - **Icon** (`components/ui/icon.tsx`): Material Symbols wrapper (`material-symbols-outlined`); props: name, size, color, aria-hidden.
 - **IconButton** (`components/ui/icon-button.tsx`): accessible button with Icon; variants `ghost` | `danger`, sizes `sm` | `md`; tokens `--icon-button-*`.
@@ -47,6 +65,8 @@
 
 ### Fixed
 
+- **Auth error handling (Phase 5e)**: OAuth callback (`GET /auth/callback`) handler wrapped in try/catch — any thrown error (e.g. from `createClient` or `exchangeCodeForSession`) redirects to `/auth/error` instead of returning 500. Login page: `handleGoogleSignIn` in try/catch/finally; on failure shows "Sign-in failed. Please try again." via `ErrorMessage` below the button; loading reset in `finally`; error cleared when user clicks the button again.
+- Nav bar on desktop now stretches full width; removed inner max-width (600px) constraint and `--nav-max-width` token.
 - Next.js upgraded to patch security vulnerability (^15.5.12).
 
 ### Security

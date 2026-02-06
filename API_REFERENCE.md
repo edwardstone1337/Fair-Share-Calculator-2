@@ -170,6 +170,10 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 
 - **Props**: `icon` (Material Symbols name), `variant: "ghost" | "danger"`, `onClick`, `aria-label` (required), `size?: "sm" | "md"`, `className?`, `style?`. Uses tokens `--icon-button-size-*`, `--icon-button-bg-*`, `--icon-button-color-*`, etc.
 
+### Card
+
+- **Props**: `children`, `className?`, `style?` (optional; merged with base styles for layout).
+
 ---
 
 ## Hooks (`lib/hooks/`)
@@ -190,12 +194,79 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 
 ## Environment (`lib/env.ts`)
 
+Required and optional variables are listed in `.env.example` (Supabase, Share API).
+
 #### `getServerEnv(): { SUPABASE_URL, SUPABASE_ANON_KEY, SITE_URL, NEXT_PUBLIC_SHARE_API_URL? }`
 
-Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SHARE_API_URL`. Logs warnings (via `logger`) if Supabase vars missing; returns empty string for URL/key and `http://localhost:3000` for SITE_URL if unset. Share API URL is optional; client uses it in `share.ts` when set.
+Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SHARE_API_URL`. Logs warnings (via `logger`) if Supabase vars missing; returns empty string for URL/key and `http://localhost:3000` for SITE_URL if unset. Share API URL is optional; client uses it in `share.ts` when set. `SUPABASE_SERVICE_ROLE_KEY` (in `.env.example`) is for future server-side use only; not read by `getServerEnv`.
 
 ---
 
-## Route Handlers / Server Actions
+## Route Handlers
 
-None yet. When added, document here: method, path, auth, request/response shape, and any RLS requirements.
+### `GET /auth/callback`
+
+**Auth**: None (OAuth redirect target).  
+**Query**: `code` — OAuth authorization code from Supabase/Google.
+
+**Behavior**: Entire handler body wrapped in try/catch. Uses server Supabase client (`createClient()` from `lib/supabase/server.ts`). If `code` missing → redirect to `/auth/error`. Calls `supabase.auth.exchangeCodeForSession(code)`. On success → redirect to `/dashboard`; on Supabase error or no code → redirect to `/auth/error`. On any thrown exception (e.g. `createClient` or network) → redirect to `/auth/error`; no unhandled exception.
+
+**Response**: 302 redirect. No JSON.
+
+---
+
+## Database Schema (`supabase/migrations/001_foundation_schema.sql`)
+
+Run manually in Supabase SQL Editor. No app CRUD on these tables yet (auth-only Phase 5c).
+
+### Tables
+
+**households**
+- `id` UUID PK, `name` TEXT DEFAULT 'My Household', `currency` TEXT DEFAULT 'USD', `created_at`, `updated_at`.
+- RLS: SELECT/UPDATE/DELETE for members only; INSERT for any authenticated.
+
+**household_members**
+- `id` UUID PK, `household_id` FK → households, `user_id` FK → auth.users, `role` TEXT CHECK (owner | partner), `created_at`. UNIQUE(household_id, user_id).
+- RLS: SELECT for members; INSERT/UPDATE/DELETE for owners only (same household).
+
+**configurations**
+- `id` UUID PK, `household_id` FK → households, `name`, `person_1_name`, `person_2_name`, `person_1_salary`, `person_2_salary` NUMERIC(12,2), `currency`, `created_at`, `updated_at`.
+- RLS: full CRUD for users who are members of the household.
+
+**expenses**
+- `id` UUID PK, `configuration_id` FK → configurations, `label`, `amount` NUMERIC(12,2), `sort_order`, `created_at`, `updated_at`.
+- RLS: full CRUD for users whose household owns the configuration.
+
+### Helper
+
+- **`public.user_household_ids(user_uuid UUID)`** — SECURITY DEFINER, STABLE. Returns SETOF household IDs for which the user is a member. Used by RLS policies.
+
+### Triggers
+
+- **on_auth_user_created** (AFTER INSERT ON auth.users): calls `public.handle_new_user()` — inserts one household and one household_members row (role owner).
+- **households_updated_at**, **configurations_updated_at**, **expenses_updated_at**: BEFORE UPDATE set `updated_at = now()`.
+
+### Indexes
+
+- `idx_household_members_user_id`, `idx_configurations_household_id`, `idx_expenses_configuration_id`.
+
+---
+
+## Supabase clients (`lib/supabase/`)
+
+Use the correct client for the runtime. Do not use the service role key in app code.
+
+### `client.ts` — Browser
+
+- **`createClient(): SupabaseClient`**  
+  Use in Client Components only. Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`. `@supabase/ssr` handles dedup.
+
+### `server.ts` — Server (Server Components, Server Actions, Route Handlers)
+
+- **`createClient(): Promise<SupabaseClient>`**  
+  Async; awaits `cookies()` from `next/headers`. Cookie methods: `getAll()`, `setAll()` (wrapped in try/catch for read-only contexts). Use for `getUser()`, `exchangeCodeForSession()`, etc.
+
+### `middleware.ts` — Middleware
+
+- **`createClient(request: NextRequest): { supabase: SupabaseClient; response: NextResponse }`**  
+  Sync. Cookies: read from `request.cookies.getAll()`, write to both `request.cookies` and `response.cookies` in `setAll`. Caller must call `supabase.auth.getUser()` to refresh session, then return `response` (or a redirect).

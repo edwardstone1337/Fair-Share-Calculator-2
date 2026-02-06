@@ -395,7 +395,6 @@
   --nav-shadow: none;
   --nav-logo-size: 28px;
   --nav-z-index: 50;
-  --nav-max-width: 600px;
 
   /* --- Currency Selector --- */
   --currency-selector-bg: var(--input-bg);

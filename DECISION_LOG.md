@@ -1,5 +1,41 @@
 # Decision Log
 
+## [2025-02-06] - Auth error handling (Phase 5e)
+
+**Context**: Callback and login could throw (e.g. missing env, network, Supabase failure), leading to 500 or stuck loading with no user feedback.
+
+**Decision**: (1) Wrap entire `GET /auth/callback` handler in try/catch; on any error redirect to `/auth/error`. (2) Wrap `handleGoogleSignIn` on login page in try/catch/finally; on catch set error state ("Sign-in failed. Please try again."), in finally call `setLoading(false)`; show error with existing `ErrorMessage` below the button; clear error when user clicks the button again.
+
+**Rationale**: No unhandled exceptions from auth paths; users always get a redirect or inline message. Reusing ErrorMessage keeps styling consistent and avoids new tokens.
+
+**Consequences**: Callback never returns 500 for auth failures; login always resets loading and surfaces failure so user can retry.
+
+---
+
+## [2025-02-06] - Foundation schema (Phase 5b)
+
+**Context**: Need a DB model for saved configurations and future multi-user households without blocking auth-only Phase 5c.
+
+**Decision**: Single migration `001_foundation_schema.sql`: household-centric tables (households, household_members, configurations, expenses), RLS on all, helper `user_household_ids(uuid)`, trigger on auth.users INSERT to create one household and one owner membership per user. Run manually in Supabase SQL Editor; app uses anon key only and does not yet perform CRUD on these tables.
+
+**Rationale**: Schema is ready for Phase 6 (save/load configurations); RLS and trigger ensure every new user gets a household and correct permissions. Manual run keeps deployment simple and avoids migration runner dependency.
+
+**Consequences**: Migrations live in repo; any schema change is a new migration file. App remains auth-only until Server Actions use these tables.
+
+---
+
+## [2025-02-06] - Supabase Auth integration (Phase 5c)
+
+**Context**: Need Google OAuth and session handling without blocking the anonymous calculator or adding auth to `/`.
+
+**Decision**: Use `@supabase/ssr` with three clients: (1) browser client for Client Components (login, NavBar); (2) server client with `cookies()` from `next/headers` (async `createClient()`, `getAll`/`setAll`, try/catch on `setAll` for read-only Server Component contexts); (3) middleware client that takes `NextRequest`, returns `{ supabase, response }`, and syncs cookies to both request and response. Root middleware calls `getUser()` to refresh session; protects `/dashboard` (redirect to `/login`); redirects authenticated users from `/login` to `/dashboard`. No middleware or auth check on `/`.
+
+**Rationale**: Session must be refreshed on every request or tokens expire silently; middleware is the only place that can write cookies for the whole request. Calculator remains the hero; auth is optional. Anon key only; no service-role client in app code for Phase 5c.
+
+**Consequences**: New auth routes and NavBar auth slot. Env: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`. `lib/env.ts` kept for server-only vars (e.g. `SUPABASE_SERVICE_ROLE_KEY`). Card atom extended with optional `style` for auth/dashboard layout.
+
+---
+
 ## [2025-02-06] - Currency in context, not in calculator state
 
 **Context**: Users need to choose display currency (e.g. GBP, CAD); currency should persist and travel with share links.
