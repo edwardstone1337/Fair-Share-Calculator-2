@@ -156,6 +156,7 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 ### Input
 
 - **prefix?: string** — Non-editable text shown inside the input on the left (e.g. `"$"`, `"£"`). When set, input is wrapped in a focusable container; use for currency-prefixed fields.
+- **autoComplete**: Calculator salary and expense amount inputs use `autoComplete="off"` to avoid inappropriate browser autofill suggestions.
 
 ### FormField
 

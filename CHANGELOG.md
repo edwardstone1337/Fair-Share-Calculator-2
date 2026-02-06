@@ -12,6 +12,7 @@
 
 ### Changed
 
+- **autoComplete="off"** on calculator input fields (ExpenseRow amount, IncomeSection salary inputs) to reduce distracting browser autofill suggestions.
 - **.gitignore**: `.env.local` replaced with `.env*.local` to cover all env local files.
 
 ### Removed

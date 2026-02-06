@@ -61,7 +61,7 @@ supabase/
 - **Default**: Server Components. Use `"use client"` only when needed (state, hooks, event handlers).
 - **Calculator**: Client boundary at `CalculatorClient`; sections are client components that receive props and callbacks.
 - **Props**: Explicit interfaces (e.g. `IncomeSectionProps`); no inline only types for public components.
-- **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`.
+- **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`. Calculator salary and expense amount inputs: use `autoComplete="off"` to reduce browser autofill suggestions.
 
 ## State & Data Flow
 
