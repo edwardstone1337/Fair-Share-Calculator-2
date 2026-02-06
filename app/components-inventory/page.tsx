@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 // Atoms
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
+import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
@@ -12,13 +14,25 @@ import { SectionHeader } from '@/components/ui/section-header';
 import { Snackbar } from '@/components/ui/snackbar';
 import { CurrencySelector } from '@/components/ui/currency-selector';
 
+// Molecules
+import { FormField } from '@/components/ui/form-field';
+
 // Organisms
+import { NavBar } from '@/components/nav/nav-bar';
 import { SummaryCard } from '@/components/calculator/summary-card';
 import { BreakdownCard } from '@/components/calculator/breakdown-card';
 import { ExplanationCard } from '@/components/calculator/explanation-card';
 import { ResultsFooter } from '@/components/calculator/results-footer';
+import { ExpenseRow } from '@/components/calculator/expense-row';
 
 import { formatCurrency } from '@/lib/calculator/compute';
+
+const h3Style: React.CSSProperties = {
+  fontSize: 'var(--font-size-lg)',
+  fontWeight: 'var(--font-weight-semibold)',
+  marginBottom: 'var(--space-3)',
+  color: 'var(--text-primary)',
+};
 
 export default function ComponentsInventory() {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -27,15 +41,22 @@ export default function ComponentsInventory() {
   const noop = () => {};
 
   return (
-    <div style={{
-      maxWidth: '800px',
-      margin: '0 auto',
+    <main style={{
+      minHeight: '100vh',
+      background: 'var(--surface-page)',
       padding: 'var(--space-8) var(--space-4)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 'var(--space-10)',
-      fontFamily: 'var(--font-family-body)',
     }}>
+      <div style={{
+        maxWidth: '800px',
+        margin: '0 auto',
+        background: 'var(--app-bg)',
+        borderRadius: 'var(--radius-card)',
+        padding: 'var(--space-8) var(--space-6)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-10)',
+        fontFamily: 'var(--font-family-body)',
+      }}>
       <h1 style={{
         fontFamily: 'var(--font-family-heading)',
         fontSize: 'var(--font-size-3xl)',
@@ -66,7 +87,7 @@ export default function ComponentsInventory() {
 
           {/* Button */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               Button
             </h3>
             <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -76,9 +97,45 @@ export default function ComponentsInventory() {
             </div>
           </div>
 
+          {/* Icon */}
+          <div>
+            <h3 style={h3Style}>Icon</h3>
+            <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+              <Icon name="remove" size="var(--icon-size-sm)" />
+              <Icon name="visibility" size="var(--icon-size-md)" />
+              <Icon name="visibility_off" size="var(--icon-size-md)" />
+              <Icon name="add" size="var(--icon-size-md)" />
+              <Icon name="lightbulb" size="var(--icon-size-md)" />
+              <Icon name="receipt_long" size="var(--icon-size-md)" />
+            </div>
+          </div>
+
+          {/* IconButton */}
+          <div>
+            <h3 style={h3Style}>IconButton</h3>
+            <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
+                <IconButton icon="remove" variant="danger" size="sm" onClick={noop} aria-label="Delete" />
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>danger/sm</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
+                <IconButton icon="remove" variant="danger" size="md" onClick={noop} aria-label="Delete" />
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>danger/md</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
+                <IconButton icon="visibility" variant="ghost" size="sm" onClick={noop} aria-label="Toggle" />
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>ghost/sm</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-1)' }}>
+                <IconButton icon="visibility" variant="ghost" size="md" onClick={noop} aria-label="Toggle" />
+                <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>ghost/md</span>
+              </div>
+            </div>
+          </div>
+
           {/* Input */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               Input
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', maxWidth: '300px' }}>
@@ -93,7 +150,7 @@ export default function ComponentsInventory() {
 
           {/* Label */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               Label
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
@@ -104,7 +161,7 @@ export default function ComponentsInventory() {
 
           {/* Card */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               Card
             </h3>
             <Card>
@@ -114,7 +171,7 @@ export default function ComponentsInventory() {
 
           {/* SectionHeader */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               SectionHeader
             </h3>
             <SectionHeader
@@ -125,7 +182,7 @@ export default function ComponentsInventory() {
 
           {/* ErrorMessage */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               ErrorMessage
             </h3>
             <ErrorMessage id="inv-error-1" message="This is an error message" />
@@ -133,7 +190,7 @@ export default function ComponentsInventory() {
 
           {/* CurrencySelector */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               CurrencySelector
             </h3>
             <CurrencySelector value={currencyValue} onChange={setCurrencyValue} />
@@ -141,7 +198,7 @@ export default function ComponentsInventory() {
 
           {/* Snackbar */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               Snackbar
             </h3>
             <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
@@ -175,9 +232,93 @@ export default function ComponentsInventory() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
 
+          {/* FormField */}
+          <div>
+            <h3 style={h3Style}>FormField</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', maxWidth: '300px' }}>
+              <FormField
+                id="inv-formfield-1"
+                label="Your salary"
+                required
+                placeholder="0"
+                prefix="$"
+              />
+              <FormField
+                id="inv-formfield-2"
+                label="Your salary"
+                required
+                placeholder="0"
+                prefix="$"
+                error="Please enter a valid salary amount"
+              />
+              <FormField
+                id="inv-formfield-3"
+                label="Your name"
+                placeholder="e.g. Alex (optional)"
+              />
+              <FormField
+                id="inv-formfield-4"
+                label="Your salary"
+                required
+                placeholder="0"
+                prefix="£"
+                labelSuffix={
+                  <IconButton
+                    icon="visibility"
+                    variant="ghost"
+                    size="sm"
+                    onClick={noop}
+                    aria-label="Toggle visibility"
+                  />
+                }
+              />
+            </div>
+          </div>
+
+          {/* ExpenseRow */}
+          <div>
+            <h3 style={h3Style}>ExpenseRow</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', maxWidth: '410px' }}>
+              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+                First row (no delete button):
+              </p>
+              <ExpenseRow
+                expense={{ id: 'inv-expense-1', amount: '', label: '' }}
+                index={0}
+                onAmountChange={noop}
+                onLabelChange={noop}
+                onDelete={noop}
+                onKeyDown={noop}
+              />
+              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+                Subsequent row (with delete button):
+              </p>
+              <ExpenseRow
+                expense={{ id: 'inv-expense-2', amount: '2,000', label: 'Rent' }}
+                index={1}
+                onAmountChange={noop}
+                onLabelChange={noop}
+                onDelete={noop}
+                onKeyDown={noop}
+              />
+              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-2)' }}>
+                Error state:
+              </p>
+              <ExpenseRow
+                expense={{ id: 'inv-expense-3', amount: '', label: 'Groceries' }}
+                index={1}
+                error="Please enter an expense amount"
+                onAmountChange={noop}
+                onLabelChange={noop}
+                onDelete={noop}
+                onKeyDown={noop}
+              />
+            </div>
+          </div>
+
           {/* ResultsFooter */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               ResultsFooter
             </h3>
             <div style={{ maxWidth: '410px' }}>
@@ -206,7 +347,7 @@ export default function ComponentsInventory() {
 
           {/* SummaryCard */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               SummaryCard
             </h3>
             <div style={{ maxWidth: '410px' }}>
@@ -226,7 +367,7 @@ export default function ComponentsInventory() {
 
           {/* BreakdownCard */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               BreakdownCard
             </h3>
             <div style={{ maxWidth: '410px' }}>
@@ -244,7 +385,7 @@ export default function ComponentsInventory() {
 
           {/* ExplanationCard */}
           <div>
-            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-3)', color: 'var(--text-primary)' }}>
+            <h3 style={h3Style}>
               ExplanationCard
             </h3>
             <div style={{ maxWidth: '410px' }}>
@@ -261,6 +402,30 @@ export default function ComponentsInventory() {
             </div>
           </div>
 
+          {/* NavBar */}
+          <div>
+            <h3 style={h3Style}>NavBar</h3>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
+              Sticky nav with logo (left) and currency selector (right). Also visible at the top of this page.
+            </p>
+            <div style={{
+              border: '1px dashed var(--border-default)',
+              borderRadius: 'var(--radius-md)',
+              overflow: 'hidden',
+              background: 'var(--nav-bg)',
+            }}>
+              <NavBar />
+            </div>
+          </div>
+
+          {/* ResultsView */}
+          <div>
+            <h3 style={h3Style}>ResultsView (composite)</h3>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
+              Composes SummaryCard + BreakdownCard + ExplanationCard + ResultsFooter. Each card is shown individually above.
+            </p>
+          </div>
+
         </div>
       </section>
 
@@ -272,9 +437,11 @@ export default function ComponentsInventory() {
         color: 'var(--text-secondary)',
         fontSize: 'var(--font-size-sm)',
       }}>
-        <p><strong>Note:</strong> IncomeSection, ExpensesSection, NamesSection, and NavBar are not rendered here because they require full state management (useCalculator hook / CurrencyContext). They are tested via the main calculator page. ExpenseRow similarly requires parent state and callbacks to render properly.</p>
-        <p style={{ marginTop: 'var(--space-2)' }}><strong>Back to Top</strong> and <strong>FaqSection</strong> are server/page-level components and are excluded from this inventory.</p>
+        <p><strong>Included:</strong> All atoms, molecules (FormField, ExpenseRow, ResultsFooter), and organisms (SummaryCard, BreakdownCard, ExplanationCard) with realistic test data.</p>
+        <p style={{ marginTop: 'var(--space-2)' }}><strong>Rendered elsewhere:</strong> NavBar (visible at top of this page). IncomeSection, ExpensesSection, NamesSection require useCalculator state — tested via the main calculator page.</p>
+        <p style={{ marginTop: 'var(--space-2)' }}><strong>Page-level:</strong> FaqSection (server component), BackToTopButton, CalculatorClient, and ResultsView are page compositions, not reusable components.</p>
       </section>
-    </div>
+      </div>
+    </main>
   );
 }

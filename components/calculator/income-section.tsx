@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { IconButton } from "@/components/ui/icon-button";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { useInputTracking } from "@/lib/hooks/use-input-tracking";
@@ -123,8 +124,10 @@ export function IncomeSection({
                 }
                 aria-label="Your salary"
               />
-              <button
-                type="button"
+              <IconButton
+                icon={person1SalaryVisible ? "visibility_off" : "visibility"}
+                variant="ghost"
+                size="sm"
                 onClick={handleToggle1}
                 aria-label={person1SalaryVisible ? "Hide salary" : "Show salary"}
                 style={{
@@ -132,24 +135,8 @@ export function IncomeSection({
                   right: "var(--space-2)",
                   top: "50%",
                   transform: "translateY(-50%)",
-                  width: "var(--salary-toggle-size)",
-                  height: "var(--salary-toggle-size)",
-                  padding: 0,
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
-              >
-                <img
-                  src={person1SalaryVisible ? "/images/Hide.svg" : "/images/Show.svg"}
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-              </button>
+              />
             </div>
             <ErrorMessage
               id="person1-salary-error"
@@ -190,8 +177,10 @@ export function IncomeSection({
                 }
                 aria-label="Their salary"
               />
-              <button
-                type="button"
+              <IconButton
+                icon={person2SalaryVisible ? "visibility_off" : "visibility"}
+                variant="ghost"
+                size="sm"
                 onClick={handleToggle2}
                 aria-label={person2SalaryVisible ? "Hide salary" : "Show salary"}
                 style={{
@@ -199,24 +188,8 @@ export function IncomeSection({
                   right: "var(--space-2)",
                   top: "50%",
                   transform: "translateY(-50%)",
-                  width: "var(--salary-toggle-size)",
-                  height: "var(--salary-toggle-size)",
-                  padding: 0,
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                 }}
-              >
-                <img
-                  src={person2SalaryVisible ? "/images/Hide.svg" : "/images/Show.svg"}
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-              </button>
+              />
             </div>
             <ErrorMessage
               id="person2-salary-error"

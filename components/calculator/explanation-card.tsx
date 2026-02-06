@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "@/components/ui/icon";
+
 export interface ExplanationCardProps {
   person1Name: string;
   person2Name: string;
@@ -47,16 +49,11 @@ export function ExplanationCard({
           marginBottom: "var(--space-4)",
         }}
       >
-        <span
-          className="material-symbols-outlined"
-          style={{
-            fontSize: "var(--explanation-icon-size)",
-            color: "var(--explanation-icon-color)",
-          }}
-          aria-hidden
-        >
-          lightbulb
-        </span>
+        <Icon
+          name="lightbulb"
+          size="var(--explanation-icon-size)"
+          color="var(--explanation-icon-color)"
+        />
         <h2
           style={{
             fontSize: "var(--explanation-title-size)",

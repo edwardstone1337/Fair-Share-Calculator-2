@@ -23,11 +23,11 @@ export function NavBar() {
         style={{
           maxWidth: 'var(--nav-max-width)',
           margin: '0 auto',
-          height: 'var(--nav-height)',
+          minHeight: 'var(--nav-height)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 var(--nav-padding-x)',
+          padding: 'var(--nav-padding-y) var(--nav-padding-x)',
         }}
       >
         {/* Left: Logo */}

@@ -11,7 +11,7 @@ app/
 
 components/
   nav/                      # NavBar (sticky nav, logo, CurrencySelector)
-  ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector
+  ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton. Molecules: FormField (label + Input + ErrorMessage; prefix, labelSuffix)
   calculator/               # Calculator organisms: IncomeSection, ExpensesSection, NamesSection, CalculatorClient,
                             # ExpenseRow, ResultsView, SummaryCard, BreakdownCard, ExplanationCard, ResultsFooter
   faq-section.tsx           # FAQ accordion (below calculator)
@@ -53,6 +53,7 @@ lib/
 - **Default**: Server Components. Use `"use client"` only when needed (state, hooks, event handlers).
 - **Calculator**: Client boundary at `CalculatorClient`; sections are client components that receive props and callbacks.
 - **Props**: Explicit interfaces (e.g. `IncomeSectionProps`); no inline only types for public components.
+- **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`.
 
 ## State & Data Flow
 

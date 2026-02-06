@@ -18,7 +18,7 @@ Fair Share Calculator is an income-based bill split calculator for couples and r
 
 No database yet. In-memory + localStorage:
 
-- **Calculator form state** — `CalculatorFormState` in `lib/calculator/types.ts`: person names, salaries (strings), expenses array, step (`input` | `results`), validation errors.
+- **Calculator form state** — `CalculatorFormState` in `lib/calculator/types.ts`: person names, salaries (strings), expenses array, step (`input` | `results`), validation errors, result (last calculation or null).
 - **Saved form data** — `SavedFormData`: names, salary strings, expenses (amount + label), optional `currency` (ISO code). Stored under key `fairshare_form`. V1 backward compat: also reads legacy keys `name1`, `name2`, `salary1`, `salary2`, `expenses`.
 - **Currency** — Not in form state. Held in React context (`CurrencyProvider`); persisted in `fairshare_currency` and optionally in `fairshare_form.currency`. Share state and URL params include `currency` for restore.
 
@@ -31,7 +31,7 @@ No database yet. In-memory + localStorage:
 ## Design System
 
 - **Tokens** — Three layers in `app/globals.css`: Layer 1 `@theme` (primitives), Layer 2 `:root` (semantic), Layer 3 component tokens (including `--nav-*`, `--currency-selector-*`). 8px spacing grid.
-- **Components** — Layout: `NavBar` in `components/nav/` (sticky nav, logo, `CurrencySelector`). Atoms in `components/ui/` (Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector). Calculator organisms in `components/calculator/` (IncomeSection, ExpensesSection, NamesSection, CalculatorClient, ResultsView, SummaryCard, BreakdownCard, ExplanationCard, ResultsFooter). FAQ: `FaqSection`.
+- **Components** — Layout: `NavBar` in `components/nav/` (sticky nav, logo, `CurrencySelector`). Atoms in `components/ui/` (Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton). Molecules: `FormField` (label + Input + ErrorMessage; optional prefix, labelSuffix). Calculator organisms in `components/calculator/` (IncomeSection, ExpensesSection, NamesSection, CalculatorClient, ResultsView, SummaryCard, BreakdownCard, ExplanationCard, ResultsFooter). FAQ: `FaqSection`. Input supports `prefix` (e.g. currency symbol) with token-driven focus ring.
 - **Rule** — No magic numbers in components; use CSS variables. Tailwind for layout (flex, grid); tokens for color, typography, spacing, radius.
 
 ## Key Files
@@ -39,6 +39,7 @@ No database yet. In-memory + localStorage:
 | Path | Purpose |
 |------|---------|
 | `app/(calculator)/page.tsx` | Calculator page: header, H1, `CalculatorClient`, `FaqSection`, JSON-LD |
+| `app/components-inventory/page.tsx` | Dev/QA: showcases all atoms, molecules, organisms and calculator components |
 | `app/layout.tsx` | Root layout: CurrencyProvider, NavBar, fonts, metadata, canonical, OG, GA4/Hotjar/Clarity/AdSense scripts |
 | `app/sitemap.ts` | Dynamic sitemap (single URL, monthly, priority 1.0) |
 | `app/globals.css` | Design tokens (all 3 layers) |

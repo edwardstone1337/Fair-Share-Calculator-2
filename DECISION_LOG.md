@@ -68,7 +68,7 @@
 
 **Rationale**: Keeps state transitions explicit, avoids prop drilling; localStorage gives anonymous users continuity; V1 used localStorage so we preserve that and add backward compat for legacy keys.
 
-**Consequences**: Result is kept in a ref (not in reducer state) to avoid re-renders when only result changes; validation errors live in state so UI updates immediately.
+**Consequences**: Result is kept in reducer state (`state.result`); validation errors live in state so UI updates immediately. Re-renders when result or validation changes.
 
 ---
 

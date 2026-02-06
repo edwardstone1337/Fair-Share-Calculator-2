@@ -238,21 +238,28 @@
   --add-expense-padding-y: var(--space-3);
   --add-expense-padding-x: var(--space-4);
 
-  /* --- Salary Toggle --- */
-  --salary-toggle-size: var(--space-6);
+  /* --- Icon --- */
+  --icon-size-sm: var(--font-size-md);
+  --icon-size-md: var(--font-size-xl);
+  --icon-size-lg: var(--font-size-2xl);
+
+  /* --- Icon Button --- */
+  --icon-button-size-sm: 32px;
+  --icon-button-size-md: 40px;
+  --icon-button-icon-size-sm: 18px;
+  --icon-button-icon-size-md: 20px;
+  --icon-button-radius-danger: var(--radius-md);
+  --icon-button-radius-ghost: var(--radius-md);
+  --icon-button-bg-danger: var(--color-red-500);
+  --icon-button-bg-danger-hover: var(--color-red-600);
+  --icon-button-bg-ghost: transparent;
+  --icon-button-color-danger: var(--color-white);
+  --icon-button-color-ghost: var(--text-secondary);
 
   /* --- Expense Headers --- */
   --expense-header-font-size: var(--font-size-md);
   --expense-header-font-weight: var(--font-weight-semibold);
   --expense-header-text: var(--text-primary);
-
-  /* --- Delete Button --- */
-  --delete-button-size: var(--space-8);
-  --delete-button-bg: var(--color-red-500);
-  --delete-button-bg-hover: var(--color-red-600);
-  --delete-button-radius: var(--radius-sm);
-  --delete-button-icon-size: var(--font-size-md);
-  --delete-button-icon-color: var(--color-white);
 
   /* --- Error Message --- */
   --error-font-size: var(--font-size-xs);
@@ -381,8 +388,9 @@
 
   /* --- Navigation Bar --- */
   --nav-bg: var(--surface-app);
-  --nav-height: 48px;
+  --nav-height: 56px;
   --nav-padding-x: var(--space-4);
+  --nav-padding-y: var(--space-2);
   --nav-border-bottom: none;
   --nav-shadow: none;
   --nav-logo-size: 28px;
@@ -394,10 +402,10 @@
   --currency-selector-border: var(--input-border);
   --currency-selector-radius: var(--input-radius);
   --currency-selector-text: var(--input-text);
-  --currency-selector-font-size: var(--font-size-sm);
+  --currency-selector-font-size: var(--input-font-size);
   --currency-selector-font-family: var(--input-font-family);
-  --currency-selector-padding-y: var(--space-1);
-  --currency-selector-padding-x: var(--space-2);
+  --currency-selector-padding-y: var(--input-padding-y);
+  --currency-selector-padding-x: var(--input-padding-x);
   --currency-selector-focus-ring: var(--focus-ring-color);
 }
 
@@ -451,12 +459,6 @@ body {
   color: var(--text-primary);
 }
 
-/* Focus ring utility */
-.focus-ring {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
-}
-
 /* Button variant states (component token-driven) */
 button[data-button-variant="primary"]:hover {
   background: var(--button-bg-hover);
@@ -469,8 +471,8 @@ button[data-button-variant="secondary"]:hover {
   background: var(--button-secondary-bg-hover);
 }
 
-button[data-delete-button]:hover {
-  background: var(--delete-button-bg-hover);
+button[data-icon-button-variant="danger"]:hover {
+  background: var(--icon-button-bg-danger-hover);
 }
 
 /* Results cards responsive (≤430px) */

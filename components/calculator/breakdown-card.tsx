@@ -1,6 +1,7 @@
 "use client";
 
 import type { ExpenseResult } from "@/lib/calculator/types";
+import { Icon } from "@/components/ui/icon";
 
 export interface BreakdownCardProps {
   person1Name: string;
@@ -36,16 +37,11 @@ export function BreakdownCard({
           marginBottom: "var(--space-5)",
         }}
       >
-        <span
-          className="material-symbols-outlined"
-          style={{
-            fontSize: "var(--breakdown-icon-size)",
-            color: "var(--breakdown-icon-color)",
-          }}
-          aria-hidden
-        >
-          receipt_long
-        </span>
+        <Icon
+          name="receipt_long"
+          size="var(--breakdown-icon-size)"
+          color="var(--breakdown-icon-color)"
+        />
         <h2
           style={{
             fontSize: "var(--breakdown-title-size)",

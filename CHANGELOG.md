@@ -4,6 +4,11 @@
 
 ### Added
 
+- **FormField** (`components/ui/form-field.tsx`): composite label + Input + ErrorMessage; optional `prefix`, `labelSuffix`. Used for consistent form layout.
+- **Icon** (`components/ui/icon.tsx`): Material Symbols wrapper (`material-symbols-outlined`); props: name, size, color, aria-hidden.
+- **IconButton** (`components/ui/icon-button.tsx`): accessible button with Icon; variants `ghost` | `danger`, sizes `sm` | `md`; tokens `--icon-button-*`.
+- **Input prefix**: salary and expense amount inputs show currency symbol inside the field (e.g. `$`, `£`) via `Input` prop `prefix`; tokens and focus ring for prefixed wrapper in `globals.css`.
+- Component inventory page: molecules section (FormField), atoms updated (Icon, IconButton); showcases all UI primitives for QA.
 - Multi-currency support: user can select currency (USD, CAD, AUD, NZD, GBP, INR, PHP, SGD) via selector in nav. Currency is persisted in localStorage (`fairshare_currency`) and restored from `fairshare_form.currency` for backward compat. Share links and legacy URL params include and restore currency.
 - Currency auto-detection from browser locale (`detectCurrencyFromLocale` in `lib/constants/currencies.ts`); used when no saved currency.
 - Sticky nav bar: logo (link to home), currency selector, slot for future auth. Tokens: `--nav-*`, `--currency-selector-*` in `app/globals.css`.

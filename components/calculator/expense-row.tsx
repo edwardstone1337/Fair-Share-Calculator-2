@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ExpenseInput } from "@/lib/calculator/types";
 import { Input } from "@/components/ui/input";
+import { IconButton } from "@/components/ui/icon-button";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { useInputTracking } from "@/lib/hooks/use-input-tracking";
 import { useCurrency } from "@/lib/contexts/currency-context";
@@ -94,7 +95,7 @@ export function ExpenseRow({
       </div>
       <div
         style={{
-          width: "var(--space-8)",
+          width: "var(--icon-button-size-sm)",
           flexShrink: 0,
           display: "flex",
           alignItems: "flex-start",
@@ -102,44 +103,21 @@ export function ExpenseRow({
         }}
       >
         {showDelete ? (
-          <button
-            type="button"
-            data-delete-button
+          <IconButton
+            icon="remove"
+            variant="danger"
+            size="sm"
             onClick={onDelete}
             aria-label="Remove expense"
-            className="focus:outline-none focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring-width)] focus-visible:outline-[var(--focus-ring-color)] transition-transform hover:scale-105"
-            style={{
-              width: "var(--delete-button-size)",
-              height: "var(--delete-button-size)",
-              minWidth: "var(--delete-button-size)",
-              minHeight: "var(--delete-button-size)",
-              background: "var(--delete-button-bg)",
-              borderRadius: "var(--delete-button-radius)",
-              border: "none",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontSize: "var(--delete-button-icon-size)",
-                color: "var(--delete-button-icon-color)",
-              }}
-              aria-hidden
-            >
-              remove
-            </span>
-          </button>
+          />
         ) : (
           <div
             role="presentation"
             style={{
-              width: "var(--delete-button-size)",
-              height: "var(--delete-button-size)",
-              minWidth: "var(--delete-button-size)",
-              minHeight: "var(--delete-button-size)",
+              width: "var(--icon-button-size-sm)",
+              height: "var(--icon-button-size-sm)",
+              minWidth: "var(--icon-button-size-sm)",
+              minHeight: "var(--icon-button-size-sm)",
             }}
           />
         )}

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ExpenseRow } from "./expense-row";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { ErrorMessage } from "@/components/ui/error-message";
 
 export interface ExpensesSectionProps {
@@ -120,13 +121,11 @@ export function ExpensesSection({
           }}
           className="border-[var(--add-expense-border)] hover:border-[var(--add-expense-border-hover)] hover:bg-[var(--add-expense-bg-hover)]"
         >
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: "var(--font-size-lg)", marginRight: "var(--space-2)" }}
-            aria-hidden
-          >
-            add
-          </span>
+          <Icon
+            name="add"
+            size="var(--font-size-lg)"
+            style={{ marginRight: "var(--space-2)" }}
+          />
           Add Expense
         </Button>
       </div>

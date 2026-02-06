@@ -27,6 +27,11 @@ export function Snackbar({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const onHideRef = useRef(onHide);
+  useEffect(() => {
+    onHideRef.current = onHide;
+  });
+
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mq.matches);
@@ -49,7 +54,7 @@ export function Snackbar({
 
     if (prefersReducedMotion) {
       timeoutRef.current = setTimeout(() => {
-        onHide();
+        onHideRef.current();
         timeoutRef.current = null;
       }, duration);
       return () => {
@@ -66,7 +71,7 @@ export function Snackbar({
       timeoutRef.current = null;
 
       hideTimeoutRef.current = setTimeout(() => {
-        onHide();
+        onHideRef.current();
         hideTimeoutRef.current = null;
       }, ANIMATION_MS);
     }, duration);
@@ -75,7 +80,7 @@ export function Snackbar({
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     };
-  }, [visible, duration, onHide, prefersReducedMotion]);
+  }, [visible, duration, prefersReducedMotion]);
 
   if (!visible && !isAnimatingOut) return null;
 

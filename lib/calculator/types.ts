@@ -16,6 +16,7 @@ export interface CalculatorFormState {
   expenses: ExpenseInput[];
   step: "input" | "results";
   validationErrors: FieldError[];
+  result: CalculatorResult | null; // Last calculation result; cleared when invalid or back to edit
 }
 
 // === Validation types ===

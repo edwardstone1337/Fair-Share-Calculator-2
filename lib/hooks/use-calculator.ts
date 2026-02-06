@@ -32,6 +32,7 @@ const initialState: CalculatorFormState = {
   expenses: [createInitialExpense()],
   step: "input",
   validationErrors: [],
+  result: null,
 };
 
 // --- Action types ---
@@ -47,6 +48,7 @@ type Action =
   | { type: "ADD_EXPENSE" }
   | { type: "DELETE_EXPENSE"; id: string }
   | { type: "SET_STEP"; step: "input" | "results" }
+  | { type: "SET_RESULT"; result: CalculatorResult | null }
   | { type: "SET_VALIDATION_ERRORS"; errors: FieldError[] }
   | { type: "RESTORE_STATE"; state: Partial<CalculatorFormState> };
 
@@ -116,11 +118,14 @@ function calculatorReducer(
       };
     case "SET_STEP":
       return { ...state, step: action.step };
+    case "SET_RESULT":
+      return { ...state, result: action.result };
     case "SET_VALIDATION_ERRORS":
       return { ...state, validationErrors: action.errors };
     case "RESTORE_STATE": {
       const next = { ...state, ...action.state };
       if (next.validationErrors === undefined) next.validationErrors = [];
+      if (next.result === undefined) next.result = null;
       return next;
     }
     default:
@@ -228,7 +233,6 @@ export interface UseCalculatorOptions {
 
 export function useCalculator(options?: UseCalculatorOptions) {
   const [state, dispatch] = useReducer(calculatorReducer, initialState);
-  const resultRef = useRef<CalculatorResult | null>(null);
   const restoredRef = useRef(false);
   const onDataRestored = options?.onDataRestored;
 
@@ -274,7 +278,7 @@ export function useCalculator(options?: UseCalculatorOptions) {
 
     if (!validation.valid) {
       dispatch({ type: "SET_VALIDATION_ERRORS", errors: validation.errors });
-      resultRef.current = null;
+      dispatch({ type: "SET_RESULT", result: null });
       return null;
     }
 
@@ -305,8 +309,8 @@ export function useCalculator(options?: UseCalculatorOptions) {
       ...rawResult,
       currencySymbol: "", // Component adds from context
     };
-    resultRef.current = resultWithPlaceholder;
     dispatch({ type: "SET_VALIDATION_ERRORS", errors: [] });
+    dispatch({ type: "SET_RESULT", result: resultWithPlaceholder });
     dispatch({ type: "SET_STEP", step: "results" });
     return resultWithPlaceholder;
   }, [state]);
@@ -334,7 +338,7 @@ export function useCalculator(options?: UseCalculatorOptions) {
     dispatch,
     calculate,
     backToEdit,
-    result: resultRef.current,
+    result: state.result,
     errors: state.validationErrors,
     getError,
     hasError,

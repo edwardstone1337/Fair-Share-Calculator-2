@@ -22,7 +22,7 @@ Same behavior as `parseSalary` (used for expense amount fields).
 - **expenses**: `{ amount: number; label: string }[]`.
 - **person1Name, person2Name**: optional; default `"Person 1"` / `"Person 2"`.
 
-**Returns** `CalculatorResult`: `person1Name`, `person2Name`, `person1TotalShare`, `person2TotalShare`, `person1Percentage`, `person2Percentage`, `totalExpenses`, `expenseBreakdown` (per-expense shares), `person1Salary`, `person2Salary`, `combinedSalary`.
+**Returns** `CalculatorResult`: `person1Name`, `person2Name`, `person1TotalShare`, `person2TotalShare`, `person1Percentage`, `person2Percentage`, `totalExpenses`, `expenseBreakdown` (per-expense shares), `person1Salary`, `person2Salary`, `combinedSalary`. (Note: `currencySymbol` is added by the hook/UI from context when storing in state.)
 
 Formula: `person1Share = (person1Salary / (person1Salary + person2Salary)) * expense` (same for person 2). Percentages are `Math.round((totalShare / totalExpenses) * 100)`.
 
@@ -51,7 +51,7 @@ Rules:
 ### `types.ts`
 
 - **ExpenseInput**: `{ id: string; amount: string; label: string }`.
-- **CalculatorFormState**: form state (person names, salary strings, visibility toggles, expenses, step, validationErrors).
+- **CalculatorFormState**: form state (person names, salary strings, visibility toggles, expenses, step, validationErrors, result).
 - **FieldError**: `{ field: string; message: string }`.
 - **ValidationResult**: `{ valid: boolean; errors: FieldError[] }`.
 - **ExpenseResult**: `{ label; amount; person1Share; person2Share }`.
@@ -148,6 +148,27 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 
 - **CurrencyProvider**: wraps app; on mount loads from `localStorage.getItem('fairshare_currency')` or `fairshare_form.currency`, else `detectCurrencyFromLocale()`. Persists on change. Fires `trackEvent('currency_changed', { currency_code })` on user change.
 - **useCurrency()**: returns `{ currency: CurrencyConfig; setCurrency: (code: string) => void }`.
+
+---
+
+## UI Components (`components/ui/`)
+
+### Input
+
+- **prefix?: string** — Non-editable text shown inside the input on the left (e.g. `"$"`, `"£"`). When set, input is wrapped in a focusable container; use for currency-prefixed fields.
+
+### FormField
+
+- **Props**: `id`, `label`, `required?`, `error?`, `prefix?`, `labelSuffix?`, plus Input props (`value`, `onChange`, `onFocus`, `onBlur`, etc.). Composes Label + Input + ErrorMessage.
+- **labelSuffix**: React node after the label (e.g. toggle button). Use for "label row" layout.
+
+### Icon
+
+- **Props**: `name` (Material Symbols icon name), `size?`, `color?`, `style?`, `className?`, `aria-hidden?` (default true). Renders `material-symbols-outlined` span.
+
+### IconButton
+
+- **Props**: `icon` (Material Symbols name), `variant: "ghost" | "danger"`, `onClick`, `aria-label` (required), `size?: "sm" | "md"`, `className?`, `style?`. Uses tokens `--icon-button-size-*`, `--icon-button-bg-*`, `--icon-button-color-*`, etc.
 
 ---
 
