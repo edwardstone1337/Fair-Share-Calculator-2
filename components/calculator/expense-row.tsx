@@ -5,6 +5,7 @@ import { ExpenseInput } from "@/lib/calculator/types";
 import { Input } from "@/components/ui/input";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { useInputTracking } from "@/lib/hooks/use-input-tracking";
+import { useCurrency } from "@/lib/contexts/currency-context";
 
 export interface ExpenseRowProps {
   expense: ExpenseInput;
@@ -28,6 +29,7 @@ export function ExpenseRow({
   onDelete,
   onKeyDown,
 }: ExpenseRowProps) {
+  const { currency } = useCurrency();
   const amountId = `expense-amount-${expense.id}`;
   const labelId = `expense-label-${expense.id}`;
   const showDelete = index > 0;
@@ -51,6 +53,7 @@ export function ExpenseRow({
       <div className="flex-1 flex flex-col" style={{ minWidth: 0, maxWidth: "50%" }}>
         <Input
           id={amountId}
+          prefix={currency.symbol}
           type="text"
           inputMode="numeric"
           placeholder="0"

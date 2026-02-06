@@ -21,7 +21,7 @@ export function ResultsView({
   onShare,
   resultsHeadingRef,
 }: ResultsViewProps) {
-  const format = formatCurrency;
+  const format = (n: number) => formatCurrency(n, result.currencySymbol);
   const expenseCount = result.expenseBreakdown.length;
 
   return (
@@ -58,6 +58,7 @@ export function ResultsView({
         person1Salary={result.person1Salary}
         person2Salary={result.person2Salary}
         combinedSalary={result.combinedSalary}
+        currencySymbol={result.currencySymbol}
       />
       <ResultsFooter onBackToEdit={onBackToEdit} onShare={onShare} />
     </div>

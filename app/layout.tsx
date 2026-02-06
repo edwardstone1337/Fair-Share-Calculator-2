@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Josefin_Sans, Assistant } from "next/font/google";
+import { CurrencyProvider } from "@/lib/contexts/currency-context";
+import { NavBar } from "@/components/nav/nav-bar";
 import "./globals.css";
 
 const josefinSans = Josefin_Sans({
@@ -64,7 +66,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${josefinSans.variable} ${assistant.variable}`}>
-        {children}
+        <CurrencyProvider>
+          <NavBar />
+          {children}
+        </CurrencyProvider>
         {/* Google Analytics (GA4) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TQZ0HGB3MT"

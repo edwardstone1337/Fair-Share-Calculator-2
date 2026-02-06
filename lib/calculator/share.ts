@@ -8,6 +8,7 @@ export interface ShareState {
   salary1: string;
   salary2: string;
   expenses: { amount: string; label: string }[];
+  currency?: string; // ISO 4217 code, e.g. 'USD'. Optional for backward compat.
 }
 
 /**
@@ -46,6 +47,7 @@ export function buildLegacyShareUrl(state: ShareState): string {
     salary1: state.salary1,
     salary2: state.salary2,
     expenses: JSON.stringify(state.expenses),
+    ...(state.currency ? { currency: state.currency } : {}),
   });
   return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
 }
@@ -75,6 +77,7 @@ function validateShareResponse(data: unknown): ShareState {
             label: typeof e.label === "string" ? e.label : "",
           }))
       : [],
+    currency: typeof obj.currency === "string" ? obj.currency : undefined,
   };
 }
 

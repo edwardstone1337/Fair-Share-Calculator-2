@@ -90,7 +90,7 @@ export function SummaryCard({
               color: "var(--text-primary)",
             }}
           >
-            ${formatCurrency(person1TotalShare)}
+            {formatCurrency(person1TotalShare)}
           </span>
           <span
             style={{
@@ -143,7 +143,7 @@ export function SummaryCard({
               color: "var(--text-primary)",
             }}
           >
-            ${formatCurrency(person2TotalShare)}
+            {formatCurrency(person2TotalShare)}
           </span>
           <span
             style={{
@@ -190,7 +190,7 @@ export function SummaryCard({
             color: "var(--text-primary)",
           }}
         >
-          ${formatCurrency(totalExpenses)}
+          {formatCurrency(totalExpenses)}
         </div>
         <div
           style={{

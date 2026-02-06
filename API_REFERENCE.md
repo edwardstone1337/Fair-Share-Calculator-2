@@ -26,9 +26,9 @@ Same behavior as `parseSalary` (used for expense amount fields).
 
 Formula: `person1Share = (person1Salary / (person1Salary + person2Salary)) * expense` (same for person 2). Percentages are `Math.round((totalShare / totalExpenses) * 100)`.
 
-#### `formatCurrency(num: number): string`
+#### `formatCurrency(num: number, symbol?: string): string`
 
-Display format: 2 decimals, comma grouping. Example: `1234.5` → `"1,234.50"`. Matches V1 regex.
+Display format: symbol + 2 decimals, comma grouping. Example: `formatCurrency(1234.5, '$')` → `"$1,234.50"`. `symbol` defaults to `'$'`.
 
 ---
 
@@ -55,8 +55,9 @@ Rules:
 - **FieldError**: `{ field: string; message: string }`.
 - **ValidationResult**: `{ valid: boolean; errors: FieldError[] }`.
 - **ExpenseResult**: `{ label; amount; person1Share; person2Share }`.
-- **CalculatorResult**: see `calculateShares` return shape.
-- **SavedFormData**: shape used for localStorage (`name1`, `name2`, `salary1`, `salary2`, `expenses`).
+- **CalculatorResult**: see `calculateShares` return shape; includes `currencySymbol: string` (hook/UI add from context).
+- **CalculateSharesResult**: `Omit<CalculatorResult, 'currencySymbol'>` — pure compute return; no symbol.
+- **SavedFormData**: shape used for localStorage (`name1`, `name2`, `salary1`, `salary2`, `expenses`, optional `currency`).
 
 ---
 
@@ -67,8 +68,10 @@ Cloudflare Worker backend. Base URL: `process.env.NEXT_PUBLIC_SHARE_API_URL` or 
 ### `ShareState`
 
 ```ts
-{ name1, name2, salary1, salary2, expenses: { amount: string; label: string }[] }
+{ name1, name2, salary1, salary2, expenses: { amount: string; label: string }[], currency?: string }
 ```
+
+`currency`: optional ISO 4217 code (e.g. `'USD'`). Included in POST body and legacy URL params; restored when loading share link.
 
 ### `shareViaBackend(state: ShareState): Promise<string>`
 
@@ -129,6 +132,22 @@ Returns privacy bucket: `"0-100"` | `"100-250"` | `"250-500"` | `"500-1000"` | `
 ### `bucketSplitRatio(salary1: number, salary2: number): string`
 
 Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`. Based on person1 share of combined salary.
+
+---
+
+## Currency (`lib/constants/currencies.ts` + `lib/contexts/currency-context.tsx`)
+
+### Constants
+
+- **CURRENCIES**: `CurrencyConfig[]` — supported codes (USD, CAD, AUD, NZD, GBP, INR, PHP, SGD) with `code`, `symbol`, `label`.
+- **DEFAULT_CURRENCY**: USD.
+- **detectCurrencyFromLocale()**: uses `navigator.languages` / locale; returns matching `CurrencyConfig` or DEFAULT_CURRENCY. Client-only.
+- **getCurrencyByCode(code: string)**: returns `CurrencyConfig` for code, or DEFAULT_CURRENCY.
+
+### Context
+
+- **CurrencyProvider**: wraps app; on mount loads from `localStorage.getItem('fairshare_currency')` or `fairshare_form.currency`, else `detectCurrencyFromLocale()`. Persists on change. Fires `trackEvent('currency_changed', { currency_code })` on user change.
+- **useCurrency()**: returns `{ currency: CurrencyConfig; setCurrency: (code: string) => void }`.
 
 ---
 

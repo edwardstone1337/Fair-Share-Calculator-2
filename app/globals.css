@@ -379,6 +379,43 @@
   --explanation-note-size: var(--font-size-sm);
   --explanation-note-text: var(--text-secondary);
 
+  /* --- Navigation Bar --- */
+  --nav-bg: var(--surface-app);
+  --nav-height: 48px;
+  --nav-padding-x: var(--space-4);
+  --nav-border-bottom: none;
+  --nav-shadow: none;
+  --nav-logo-size: 28px;
+  --nav-z-index: 50;
+  --nav-max-width: 600px;
+
+  /* --- Currency Selector --- */
+  --currency-selector-bg: var(--input-bg);
+  --currency-selector-border: var(--input-border);
+  --currency-selector-radius: var(--input-radius);
+  --currency-selector-text: var(--input-text);
+  --currency-selector-font-size: var(--font-size-sm);
+  --currency-selector-font-family: var(--input-font-family);
+  --currency-selector-padding-y: var(--space-1);
+  --currency-selector-padding-x: var(--space-2);
+  --currency-selector-focus-ring: var(--focus-ring-color);
+}
+
+.currency-selector {
+  outline: none;
+}
+.currency-selector:focus-visible {
+  outline: var(--focus-ring-width) solid var(--currency-selector-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-color: var(--input-border-focus);
+}
+[data-input-wrapper]:focus-within {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-color: var(--input-border-focus);
+}
+
+:root {
   /* --- FAQ Section --- */
   --faq-bg: var(--surface-app);
   --faq-text: var(--text-primary);

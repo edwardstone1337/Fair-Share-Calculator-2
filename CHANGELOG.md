@@ -4,6 +4,11 @@
 
 ### Added
 
+- Multi-currency support: user can select currency (USD, CAD, AUD, NZD, GBP, INR, PHP, SGD) via selector in nav. Currency is persisted in localStorage (`fairshare_currency`) and restored from `fairshare_form.currency` for backward compat. Share links and legacy URL params include and restore currency.
+- Currency auto-detection from browser locale (`detectCurrencyFromLocale` in `lib/constants/currencies.ts`); used when no saved currency.
+- Sticky nav bar: logo (link to home), currency selector, slot for future auth. Tokens: `--nav-*`, `--currency-selector-*` in `app/globals.css`.
+- `CurrencyProvider` and `useCurrency()` in `lib/contexts/currency-context.tsx`; root layout wraps app with provider. Analytics: `currency_changed` on selector change.
+- `CalculatorResult.currencySymbol` and `formatCurrency(num, symbol)`; results and share state use selected currency symbol/code.
 - Analytics: GA4 (G-TQZ0HGB3MT), Hotjar, Microsoft Clarity, Google AdSense in root layout (Next.js Script, afterInteractive).
 - Analytics module `lib/analytics/gtag.ts`: `trackEvent()`, `bucketExpenseAmount()`, `bucketSplitRatio()`; silent no-op if gtag unavailable.
 - Event tracking: calculate_clicked, calculate_attempt (success/error + error_type), results_viewed, share_results, data_restored (localStorage + share link), add/delete expense, salary_toggle, back_to_edit_clicked, input_started, input_completed, validation_error (blur).
@@ -30,6 +35,8 @@
 
 ### Changed
 
+- Calculator page: main layout uses `--space-6` gap between calculator shell and FAQ; FAQ section uses full width and stretch for correct flex layout.
+- Root layout: `CurrencyProvider` and `NavBar` added; body content wrapped for currency context.
 - Root layout: GA4, Hotjar, Clarity, AdSense scripts added (Next.js Script, afterInteractive).
 - Documentation: API reference and conventions updated to match current code (env return shape, share API env override, logger, analytics, sitemap).
 

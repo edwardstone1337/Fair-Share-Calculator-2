@@ -51,6 +51,7 @@ export interface CalculatorResult {
   person1Salary: number; // For the explanation card
   person2Salary: number;
   combinedSalary: number;
+  currencySymbol: string; // e.g. '$', '£', 'A$'
 }
 
 // === localStorage persistence ===
@@ -61,4 +62,5 @@ export interface SavedFormData {
   salary1: string;
   salary2: string;
   expenses: { amount: string; label: string }[];
+  currency?: string;
 }

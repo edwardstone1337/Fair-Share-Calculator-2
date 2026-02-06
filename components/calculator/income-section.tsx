@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { trackEvent } from "@/lib/analytics/gtag";
 import { useInputTracking } from "@/lib/hooks/use-input-tracking";
+import { useCurrency } from "@/lib/contexts/currency-context";
 
 export interface IncomeSectionProps {
   person1Salary: string;
@@ -39,6 +40,7 @@ export function IncomeSection({
   onTogglePerson2Visibility,
   onCalculate,
 }: IncomeSectionProps) {
+  const { currency } = useCurrency();
   const tracking1 = useInputTracking({
     fieldId: "person1-salary",
     fieldType: "salary",
@@ -100,6 +102,7 @@ export function IncomeSection({
             >
               <Input
                 id="person1-salary"
+                prefix={currency.symbol}
                 type={person1SalaryVisible ? "text" : "password"}
                 inputMode="numeric"
                 placeholder="0"
@@ -166,6 +169,7 @@ export function IncomeSection({
             >
               <Input
                 id="person2-salary"
+                prefix={currency.symbol}
                 type={person2SalaryVisible ? "text" : "password"}
                 inputMode="numeric"
                 placeholder="0"

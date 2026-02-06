@@ -1,5 +1,17 @@
 # Decision Log
 
+## [2025-02-06] - Currency in context, not in calculator state
+
+**Context**: Users need to choose display currency (e.g. GBP, CAD); currency should persist and travel with share links.
+
+**Decision**: Currency lives in React context (`CurrencyProvider` / `useCurrency`), persisted in `fairshare_currency` (and read from `fairshare_form.currency` for backward compat). Calculator reducer and form state do not hold currency. `CalculatorResult` gets `currencySymbol` from context in the client when rendering results. Share state and legacy URL params include optional `currency`; loading a share link or legacy params restores currency via `setCurrency(code)`.
+
+**Rationale**: Currency is a global display preference, not part of the calculation input. Keeping it out of the reducer avoids syncing two persistence layers and keeps share/localStorage restore simple (one place to set currency on load). Locale-based default (`detectCurrencyFromLocale`) used when no saved preference.
+
+**Consequences**: Any component that formats money must have access to currency (context or prop). New currencies: add to `lib/constants/currencies.ts` and optionally to locale map.
+
+---
+
 ## [2025-02-06] - Analytics: GA4 + Hotjar + Clarity + AdSense
 
 **Context**: Need product analytics and optional ads without blocking render or breaking on ad blockers.

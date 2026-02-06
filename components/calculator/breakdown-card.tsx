@@ -103,7 +103,7 @@ export function BreakdownCard({
                   textAlign: "right",
                 }}
               >
-                ${formatCurrency(expense.amount)}
+                {formatCurrency(expense.amount)}
               </span>
             </div>
             <div
@@ -125,7 +125,7 @@ export function BreakdownCard({
                   textAlign: "left",
                 }}
               >
-                ${formatCurrency(expense.person1Share)}
+                {formatCurrency(expense.person1Share)}
               </span>
               <span
                 className="breakdown-share-amount-mobile"
@@ -137,7 +137,7 @@ export function BreakdownCard({
                   textAlign: "right",
                 }}
               >
-                ${formatCurrency(expense.person2Share)}
+                {formatCurrency(expense.person2Share)}
               </span>
             </div>
             <div

@@ -15,6 +15,7 @@ import {
   bucketExpenseAmount,
   bucketSplitRatio,
 } from "@/lib/analytics/gtag";
+import { useCurrency } from "@/lib/contexts/currency-context";
 import { IncomeSection } from "./income-section";
 import { ExpensesSection } from "./expenses-section";
 import { NamesSection } from "./names-section";
@@ -29,6 +30,7 @@ export function CalculatorClient() {
   const returningUserRef = useRef(false);
   const [dataRestored, setDataRestored] = useState(false);
 
+  const { currency, setCurrency } = useCurrency();
   const {
     state,
     dispatch,
@@ -78,6 +80,8 @@ export function CalculatorClient() {
 
   // URL param loading (?id= or legacy params) — runs after mount, overrides localStorage
   useEffect(() => {
+    let cancelled = false;
+
     const params = new URLSearchParams(
       typeof window !== "undefined" ? window.location.search : ""
     );
@@ -97,6 +101,7 @@ export function CalculatorClient() {
     if (id) {
       loadFromShareId(id)
         .then((data) => {
+          if (cancelled) return;
           const name1 = data.name1 || "";
           const name2 = data.name2 || "";
           const salary1 = data.salary1 || "";
@@ -119,6 +124,9 @@ export function CalculatorClient() {
               expenses,
             },
           });
+          if (data.currency) {
+            setCurrency(data.currency);
+          }
 
           const expensesWithAmount = expenses.filter(
             (e) => e.amount.replace(/,/g, "").trim() !== ""
@@ -131,12 +139,15 @@ export function CalculatorClient() {
           });
         })
         .catch((err) => {
+          if (cancelled) return;
           logger.error("Failed to load shared configuration", err);
           setErrorMessage(
             "Could not load shared link. Please check the URL and try again."
           );
         });
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
     const name1 = params.get("name1");
@@ -180,6 +191,9 @@ export function CalculatorClient() {
         },
       });
 
+      const currencyParam = params.get("currency");
+      if (currencyParam) setCurrency(currencyParam);
+
       const expensesWithAmount = expenses.filter(
         (e) => e.amount.replace(/,/g, "").trim() !== ""
       );
@@ -190,7 +204,7 @@ export function CalculatorClient() {
         expense_count: expensesWithAmount.length,
       });
     }
-  }, [dispatch]);
+  }, [dispatch, setCurrency]);
 
   const handleCalculate = () => {
     trackEvent("calculate_clicked");
@@ -270,6 +284,7 @@ export function CalculatorClient() {
       expenses: state.expenses
         .filter((e) => e.amount.replace(/,/g, "").trim() !== "")
         .map((e) => ({ amount: e.amount, label: e.label || "Expense" })),
+      currency: currency.code,
     };
 
     try {
@@ -290,13 +305,17 @@ export function CalculatorClient() {
     }
   };
 
+  const resultWithCurrency = result
+    ? { ...result, currencySymbol: currency.symbol }
+    : null;
+
   // Show results only when we have a result (avoid showing empty results on #results bookmark)
-  if (state.step === "results" && result) {
+  if (state.step === "results" && resultWithCurrency) {
     return (
       <>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
           <ResultsView
-            result={result}
+            result={resultWithCurrency}
             onBackToEdit={handleBackToEdit}
             onShare={handleShare}
             resultsHeadingRef={resultsHeadingRef}

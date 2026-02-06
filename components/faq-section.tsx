@@ -7,6 +7,8 @@ export function FaqSection() {
   return (
     <section
       style={{
+        width: "100%",
+        alignSelf: "stretch",
         background: "var(--faq-bg)",
         color: "var(--faq-text)",
         paddingTop: "var(--space-16)",

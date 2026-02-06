@@ -8,6 +8,7 @@ export interface ExplanationCardProps {
   person1Salary: number;
   person2Salary: number;
   combinedSalary: number;
+  currencySymbol: string;
 }
 
 export function ExplanationCard({
@@ -18,6 +19,7 @@ export function ExplanationCard({
   person1Salary,
   person2Salary,
   combinedSalary,
+  currencySymbol,
 }: ExplanationCardProps) {
   const name1 = person1Name.trim() || "Person 1";
   const name2 = person2Name.trim() || "Person 2";
@@ -25,7 +27,7 @@ export function ExplanationCard({
   const salary1Formatted = person1Salary.toLocaleString();
   const salary2Formatted = person2Salary.toLocaleString();
 
-  const noteText = `We divide costs based on how much each of you contributes to your combined income. ${name1} earns $${salary1Formatted} and ${name2} earns $${salary2Formatted}, which adds up to $${combinedFormatted}. That means ${name1} earns ${person1Percentage}% of the total and ${name2} earns ${person2Percentage}%, so for each expense ${name1} pays ${person1Percentage}% and ${name2} pays ${person2Percentage}%.`;
+  const noteText = `We divide costs based on how much each of you contributes to your combined income. ${name1} earns ${currencySymbol}${salary1Formatted} and ${name2} earns ${currencySymbol}${salary2Formatted}, which adds up to ${currencySymbol}${combinedFormatted}. That means ${name1} earns ${person1Percentage}% of the total and ${name2} earns ${person2Percentage}%, so for each expense ${name1} pays ${person1Percentage}% and ${name2} pays ${person2Percentage}%.`;
 
   return (
     <article

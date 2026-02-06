@@ -5,7 +5,11 @@ export default function CalculatorPage() {
   return (
     <main
       className="min-h-screen flex flex-col items-center"
-      style={{ background: "var(--surface-page)" }}
+      style={{
+        background: "var(--surface-page)",
+        gap: "var(--space-6)",
+        paddingTop: "var(--space-6)",
+      }}
     >
       {/* Calculator App Shell */}
       <div
@@ -20,17 +24,8 @@ export default function CalculatorPage() {
         {/* Header */}
         <div
           className="flex flex-col items-center text-center"
-          style={{
-            gap: "var(--space-2)",
-            marginBottom: "var(--space-6)",
-          }}
+          style={{ gap: "var(--space-2)", marginBottom: "var(--space-6)" }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/logoIcon.png"
-            alt="Fair Share Calculator"
-            style={{ width: "40px", height: "40px" }}
-          />
           <h1
             style={{
               fontFamily: "var(--font-family-heading)",
@@ -42,12 +37,7 @@ export default function CalculatorPage() {
           >
             Income-Based Bill Split Calculator
           </h1>
-          <p
-            style={{
-              fontSize: "var(--font-size-lg)",
-              color: "var(--text-primary)",
-            }}
-          >
+          <p style={{ fontSize: "var(--font-size-lg)", color: "var(--text-primary)" }}>
             Split bills, rent, and shared expenses fairly based on income.
             Perfect for roommates, couples, or any shared living situation.
           </p>

@@ -27,13 +27,16 @@ export function parseExpenseAmount(raw: string): number {
  *   share2 = (salary2 / (salary1 + salary2)) * expense
  *   percentage = Math.round((totalShare / totalExpenses) * 100)
  */
+/** Result of calculateShares without currency (hook adds currencySymbol). */
+export type CalculateSharesResult = Omit<CalculatorResult, "currencySymbol">;
+
 export function calculateShares(
   person1Salary: number,
   person2Salary: number,
   expenses: { amount: number; label: string }[],
   person1Name: string = "Person 1",
   person2Name: string = "Person 2"
-): CalculatorResult {
+): CalculateSharesResult {
   const combinedSalary = person1Salary + person2Salary;
 
   const expenseBreakdown: ExpenseResult[] = expenses.map((exp) => ({
@@ -69,10 +72,11 @@ export function calculateShares(
 }
 
 /**
- * Format a number for display: 2 decimal places with comma grouping.
- * e.g. 1234.5 → "1,234.50"
- * Must match V1: num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
+ * Format a number for display with currency symbol.
+ * e.g. formatCurrency(1234.5, '$') → "$1,234.50"
+ * Symbol defaults to '$' for backward compatibility.
  */
-export function formatCurrency(num: number): string {
-  return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+export function formatCurrency(num: number, symbol: string = '$'): string {
+  const formatted = num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+  return `${symbol}${formatted}`;
 }

@@ -293,7 +293,7 @@ export function useCalculator(options?: UseCalculatorOptions) {
         label: e.label.trim() || "Expense",
       }));
 
-    const result = calculateShares(
+    const rawResult = calculateShares(
       salary1,
       salary2,
       validExpenses,
@@ -301,10 +301,14 @@ export function useCalculator(options?: UseCalculatorOptions) {
       state.person2Name.trim()
     );
 
-    resultRef.current = result;
+    const resultWithPlaceholder = {
+      ...rawResult,
+      currencySymbol: "", // Component adds from context
+    };
+    resultRef.current = resultWithPlaceholder;
     dispatch({ type: "SET_VALIDATION_ERRORS", errors: [] });
     dispatch({ type: "SET_STEP", step: "results" });
-    return result;
+    return resultWithPlaceholder;
   }, [state]);
 
   const backToEdit = useCallback(() => {
