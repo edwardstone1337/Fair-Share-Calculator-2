@@ -12,6 +12,8 @@ export interface ExpensesSectionProps {
   expenses: ExpenseInput[];
   errors: FieldError[];
   globalError?: string;
+  /** When true, expense inputs are treated as pre-filled (no input_started) */
+  prefilledExpenses?: boolean;
   onAmountChange: (id: string, value: string) => void;
   onLabelChange: (id: string, value: string) => void;
   onAddExpense: () => void;
@@ -23,6 +25,7 @@ export function ExpensesSection({
   expenses,
   errors,
   globalError,
+  prefilledExpenses = false,
   onAmountChange,
   onLabelChange,
   onAddExpense,
@@ -88,6 +91,7 @@ export function ExpensesSection({
               expense={expense}
               index={index}
               error={getErrorForExpense(expense.id)}
+              prefilled={prefilledExpenses}
               onAmountChange={(value) => onAmountChange(expense.id, value)}
               onLabelChange={(value) => onLabelChange(expense.id, value)}
               onDelete={() => onDeleteExpense(expense.id)}

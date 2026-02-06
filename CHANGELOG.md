@@ -4,6 +4,13 @@
 
 ### Added
 
+- Analytics: GA4 (G-TQZ0HGB3MT), Hotjar, Microsoft Clarity, Google AdSense in root layout (Next.js Script, afterInteractive).
+- Analytics module `lib/analytics/gtag.ts`: `trackEvent()`, `bucketExpenseAmount()`, `bucketSplitRatio()`; silent no-op if gtag unavailable.
+- Event tracking: calculate_clicked, calculate_attempt (success/error + error_type), results_viewed, share_results, data_restored (localStorage + share link), add/delete expense, salary_toggle, back_to_edit_clicked, input_started, input_completed, validation_error (blur).
+- `useInputTracking` hook: per-field input_started/input_completed/validation_error; optional `prefilled` to skip input_started for restored data.
+- `useCalculator` option `onDataRestored`: callback when state is restored from localStorage (used for prefilled UX and returning-user analytics).
+- Prefilled props: `prefilledSalaries`, `prefilledNames`, `prefilledExpenses` on Income/Names/Expenses sections and `prefilled` on ExpenseRow when data comes from share link or localStorage.
+- Dynamic sitemap: `app/sitemap.ts` (single URL, monthly changeFrequency, priority 1.0); removed static `public/sitemap.xml`.
 - Income-based bill split calculator: two salaries, multiple expenses, proportional split.
 - Income section (two salary inputs, show/hide toggles, Calculate CTA).
 - Expenses section (add/remove rows, amount + label; at least one expense required).
@@ -23,7 +30,8 @@
 
 ### Changed
 
-- Documentation: API reference and conventions updated to match current code (env return shape, share API env override, logger).
+- Root layout: GA4, Hotjar, Clarity, AdSense scripts added (Next.js Script, afterInteractive).
+- Documentation: API reference and conventions updated to match current code (env return shape, share API env override, logger, analytics, sitemap).
 
 ### Fixed
 
@@ -35,4 +43,5 @@
 
 ### Removed
 
-- (None yet.)
+- Static `public/sitemap.xml` (replaced by `app/sitemap.ts`).
+

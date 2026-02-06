@@ -1,5 +1,41 @@
 # Decision Log
 
+## [2025-02-06] - Analytics: GA4 + Hotjar + Clarity + AdSense
+
+**Context**: Need product analytics and optional ads without blocking render or breaking on ad blockers.
+
+**Decision**: Root layout loads GA4, Hotjar, Clarity, AdSense via Next.js `Script` with `strategy="afterInteractive"`. All event calls go through `lib/analytics/gtag.ts`; `trackEvent()` is a no-op if `window.gtag` is missing. Privacy: expense totals and split ratios sent as bucketed values (e.g. `bucketExpenseAmount`, `bucketSplitRatio`) to match V1.
+
+**Rationale**: afterInteractive keeps LCP unaffected; central wrapper ensures tracking never throws. Bucketing avoids sending raw numbers.
+
+**Consequences**: New events must use `trackEvent()`; bucketing logic must stay in sync with any reporting.
+
+---
+
+## [2025-02-06] - Input tracking and prefilled flag
+
+**Context**: Analytics should distinguish first-time vs returning (restored) form state; avoid firing "input_started" when user didn’t type.
+
+**Decision**: `useInputTracking` hook per field (name, salary, expense_amount, expense_label); optional `prefilled`. When `prefilled` is true, skip `input_started`. Calculator client sets `dataRestored` from `onDataRestored` (localStorage) and share-link restore, and passes prefilled* props to sections so restored data doesn’t count as "user started typing."
+
+**Rationale**: Returning-user and funnel metrics stay accurate; one hook keeps logic in one place.
+
+**Consequences**: Any new form section that uses input tracking must accept and forward a prefilled prop when data can be restored.
+
+---
+
+## [2025-02-06] - Dynamic sitemap
+
+**Context**: SEO and crawlers expect a sitemap; static file was manual.
+
+**Decision**: Replace `public/sitemap.xml` with `app/sitemap.ts` (Next.js dynamic sitemap). Single entry: homepage, changeFrequency monthly, priority 1.0.
+
+**Rationale**: One source of truth; easy to add routes later; Next handles XML and route.
+
+**Consequences**: Static sitemap removed; deploy must serve sitemap from app route.
+
+---
+
 ## [2025-02-06] - Share via Cloudflare Worker
 
 **Context**: Users need to share calculation links; no DB yet.

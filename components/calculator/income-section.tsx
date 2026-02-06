@@ -6,6 +6,8 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { trackEvent } from "@/lib/analytics/gtag";
+import { useInputTracking } from "@/lib/hooks/use-input-tracking";
 
 export interface IncomeSectionProps {
   person1Salary: string;
@@ -14,6 +16,8 @@ export interface IncomeSectionProps {
   person2SalaryVisible: boolean;
   person1Error?: string;
   person2Error?: string;
+  /** When true, inputs are treated as pre-filled (no input_started) */
+  prefilledSalaries?: boolean;
   onPerson1SalaryChange: (value: string) => void;
   onPerson2SalaryChange: (value: string) => void;
   onTogglePerson1Visibility: () => void;
@@ -28,17 +32,45 @@ export function IncomeSection({
   person2SalaryVisible,
   person1Error,
   person2Error,
+  prefilledSalaries = false,
   onPerson1SalaryChange,
   onPerson2SalaryChange,
   onTogglePerson1Visibility,
   onTogglePerson2Visibility,
   onCalculate,
 }: IncomeSectionProps) {
+  const tracking1 = useInputTracking({
+    fieldId: "person1-salary",
+    fieldType: "salary",
+    prefilled: prefilledSalaries,
+  });
+  const tracking2 = useInputTracking({
+    fieldId: "person2-salary",
+    fieldType: "salary",
+    prefilled: prefilledSalaries,
+  });
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       onCalculate();
     }
+  };
+
+  const handleToggle1 = () => {
+    trackEvent("salary_toggle", {
+      field_id: "salary1",
+      visibility_state: person1SalaryVisible ? "hidden" : "visible",
+    });
+    onTogglePerson1Visibility();
+  };
+
+  const handleToggle2 = () => {
+    trackEvent("salary_toggle", {
+      field_id: "salary2",
+      visibility_state: person2SalaryVisible ? "hidden" : "visible",
+    });
+    onTogglePerson2Visibility();
   };
 
   return (
@@ -72,7 +104,13 @@ export function IncomeSection({
                 inputMode="numeric"
                 placeholder="0"
                 value={person1Salary}
-                onChange={(e) => onPerson1SalaryChange(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onPerson1SalaryChange(v);
+                  tracking1.onInput(v);
+                }}
+                onFocus={tracking1.onFocus}
+                onBlur={tracking1.onBlur}
                 onKeyDown={handleKeyDown}
                 error={!!person1Error}
                 style={
@@ -84,7 +122,7 @@ export function IncomeSection({
               />
               <button
                 type="button"
-                onClick={onTogglePerson1Visibility}
+                onClick={handleToggle1}
                 aria-label={person1SalaryVisible ? "Hide salary" : "Show salary"}
                 style={{
                   position: "absolute",
@@ -132,7 +170,13 @@ export function IncomeSection({
                 inputMode="numeric"
                 placeholder="0"
                 value={person2Salary}
-                onChange={(e) => onPerson2SalaryChange(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onPerson2SalaryChange(v);
+                  tracking2.onInput(v);
+                }}
+                onFocus={tracking2.onFocus}
+                onBlur={tracking2.onBlur}
                 onKeyDown={handleKeyDown}
                 error={!!person2Error}
                 style={
@@ -144,7 +188,7 @@ export function IncomeSection({
               />
               <button
                 type="button"
-                onClick={onTogglePerson2Visibility}
+                onClick={handleToggle2}
                 aria-label={person2SalaryVisible ? "Hide salary" : "Show salary"}
                 style={{
                   position: "absolute",

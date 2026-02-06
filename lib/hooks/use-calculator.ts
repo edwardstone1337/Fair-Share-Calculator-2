@@ -15,6 +15,7 @@ import {
 } from "@/lib/calculator/compute";
 import { formatWithCommas } from "@/lib/utils/format";
 import { sanitizeInput } from "@/lib/utils/format";
+import { trackEvent } from "@/lib/analytics/gtag";
 
 // --- Initial state ---
 function createInitialExpense(): ExpenseInput {
@@ -220,10 +221,16 @@ function loadV1LocalStorage(): Partial<CalculatorFormState> | null {
 }
 
 // --- Hook ---
-export function useCalculator() {
+export interface UseCalculatorOptions {
+  /** Called when data is restored from localStorage (for returning user flag). */
+  onDataRestored?: () => void;
+}
+
+export function useCalculator(options?: UseCalculatorOptions) {
   const [state, dispatch] = useReducer(calculatorReducer, initialState);
   const resultRef = useRef<CalculatorResult | null>(null);
   const restoredRef = useRef(false);
+  const onDataRestored = options?.onDataRestored;
 
   useEffect(() => {
     if (restoredRef.current) return;
@@ -232,8 +239,29 @@ export function useCalculator() {
     const saved = loadFromLocalStorage();
     if (saved) {
       dispatch({ type: "RESTORE_STATE", state: saved });
+
+      const hasNames = !!(
+        (saved.person1Name?.trim() ?? "") || (saved.person2Name?.trim() ?? "")
+      );
+      const hasSalaries = !!(
+        (saved.person1Salary?.replace(/,/g, "").trim() ?? "") ||
+        (saved.person2Salary?.replace(/,/g, "").trim() ?? "")
+      );
+      const expensesWithAmount = (saved.expenses ?? []).filter(
+        (e) => (e.amount?.replace(/,/g, "").trim() ?? "") !== ""
+      );
+      const hasExpenses = expensesWithAmount.length > 0;
+      const expenseCount = expensesWithAmount.length;
+
+      trackEvent("data_restored", {
+        has_names: hasNames,
+        has_salaries: hasSalaries,
+        has_expenses: hasExpenses,
+        expense_count: expenseCount,
+      });
+      onDataRestored?.();
     }
-  }, []);
+  }, [onDataRestored]);
 
   useEffect(() => {
     if (!restoredRef.current) return;

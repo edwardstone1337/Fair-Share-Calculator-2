@@ -9,6 +9,12 @@ import {
   type ShareState,
 } from "@/lib/calculator/share";
 import type { ExpenseInput } from "@/lib/calculator/types";
+import { validateForm } from "@/lib/calculator/validation";
+import {
+  trackEvent,
+  bucketExpenseAmount,
+  bucketSplitRatio,
+} from "@/lib/analytics/gtag";
 import { IncomeSection } from "./income-section";
 import { ExpensesSection } from "./expenses-section";
 import { NamesSection } from "./names-section";
@@ -19,14 +25,22 @@ import { logger } from "@/lib/utils/logger";
 const SNACKBAR_MESSAGE = "Calculation link copied to clipboard!";
 
 export function CalculatorClient() {
+  const pageLoadTime = useRef(Date.now());
+  const returningUserRef = useRef(false);
+  const [dataRestored, setDataRestored] = useState(false);
+
   const {
     state,
     dispatch,
     calculate,
-    backToEdit,
     result,
     getError,
-  } = useCalculator();
+  } = useCalculator({
+    onDataRestored: () => {
+      returningUserRef.current = true;
+      setDataRestored(true);
+    },
+  });
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -69,24 +83,51 @@ export function CalculatorClient() {
     );
     const id = params.get("id");
 
+    const fireDataRestored = (payload: {
+      has_names: boolean;
+      has_salaries: boolean;
+      has_expenses: boolean;
+      expense_count: number;
+    }) => {
+      trackEvent("data_restored", payload);
+      returningUserRef.current = true;
+      setDataRestored(true);
+    };
+
     if (id) {
       loadFromShareId(id)
         .then((data) => {
+          const name1 = data.name1 || "";
+          const name2 = data.name2 || "";
+          const salary1 = data.salary1 || "";
+          const salary2 = data.salary2 || "";
+          const expenses = Array.isArray(data.expenses)
+            ? data.expenses.map((e) => ({
+                id: crypto.randomUUID(),
+                amount: e.amount || "",
+                label: e.label || "",
+              }))
+            : [{ id: crypto.randomUUID(), amount: "", label: "" }];
+
           dispatch({
             type: "RESTORE_STATE",
             state: {
-              person1Name: data.name1 || "",
-              person2Name: data.name2 || "",
-              person1Salary: data.salary1 || "",
-              person2Salary: data.salary2 || "",
-              expenses: Array.isArray(data.expenses)
-                ? data.expenses.map((e) => ({
-                    id: crypto.randomUUID(),
-                    amount: e.amount || "",
-                    label: e.label || "",
-                  }))
-                : [{ id: crypto.randomUUID(), amount: "", label: "" }],
+              person1Name: name1,
+              person2Name: name2,
+              person1Salary: salary1,
+              person2Salary: salary2,
+              expenses,
             },
+          });
+
+          const expensesWithAmount = expenses.filter(
+            (e) => e.amount.replace(/,/g, "").trim() !== ""
+          );
+          fireDataRestored({
+            has_names: !!(name1.trim() || name2.trim()),
+            has_salaries: !!(salary1.replace(/,/g, "").trim() || salary2.replace(/,/g, "").trim()),
+            has_expenses: expensesWithAmount.length > 0,
+            expense_count: expensesWithAmount.length,
           });
         })
         .catch((err) => {
@@ -123,30 +164,93 @@ export function CalculatorClient() {
         }
       }
 
+      const person1Name = params.get("name1") || "";
+      const person2Name = params.get("name2") || "";
+      const person1Salary = params.get("salary1") || "";
+      const person2Salary = params.get("salary2") || "";
+
       dispatch({
         type: "RESTORE_STATE",
         state: {
-          person1Name: params.get("name1") || "",
-          person2Name: params.get("name2") || "",
-          person1Salary: params.get("salary1") || "",
-          person2Salary: params.get("salary2") || "",
+          person1Name,
+          person2Name,
+          person1Salary,
+          person2Salary,
           expenses,
         },
+      });
+
+      const expensesWithAmount = expenses.filter(
+        (e) => e.amount.replace(/,/g, "").trim() !== ""
+      );
+      fireDataRestored({
+        has_names: !!(person1Name.trim() || person2Name.trim()),
+        has_salaries: !!(person1Salary.replace(/,/g, "").trim() || person2Salary.replace(/,/g, "").trim()),
+        has_expenses: expensesWithAmount.length > 0,
+        expense_count: expensesWithAmount.length,
       });
     }
   }, [dispatch]);
 
   const handleCalculate = () => {
+    trackEvent("calculate_clicked");
+
     const calcResult = calculate();
-    if (calcResult) {
-      if (typeof history !== "undefined") {
-        history.pushState({ step: "results" }, "", "#results");
-      }
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      requestAnimationFrame(() => {
-        resultsHeadingRef.current?.focus();
+
+    if (!calcResult) {
+      const validation = validateForm(state);
+      const errs = validation.errors;
+      const hasExpenseError = errs.some((e) => e.field.startsWith("expense"));
+      const hasSalaryError = errs.some(
+        (e) => e.field.startsWith("person") && e.field.includes("Salary")
+      );
+      const noExpenses = errs.some((e) => e.field === "expenses-global");
+
+      let errorType = "validation_error";
+      if (noExpenses) errorType = "missing_expense";
+      else if (hasSalaryError) errorType = "missing_salary";
+
+      trackEvent("calculate_attempt", {
+        status: "error",
+        error_type: errorType,
+        returning_user: returningUserRef.current,
       });
+      return;
     }
+
+    trackEvent("calculate_attempt", {
+      status: "success",
+      expense_count: calcResult.expenseBreakdown.length,
+      has_names:
+        calcResult.person1Name !== "Person 1" ||
+        calcResult.person2Name !== "Person 2",
+      has_labels: calcResult.expenseBreakdown.some((e) => e.label !== "Expense"),
+      total_expense_bucket: bucketExpenseAmount(calcResult.totalExpenses),
+      time_to_calculate_ms: Date.now() - pageLoadTime.current,
+      returning_user: returningUserRef.current,
+    });
+
+    trackEvent("results_viewed", {
+      expense_count: calcResult.expenseBreakdown.length,
+      has_names:
+        calcResult.person1Name !== "Person 1" ||
+        calcResult.person2Name !== "Person 2",
+      has_labels: calcResult.expenseBreakdown.some((e) => e.label !== "Expense"),
+      total_expense_bucket: bucketExpenseAmount(calcResult.totalExpenses),
+      split_ratio_bucket: bucketSplitRatio(
+        calcResult.person1Salary,
+        calcResult.person2Salary
+      ),
+      returning_user: returningUserRef.current,
+    });
+
+    if (typeof history !== "undefined") {
+      history.pushState({ step: "results" }, "", "#results");
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    requestAnimationFrame(() => {
+      resultsHeadingRef.current?.focus();
+    });
   };
 
   const handleBackToEdit = () => {
@@ -171,11 +275,13 @@ export function CalculatorClient() {
     try {
       const shareUrl = await shareViaBackend(shareState);
       await navigator.clipboard.writeText(shareUrl);
+      trackEvent("share_results", { method: "copy_link" });
       setSnackbarVisible(true);
     } catch {
       try {
         const legacyUrl = buildLegacyShareUrl(shareState);
         await navigator.clipboard.writeText(legacyUrl);
+        trackEvent("share_results", { method: "copy_link" });
         setSnackbarVisible(true);
       } catch (err) {
         logger.error("Failed to copy share link", err);
@@ -229,6 +335,7 @@ export function CalculatorClient() {
           person2SalaryVisible={state.person2SalaryVisible}
           person1Error={getError("person1Salary")}
           person2Error={getError("person2Salary")}
+          prefilledSalaries={dataRestored}
           onPerson1SalaryChange={(v) =>
             dispatch({ type: "SET_PERSON1_SALARY", value: v })
           }
@@ -248,14 +355,30 @@ export function CalculatorClient() {
           expenses={state.expenses}
           errors={state.validationErrors}
           globalError={getError("expenses-global")}
+          prefilledExpenses={dataRestored}
           onAmountChange={(id, v) =>
             dispatch({ type: "SET_EXPENSE_AMOUNT", id, value: v })
           }
           onLabelChange={(id, v) =>
             dispatch({ type: "SET_EXPENSE_LABEL", id, value: v })
           }
-          onAddExpense={() => dispatch({ type: "ADD_EXPENSE" })}
-          onDeleteExpense={(id) => dispatch({ type: "DELETE_EXPENSE", id })}
+          onAddExpense={() => {
+            trackEvent("add_expense_clicked");
+            dispatch({ type: "ADD_EXPENSE" });
+            trackEvent("expense_added", {
+              expense_count_after: state.expenses.length + 1,
+              expense_row_index: state.expenses.length,
+            });
+          }}
+          onDeleteExpense={(id) => {
+            trackEvent("delete_expense_clicked");
+            const index = state.expenses.findIndex((e) => e.id === id);
+            dispatch({ type: "DELETE_EXPENSE", id });
+            trackEvent("expense_deleted", {
+              expense_count_after: state.expenses.length - 1,
+              expense_row_index: index,
+            });
+          }}
           onCalculate={handleCalculate}
         />
 
@@ -264,6 +387,7 @@ export function CalculatorClient() {
           person2Name={state.person2Name}
           person1Error={getError("person1Name")}
           person2Error={getError("person2Name")}
+          prefilledNames={dataRestored}
           onPerson1NameChange={(v) =>
             dispatch({ type: "SET_PERSON1_NAME", value: v })
           }

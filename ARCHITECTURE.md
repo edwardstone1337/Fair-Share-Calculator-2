@@ -38,13 +38,16 @@ No database yet. In-memory + localStorage:
 | Path | Purpose |
 |------|---------|
 | `app/(calculator)/page.tsx` | Calculator page: header, H1, `CalculatorClient`, `FaqSection`, JSON-LD |
-| `app/layout.tsx` | Root layout: fonts, metadata, canonical, OG |
+| `app/layout.tsx` | Root layout: fonts, metadata, canonical, OG, GA4/Hotjar/Clarity/AdSense scripts |
+| `app/sitemap.ts` | Dynamic sitemap (single URL, monthly, priority 1.0) |
 | `app/globals.css` | Design tokens (all 3 layers) |
 | `lib/calculator/compute.ts` | Pure calculation + parse + formatCurrency |
 | `lib/calculator/validation.ts` | validateForm (salaries, expenses, names) |
 | `lib/calculator/types.ts` | Form state, result, validation types |
-| `lib/hooks/use-calculator.ts` | Reducer, localStorage, calculate(), getError/hasError |
-| `components/calculator/calculator-client.tsx` | Orchestrates sections, step (input vs results), URL hash/params, share, snackbar |
+| `lib/hooks/use-calculator.ts` | Reducer, localStorage, calculate(), getError/hasError, onDataRestored option |
+| `lib/hooks/use-input-tracking.ts` | Per-field analytics: input_started, input_completed, validation_error; prefilled opt-out |
+| `lib/analytics/gtag.ts` | trackEvent, bucketExpenseAmount, bucketSplitRatio; GA4 wrapper |
+| `components/calculator/calculator-client.tsx` | Orchestrates sections, step (input vs results), URL hash/params, share, snackbar, analytics events |
 | `lib/calculator/share.ts` | shareViaBackend, buildLegacyShareUrl, loadFromShareId (Cloudflare Worker) |
 
 ## Authentication & Backend
@@ -56,7 +59,7 @@ Not implemented yet. No Supabase client in app code; `lib/env.ts` and `lib/supab
 - **Cloudflare Worker** — Share backend: `POST /share` (store state, return id), `GET /share/:id` (fetch state). Read-only share links; no auth.
 - **Vercel** — Hosting (planned; auto-deploy from `main`).
 - **Supabase** — Planned (PostgreSQL, Auth, RLS).
-- **Analytics / Ads** — Not integrated yet (GA4, Hotjar, Clarity, AdSense planned).
+- **Analytics / Ads** — GA4 (G-TQZ0HGB3MT), Hotjar (hjid 4934822), Microsoft Clarity (kyx62gpbw4), Google AdSense (ca-pub-4075743460011014). Scripts in root layout via Next.js `Script` (strategy `afterInteractive`). Events via `lib/analytics/gtag.ts`; silent no-op if gtag unavailable.
 
 ## Deployment
 

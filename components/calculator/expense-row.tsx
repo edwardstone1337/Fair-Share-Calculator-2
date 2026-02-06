@@ -4,10 +4,14 @@ import * as React from "react";
 import { ExpenseInput } from "@/lib/calculator/types";
 import { Input } from "@/components/ui/input";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { useInputTracking } from "@/lib/hooks/use-input-tracking";
+
 export interface ExpenseRowProps {
   expense: ExpenseInput;
   index: number;
   error?: string;
+  /** When true, inputs are treated as pre-filled (no input_started) */
+  prefilled?: boolean;
   onAmountChange: (value: string) => void;
   onLabelChange: (value: string) => void;
   onDelete: () => void;
@@ -18,6 +22,7 @@ export function ExpenseRow({
   expense,
   index,
   error,
+  prefilled = false,
   onAmountChange,
   onLabelChange,
   onDelete,
@@ -26,6 +31,17 @@ export function ExpenseRow({
   const amountId = `expense-amount-${expense.id}`;
   const labelId = `expense-label-${expense.id}`;
   const showDelete = index > 0;
+
+  const amountTracking = useInputTracking({
+    fieldId: amountId,
+    fieldType: "expense_amount",
+    prefilled,
+  });
+  const labelTracking = useInputTracking({
+    fieldId: labelId,
+    fieldType: "expense_label",
+    prefilled,
+  });
 
   return (
     <div
@@ -39,7 +55,13 @@ export function ExpenseRow({
           inputMode="numeric"
           placeholder="0"
           value={expense.amount}
-          onChange={(e) => onAmountChange(e.target.value)}
+          onChange={(e) => {
+            const v = e.target.value;
+            onAmountChange(v);
+            amountTracking.onInput(v);
+          }}
+          onFocus={amountTracking.onFocus}
+          onBlur={amountTracking.onBlur}
           onKeyDown={onKeyDown}
           error={!!error}
           aria-label="Expense amount"
@@ -56,7 +78,13 @@ export function ExpenseRow({
           type="text"
           placeholder="e.g. Rent, Groceries"
           value={expense.label}
-          onChange={(e) => onLabelChange(e.target.value)}
+          onChange={(e) => {
+            const v = e.target.value;
+            onLabelChange(v);
+            labelTracking.onInput(v);
+          }}
+          onFocus={labelTracking.onFocus}
+          onBlur={labelTracking.onBlur}
           onKeyDown={onKeyDown}
           aria-label="Expense label"
         />

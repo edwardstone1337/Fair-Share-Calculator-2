@@ -114,6 +114,40 @@ Logs in all environments. Prefix: `[FairShare]`. Use for real failures.
 
 ---
 
+## Analytics (`lib/analytics/gtag.ts`)
+
+GA4 measurement ID: `G-TQZ0HGB3MT`. All calls no-op if `window.gtag` is undefined (e.g. SSR, ad blocker).
+
+### `trackEvent(eventName: string, params?: Record<string, unknown>): void`
+
+Sends custom event to GA4. Safe to call from client only; never throws.
+
+### `bucketExpenseAmount(total: number): string`
+
+Returns privacy bucket: `"0-100"` | `"100-250"` | `"250-500"` | `"500-1000"` | `"1000+"`. Use for analytics only, not display.
+
+### `bucketSplitRatio(salary1: number, salary2: number): string`
+
+Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`. Based on person1 share of combined salary.
+
+---
+
+## Hooks (`lib/hooks/`)
+
+### `useCalculator(options?: UseCalculatorOptions)`
+
+**Options**: `onDataRestored?: () => void` — called once when state is restored from localStorage (not on share-link restore; client fires `data_restored` for both).
+
+**Returns**: `state`, `dispatch`, `calculate`, `backToEdit`, `result`, `errors`, `getError`, `hasError`. On first load with saved data, restores then calls `onDataRestored` and fires `data_restored` via gtag.
+
+### `useInputTracking(options: UseInputTrackingOptions)`
+
+**Options**: `fieldId: string`, `fieldType: "name" | "salary" | "expense_label" | "expense_amount"`, `prefilled?: boolean`. When `prefilled` is true, `input_started` is not fired.
+
+**Returns**: `{ onFocus, onInput, onBlur }` — wire to input. Fires: `input_started` (first non-empty input), `input_completed` (blur + value changed), `validation_error` (blur, salary/expense_amount only, when value invalid/missing/too large).
+
+---
+
 ## Environment (`lib/env.ts`)
 
 #### `getServerEnv(): { SUPABASE_URL, SUPABASE_ANON_KEY, SITE_URL, NEXT_PUBLIC_SHARE_API_URL? }`

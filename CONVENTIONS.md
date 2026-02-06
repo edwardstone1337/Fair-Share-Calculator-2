@@ -5,7 +5,8 @@
 ```
 app/
   (calculator)/page.tsx     # Calculator page (SSR shell + client calculator + FAQ)
-  layout.tsx                # Root layout, metadata, fonts
+  layout.tsx                # Root layout, metadata, fonts, analytics scripts
+  sitemap.ts                # Dynamic sitemap (MetadataRoute.Sitemap)
   globals.css               # All design tokens (Layer 1–3)
 
 components/
@@ -16,10 +17,10 @@ components/
 
 lib/
   calculator/               # compute.ts, types.ts, validation.ts (pure, no React)
-  hooks/                    # use-calculator.ts (reducer + localStorage)
+  hooks/                    # use-calculator.ts, use-input-tracking.ts
   utils/                    # cn.ts, format.ts (formatWithCommas, sanitizeInput), logger.ts
   env.ts                    # getServerEnv (Supabase env; optional until Phase 5)
-  analytics/                # Placeholder
+  analytics/                # gtag.ts (trackEvent, bucketExpenseAmount, bucketSplitRatio)
   constants/                # Placeholder
   supabase/                 # Placeholder
 ```
@@ -55,14 +56,21 @@ lib/
 
 - Calculator: single source of truth in `useCalculator` (reducer state). Dispatch actions; no direct localStorage in UI.
 - Validation: run at Calculate time; errors stored in state and read via `getError(field)` / `hasError(field)`.
+- Prefilled: when state is restored (localStorage or share link), parent sets `dataRestored` and passes `prefilledSalaries` / `prefilledNames` / `prefilledExpenses` to sections so `useInputTracking` does not fire `input_started` for pre-filled fields.
 
 ## Error Handling
 
 - Validation: return `ValidationResult` with `errors` array; UI shows per-field messages.
 - localStorage: save/load in hook; failures are silent (no user-facing error for full/disabled storage).
 
+## Analytics
+
+- All GA4 events via `trackEvent(eventName, params)` from `lib/analytics/gtag.ts`. Never throw; no-op if gtag missing.
+- New form sections with inputs: use `useInputTracking` and accept a `prefilled*` prop when data can be restored; pass to hook so restored data doesn’t fire `input_started`.
+
 ## New Features
 
 - New UI token → add to Layer 3 (or Layer 2) in `globals.css`, then use in component.
 - New calculator rule → update `validation.ts` and document in API_REFERENCE.md.
 - New route → add under `app/` and document in ARCHITECTURE.md (and SYSTEM-ARCHITECTURE.md if part of V2 plan).
+- New analytics event → use `trackEvent()`; document event name and params in API_REFERENCE or ARCHITECTURE if significant.

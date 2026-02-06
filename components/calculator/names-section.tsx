@@ -7,12 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { useInputTracking } from "@/lib/hooks/use-input-tracking";
 
 export interface NamesSectionProps {
   person1Name: string;
   person2Name: string;
   person1Error?: string;
   person2Error?: string;
+  /** When true, inputs are treated as pre-filled (no input_started) */
+  prefilledNames?: boolean;
   onPerson1NameChange: (value: string) => void;
   onPerson2NameChange: (value: string) => void;
   onCalculate: () => void;
@@ -23,10 +26,22 @@ export function NamesSection({
   person2Name,
   person1Error,
   person2Error,
+  prefilledNames = false,
   onPerson1NameChange,
   onPerson2NameChange,
   onCalculate,
 }: NamesSectionProps) {
+  const tracking1 = useInputTracking({
+    fieldId: "person1-name",
+    fieldType: "name",
+    prefilled: prefilledNames,
+  });
+  const tracking2 = useInputTracking({
+    fieldId: "person2-name",
+    fieldType: "name",
+    prefilled: prefilledNames,
+  });
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -39,7 +54,7 @@ export function NamesSection({
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--card-gap)" }}>
         <SectionHeader
           title="Names (Optional)"
-          description="Add names to personalize your results, or leave blank to use \"Person 1\" and \"Person 2\"."
+          description={'Add names to personalize your results, or leave blank to use "Person 1" and "Person 2".'}
         />
         <div
           style={{
@@ -57,7 +72,13 @@ export function NamesSection({
                 type="text"
                 placeholder="e.g. Alex (optional)"
                 value={person1Name}
-                onChange={(e) => onPerson1NameChange(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onPerson1NameChange(v);
+                  tracking1.onInput(v);
+                }}
+                onFocus={tracking1.onFocus}
+                onBlur={tracking1.onBlur}
                 onKeyDown={handleKeyDown}
                 error={!!person1Error}
                 maxLength={50}
@@ -78,7 +99,13 @@ export function NamesSection({
                 type="text"
                 placeholder="e.g. Jordan (optional)"
                 value={person2Name}
-                onChange={(e) => onPerson2NameChange(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onPerson2NameChange(v);
+                  tracking2.onInput(v);
+                }}
+                onFocus={tracking2.onFocus}
+                onBlur={tracking2.onBlur}
                 onKeyDown={handleKeyDown}
                 error={!!person2Error}
                 maxLength={50}

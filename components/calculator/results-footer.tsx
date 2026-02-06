@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics/gtag";
 
 const BUY_ME_A_COFFEE_URL =
   "https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=edthedesigner&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff";
@@ -11,6 +12,11 @@ export interface ResultsFooterProps {
 }
 
 export function ResultsFooter({ onBackToEdit, onShare }: ResultsFooterProps) {
+  const handleBackToEdit = () => {
+    trackEvent("back_to_edit_clicked");
+    onBackToEdit();
+  };
+
   return (
     <footer
       style={{
@@ -21,7 +27,7 @@ export function ResultsFooter({ onBackToEdit, onShare }: ResultsFooterProps) {
         textAlign: "center",
       }}
     >
-      <Button variant="secondary" fullWidth onClick={onBackToEdit}>
+      <Button variant="secondary" fullWidth onClick={handleBackToEdit}>
         ← Edit details
       </Button>
       <Button variant="primary" fullWidth onClick={onShare}>
