@@ -4,7 +4,8 @@
 
 ```
 app/
-  (calculator)/page.tsx     # Calculator page (SSR shell + client calculator + FAQ)
+  (calculator)/page.tsx     # Calculator page (SSR shell + client calculator + JSON-LD)
+  faq/page.tsx              # FAQ page (server-rendered; content + FAQPage JSON-LD; token-driven)
   auth/callback/route.ts    # GET; OAuth code exchange
   auth/error/page.tsx      # Auth error message + link to sign in
   login/page.tsx            # Continue with Google, link to calculator
@@ -17,21 +18,20 @@ app/
   globals.css               # All design tokens (Layer 1–3)
 
 components/
-  nav/                      # NavBar, Footer (logo, CurrencySelector, auth slot; Footer: Privacy, Terms links, copyright)
-  ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton. Molecules: FormField
+  nav/                      # NavBar (logo + title ≥420px; Calculator/FAQ centred at ≥640px; right section [CurrencySelector on /] [Menu]; auth UI hidden, preserved), Footer (Privacy, Terms, copyright)
+  ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton. Molecules: FormField. Analytics: TrackedLink, TrackedAnchor
   calculator/               # Calculator organisms (IncomeSection, ExpensesSection, …)
   dashboard/                # DashboardClient, ConfigCard (saved config list, rename, delete, load)
-  faq-section.tsx           # FAQ accordion (below calculator)
 
 lib/
   calculator/               # compute.ts, types.ts, validation.ts (pure, no React)
-  constants/                # currencies.ts
+  constants/                # currencies.ts, site-links.ts (NAV_LINKS, LEGAL_LINKS)
   contexts/                 # currency-context.tsx (CurrencyProvider, useCurrency)
   hooks/                    # use-calculator.ts, use-input-tracking.ts
   utils/                    # cn.ts, format.ts, logger.ts
   env.ts                    # getServerEnv (server-only env; Supabase URL/anon key optional for client)
   actions/                  # Server Actions: configurations.ts, user-preferences.ts
-  analytics/                # gtag.ts
+  analytics/                # gtag.ts, events.ts (GA4 event name constants)
   supabase/                 # client.ts (browser), server.ts (Server/Route Handler), middleware.ts (session refresh)
 
 middleware.ts               # Root: session refresh, /dashboard protect, /login redirect
@@ -58,6 +58,7 @@ supabase/
 ## Styling
 
 - **Tokens only**: Use CSS variables for color, spacing, typography, radius, shadow. No magic numbers in components.
+- **Media queries**: CSS custom properties do not work in `@media`; use raw px values and add a comment referencing the token (e.g. `420px` for `--breakpoint-xs`, `480px` for `--breakpoint-sm`, `640px` for `--breakpoint-md`).
 - **Touch target**: All interactive elements (buttons, inputs, selects, icon buttons, link-as-button) must render at exactly 48px via `height: var(--touch-target-min-height)` (with `box-sizing: border-box` so padding/border are included). IconButton uses explicit size (48px via `--icon-button-size`). Ensures consistent tap targets for accessibility and mobile usability.
 - **Tailwind**: Use for layout (flex, grid, gap, display). Do not use Tailwind for colors/fonts that have tokens.
 - **Inline styles**: Acceptable for one-off token references (e.g. `style={{ gap: "var(--space-4)" }}`) when Tailwind doesn’t map to a token.
@@ -68,6 +69,13 @@ supabase/
 - **Calculator**: Client boundary at `CalculatorClient`; sections are client components that receive props and callbacks.
 - **Props**: Explicit interfaces (e.g. `IncomeSectionProps`); no inline only types for public components.
 - **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`. Calculator salary and expense amount inputs: use `type="text"` with `inputMode="numeric"` (not `type="number"`) for security and visibility when toggling; use `autoComplete="off"` to reduce browser autofill suggestions.
+
+## Analytics (GA4 click tracking)
+
+- **Event names**: `lib/analytics/events.ts` (e.g. `NAV_LINK_CLICKED`, `FOOTER_LINK_CLICKED`, `FAQ_CTA_CLICKED`). Use constants; do not hardcode event strings.
+- **Server components**: For internal links that need click tracking use `TrackedLink` from `@/components/ui/tracked-link` (props: `eventName`, `eventParams`). For external links use `TrackedAnchor` from `@/components/ui/tracked-anchor`.
+- **Client components**: Use `trackEvent(eventName, params)` from `@/lib/analytics/gtag` in `onClick` handlers (e.g. NavBar). No need to wrap in TrackedLink when the component already has access to hooks.
+- **Params**: Match API_REFERENCE.md Navigation Events table (e.g. footer `link` is label lowercased with spaces → `_`).
 
 ## State & Data Flow
 

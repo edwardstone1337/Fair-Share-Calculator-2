@@ -1,5 +1,113 @@
 # Decision Log
 
+## [2025-02-07] - Wire GA4 tracking into NavBar, Footer, FAQ (Phase 2)
+
+**Context**: Phase 1 added `lib/analytics/events.ts`, `TrackedLink`, and `TrackedAnchor`. We needed to wire tracking into the three surfaces without changing visuals or converting server components to client unnecessarily.
+
+**Decision**: NavBar (already client): call `trackEvent` directly in onClick for desktop links (`nav_link_clicked`, source `desktop`), mobile menu links (source `mobile_menu`), logo/home (link `home`, source `logo`), and menu open button (`nav_menu_opened` on open only). Footer (server): replace `Link` with `TrackedLink`, `eventName` `FOOTER_LINK_CLICKED`, `eventParams` from label lowercased + spaces → `_`. FAQ page (server): replace CTA `Link` with `TrackedLink` and coffee `<a>` with `TrackedAnchor`, both using `FAQ_CTA_CLICKED` with `cta` param.
+
+**Rationale**: Client components can use trackEvent directly; server components need a client boundary for gtag, so TrackedLink/TrackedAnchor keep the page server-rendered while adding tracking. Single source of truth for event names and param shapes in events.ts and API_REFERENCE.
+
+**Consequences**: NavBar, Footer, FAQ all emit GA4 events for nav/footer/CTA clicks. API_REFERENCE and CONVENTIONS document the pattern for future tracked links.
+
+---
+
+## [2025-02-07] - Remove How It Works from calculator page; FAQ CTAs as primary buttons
+
+**Context**: After Phase 1, the calculator page had a "How It Works" summary + link to `/faq`; FAQ page had text-styled "Try the calculator →" links. We wanted a leaner calculator page and clearer CTAs on the FAQ page.
+
+**Decision**: Remove the entire "How It Works" section (h2 + paragraph + wrapper) from `app/(calculator)/page.tsx`. On the FAQ page, convert "Try the calculator" links to `<Link>` elements styled as primary buttons (same tokens as `Button` variant="primary"), 48px touch target, href="/", label "Try the calculator →". No changes to globals.css, footer, or NavBar.
+
+**Rationale**: Calculator page stays focused on the tool; nav and footer already provide wayfinding to FAQ. Button-styled CTAs on FAQ improve visibility and consistency with the design system (link-as-button pattern, 48px target).
+
+**Consequences**: Calculator page is app shell + JSON-LD only. FAQ CTAs use `FaqCtaLink` component with token-only styles. All docs updated to drop "How It Works" references and note FAQ CTA styling.
+
+---
+
+## [2025-02-07] - Shared link config for NavBar and Footer
+
+**Context**: Footer redesign and nav link parity require a single source of truth for Calculator/FAQ and legal links to prevent label or URL drift between NavBar and Footer.
+
+**Decision**: Create `lib/constants/site-links.ts` with `SiteLink` interface, `NAV_LINKS` (Calculator, FAQ), and `LEGAL_LINKS` (Privacy Policy, Terms of Service). NavBar and Footer will consume this config in Phase 2.
+
+**Rationale**: Same pattern as `lib/constants/currencies.ts`; one place to update labels/hrefs; nav and footer stay in sync.
+
+**Consequences**: New file; Phase 2 will wire NavBar and Footer to import from site-links.
+
+---
+
+## [2025-02-07] - Nav title breakpoint lowered to 420px (Phase 2e)
+
+**Context**: Nav title "Fair Share" was visible at ≥480px (`--breakpoint-sm`). We wanted the title visible on more narrow viewports (e.g. small phones in portrait).
+
+**Decision**: Add `--breakpoint-xs: 420px`. Change `.nav-title` media query from `min-width: 480px` to `min-width: 420px`; update comment to reference `--breakpoint-xs`. No change to nav links or menu (still 640px).
+
+**Rationale**: Single token and one media query; 420px captures more devices without crowding the nav. CONVENTIONS already require raw px in `@media` with a comment referencing the token.
+
+**Consequences**: New token `--breakpoint-xs`; ARCHITECTURE, CONVENTIONS, and CHANGELOG updated to describe title at ≥420px.
+
+---
+
+## [2025-02-07] - Nav final fixes: reorder, hide auth, accessibility (Phase 2c)
+
+**Context**: Nav needed element reorder (Menu far-right on mobile), auth removed from UI for now, and accessibility gaps closed (ARIA, focus, keyboard).
+
+**Decision**: Reorder right section to [CurrencySelector (when pathname === '/')] [Menu] so Menu is far-right. Comment out the entire auth conditional block and all auth-related hooks/imports in `nav-bar.tsx`, with comment "Auth UI hidden — hooks preserved for future re-enablement". Add: nav `aria-label="Main navigation"`; Menu button `aria-haspopup="menu"`, `aria-controls="nav-mobile-menu"`; dropdown `id="nav-mobile-menu"`, `role="menu"`; links `role="menuitem"`; Escape closes menu and returns focus to Menu button; focus to first link on open, back to Menu on close; Arrow Up/Down between menuitems. Do not modify `button.tsx`; use Button's existing ref forwarding for focus return.
+
+**Rationale**: Right-section order matches design (Menu always rightmost). Hiding auth simplifies current UI while keeping re-enablement trivial. Full menu ARIA and keyboard behaviour meet accessibility expectations without changing visual design.
+
+**Consequences**: Auth no longer visible in nav; re-enable by uncommenting block and hooks. NavBar Key Files and CONVENTIONS/ARCHITECTURE docs updated to describe current state.
+
+---
+
+## [2025-02-07] - Nav layout fix: centred links, 640px breakpoint, Menu Button (Phase 2b)
+
+**Context**: After Phase 2, desktop nav links jumped horizontally when switching between `/` (CurrencySelector visible) and `/faq` (CurrencySelector hidden). Near 480px, links collided with the currency selector. Menu used a raw `<button>` instead of the design system `Button`.
+
+**Decision**: Add `--breakpoint-md: 640px`. Show desktop Calculator/FAQ links at ≥640px only (not 480px). Absolutely centre the link container (`.nav-links-centre`: `position: absolute; left: 50%; transform: translateX(-50%)`) so link position is independent of left/right content. Replace the Menu control with `<Button variant="secondary">` for consistent styling. Keep nav title visibility at 480px (`--breakpoint-sm`).
+
+**Rationale**: Centring prevents layout shift; 640px gives enough room so links and currency don’t collide; using `Button` keeps nav actions visually consistent with the rest of the app.
+
+**Consequences**: New token `--breakpoint-md`; new class `.nav-links-centre`; `.nav-links-desktop` and `.nav-menu-button` media queries use 640px; inner nav wrapper has `position: relative` for the centred block.
+
+---
+
+## [2025-02-07] - Navigation redesign: desktop links, mobile menu, conditional currency (Phase 2)
+
+**Context**: After adding `/faq`, the nav needed direct links to Calculator and FAQ, a mobile-friendly menu, and the currency selector only on the calculator page.
+
+**Decision**: Desktop: show inline "Calculator" and "FAQ" text links with active state (`aria-current`, token-driven). Mobile: show a "Menu" button that toggles a dropdown with the same two links; close on link click, click outside, or route change. Render `CurrencySelector` only when `pathname === '/'`. NavBar is a client component (`usePathname`, `useState` for menu open). (Breakpoint for desktop links/menu was later set to 640px in Phase 2b.)
+
+**Rationale**: Clear wayfinding to main routes; mobile avoids crowding; currency selector on FAQ is irrelevant so hide it there. Token-driven active state and dropdown styling keep design system consistent.
+
+**Consequences**: New nav tokens (`--nav-link-*`, `--nav-menu-*`) and utility classes (`.nav-links-desktop`, `.nav-menu-button`, `.nav-menu-dropdown`).
+
+---
+
+## [2025-02-07] - FAQ moved to dedicated /faq page (Phase 1)
+
+**Context**: FAQ lived inline on the calculator page; we wanted a dedicated route for SEO (FAQPage JSON-LD, targeted meta), clearer information architecture, and room to refocus content on couples.
+
+**Decision**: Create `app/faq/page.tsx` with full FAQ content, FAQPage structured data, and "Try the calculator" CTAs. Remove `FaqSection` from the calculator page and replace with a short "How It Works" summary plus link to `/faq`. Delete `components/faq-section.tsx`. Add `/faq` to sitemap (priority 0.7, monthly). Update FAQ copy to couples/partner language (no roommates framing).
+
+**Rationale**: Dedicated page improves crawlability and rich results; calculator page stays focused on the tool; single source of content avoids drift; couples focus matches product positioning.
+
+**Consequences**: One less component; calculator page is shorter; docs and any external links that pointed at in-page FAQ need to use `/faq` if they want the full FAQ.
+
+---
+
+## [2025-02-07] - Nav title aria-hidden with persistent aria-label
+
+**Context**: Nav home link shows logo + "Fair Share" title at ≥420px (Phase 2e); below that only the logo is visible. Screen readers need a clear announcement without duplication when both link text and aria-label exist.
+
+**Decision**: Keep `aria-label="Fair Share Calculator home"` on the Link at all times. Add `aria-hidden="true"` on the visible title span so screen readers announce only the aria-label. Logo remains `aria-hidden="true"`.
+
+**Rationale**: When title is visible, reading both "Fair Share Calculator home" and "Fair Share" is redundant. Hiding the title from assistive tech avoids that. The aria-label provides a consistent, descriptive announcement across breakpoints (logo-only on mobile, logo+title on desktop).
+
+**Consequences**: If the title later becomes always visible and aria-label is removed, remove aria-hidden from the span so the link text is announced.
+
+---
+
 ## [2025-02-06] - dev:clean script for cache hygiene
 
 **Context**: After editing `globals.css`, deleting files, or renaming exports, Next.js can serve stale modules from `.next` until the cache is cleared, causing confusing build/runtime errors.

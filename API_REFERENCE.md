@@ -133,6 +133,17 @@ Returns privacy bucket: `"0-100"` | `"100-250"` | `"250-500"` | `"500-1000"` | `
 
 Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`. Based on person1 share of combined salary.
 
+### Navigation Events
+
+Event names live in `lib/analytics/events.ts`. Use `TrackedLink` (internal) or `TrackedAnchor` (external) for click tracking in server components; in client components (e.g. NavBar) use `trackEvent` from `lib/analytics/gtag` directly.
+
+| Event | Params |
+|-------|--------|
+| `nav_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"home"`; optional `source`: `"desktop"` \| `"mobile_menu"` \| `"logo"` |
+| `nav_menu_opened` | (none); fired on menu open only |
+| `footer_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"privacy"` \| `"terms"` (from label lowercased, spaces → `_`) |
+| `faq_cta_clicked` | `cta`: `"try_calculator"` \| `"buy_me_a_coffee"`; optional `section` |
+
 ---
 
 ## Currency (`lib/constants/currencies.ts` + `lib/contexts/currency-context.tsx`)
@@ -151,7 +162,7 @@ Returns ratio bucket: `"50-50"` | `"60-40"` | `"70-30"` | `"80-20"` | `"other"`.
 
 ### Auth feature flag (client)
 
-- **NEXT_PUBLIC_AUTH_ENABLED**: When set to the string `'true'` (e.g. in .env.local), auth-dependent UI is shown: Save Configuration button on results, NavBar sign-in/avatar. When unset or not `'true'` (e.g. production), the Save button is not rendered and anonymous users are not sent to `/login`. `CalculatorClient` reads this once; `ResultsView`/`ResultsFooter` receive optional `onSave`/`saveState` and only show Save when provided.
+- **NEXT_PUBLIC_AUTH_ENABLED**: When set to the string `'true'` (e.g. in .env.local), auth-dependent UI is shown: Save Configuration button on results. (NavBar sign-in/avatar is currently commented out in `nav-bar.tsx`, preserved for re-enablement.) When unset or not `'true'` (e.g. production), the Save button is not rendered and anonymous users are not sent to `/login`. `CalculatorClient` reads this once; `ResultsView`/`ResultsFooter` receive optional `onSave`/`saveState` and only show Save when provided.
 
 ### localStorage keys (calculator / auth)
 
@@ -243,6 +254,11 @@ Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_
 **Auth**: None. Design-only; no Supabase, no redirect.  
 **Query**: `empty=true` → empty state (0 configs); `full=true` → 10 configs, "10 of 10 saved"; default → 5 configs, "5 of 10 saved".  
 **Behavior**: Client page; renders same layout as `/dashboard` with hardcoded `ConfigSummary[]`; `DashboardClient` receives `initialConfigs`. Load/Rename/Delete from cards call real actions and fail (expected). Not in sitemap or nav. Metadata: noindex, nofollow.
+
+### App route: `/faq`
+
+**Auth**: None. Public static page.  
+**Behavior**: Server-rendered FAQ page; metadata (title "FAQ — Fair Share Calculator", description targeting couples/spouse bill splitting); inline FAQPage JSON-LD (`mainEntity`: 5 Question/Answer pairs); content uses `--faq-*` tokens; "Try the calculator" CTAs are `TrackedLink` (GA `faq_cta_clicked`, cta `try_calculator`) styled as primary buttons (48px touch target, href `/`); Buy Me a Coffee is `TrackedAnchor` (GA `faq_cta_clicked`, cta `buy_me_a_coffee`); `BackToTopButton` at bottom. In sitemap: priority 0.7, changeFrequency monthly.
 
 ---
 

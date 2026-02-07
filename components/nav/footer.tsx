@@ -1,4 +1,15 @@
-import Link from "next/link";
+import { TrackedLink } from "@/components/ui/tracked-link";
+import { NAV_LINKS, LEGAL_LINKS } from "@/lib/constants/site-links";
+import { FOOTER_LINK_CLICKED } from "@/lib/analytics/events";
+
+import styles from "./footer.module.css";
+
+const FOOTER_LINK_KEYS: Record<string, string> = {
+  "Calculator": "calculator",
+  "FAQ": "faq",
+  "Privacy Policy": "privacy",
+  "Terms of Service": "terms",
+};
 
 export function Footer() {
   return (
@@ -9,58 +20,36 @@ export function Footer() {
         borderTop: "1px solid var(--footer-divider)",
       }}
     >
-      <div
-        style={{
-          maxWidth: "var(--footer-max-width)",
-          margin: "0 auto",
-          padding: "var(--footer-padding-y) var(--footer-padding-x)",
-          gap: "var(--space-2)",
-        }}
-        className="flex flex-col items-center text-center"
-      >
-        <nav
-          className="flex flex-wrap items-center justify-center"
-          aria-label="Footer navigation"
-        >
-          <Link
-            href="/privacy"
-            className="footer-link"
-            style={{
-              color: "var(--footer-link)",
-              fontSize: "var(--footer-font-size)",
-            }}
-          >
-            Privacy Policy
-          </Link>
-          <span
-            style={{
-              color: "var(--footer-text)",
-              fontSize: "var(--footer-font-size)",
-            }}
-            aria-hidden
-          >
-            {" "}
-            |{" "}
-          </span>
-          <Link
-            href="/terms"
-            className="footer-link"
-            style={{
-              color: "var(--footer-link)",
-              fontSize: "var(--footer-font-size)",
-            }}
-          >
-            Terms of Service
-          </Link>
-        </nav>
-        <p
-          style={{
-            color: "var(--footer-text)",
-            fontSize: "var(--footer-font-size)",
-          }}
-        >
-          © 2025 Fair Share Calculator
-        </p>
+      <div className={styles.footerInner}>
+        <div className={styles.footerLinks}>
+          <nav aria-label="Site navigation" className={styles.footerNav}>
+            {NAV_LINKS.map((link) => (
+              <TrackedLink
+                key={link.href}
+                href={link.href}
+                className={styles.footerLink}
+                eventName={FOOTER_LINK_CLICKED}
+                eventParams={{ link: FOOTER_LINK_KEYS[link.label] ?? link.label.toLowerCase().replace(/\s+/g, "_") }}
+              >
+                {link.label}
+              </TrackedLink>
+            ))}
+          </nav>
+          <nav aria-label="Legal" className={styles.footerNav}>
+            {LEGAL_LINKS.map((link) => (
+              <TrackedLink
+                key={link.href}
+                href={link.href}
+                className={styles.footerLink}
+                eventName={FOOTER_LINK_CLICKED}
+                eventParams={{ link: FOOTER_LINK_KEYS[link.label] ?? link.label.toLowerCase().replace(/\s+/g, "_") }}
+              >
+                {link.label}
+              </TrackedLink>
+            ))}
+          </nav>
+        </div>
+        <p className={styles.footerCopyright}>© 2025 Fair Share Calculator</p>
       </div>
     </footer>
   );

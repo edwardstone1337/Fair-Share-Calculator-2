@@ -4,10 +4,23 @@
 
 ### Added
 
+- **Wire GA4 tracking for NavBar links, footer links, FAQ CTAs, and Buy Me a Coffee link**: NavBar fires `nav_link_clicked` (desktop/mobile/logo) and `nav_menu_opened` (menu open only); Footer uses `TrackedLink` with `footer_link_clicked`; FAQ page uses `TrackedLink` for "Try the calculator" and `TrackedAnchor` for Buy Me a Coffee with `faq_cta_clicked`.
+- **GA4 navigation event constants and TrackedLink/TrackedAnchor**: Event names in `lib/analytics/events.ts` (nav_link_clicked, nav_menu_opened, footer_link_clicked, faq_cta_clicked); reusable `TrackedLink` (Next.js Link + GA4 on click) and `TrackedAnchor` (standard `<a>` + GA4 on click) for click tracking in nav, footer, and FAQ.
+- **Redesigned navigation (Phase 2)**: Added Calculator and FAQ text links (desktop ≥640px), Menu dropdown (mobile <640px), active page states (`aria-current`, token-driven styling), conditional currency selector (visible on `/`, hidden on `/faq`).
+- **FAQ page (Phase 1)**: Moved FAQ to dedicated `/faq` page with FAQPage JSON-LD structured data; replaced inline FAQ on calculator page with "How It Works" summary and link to `/faq`; updated FAQ content language to focus on couples (spouse, partner, couples budgeting).
+- **Site title in nav**: Site title "Fair Share" in navigation bar, visible on viewports ≥ 420px (Phase 2e); link has `aria-label`, visible title has `aria-hidden` for consistent screen reader announcement (see DECISION_LOG).
 - **dev:clean script**: `npm run dev:clean` runs `rm -rf .next && next dev`. Documented in CONVENTIONS (Development workflow): use after modifying globals.css, deleting files, or renaming exports to avoid stale .next cache; do not run `npm run build` while dev server is running.
 
 ### Changed
 
+- **Remove "How It Works" section from calculator page; convert FAQ "Try the calculator" links to branded buttons**: Calculator page no longer shows the "How It Works" h2 and paragraph; FAQ page CTAs are now `<Link>` elements styled as primary buttons (same tokens as `Button` variant="primary"), 48px touch target, href="/", label "Try the calculator →".
+- **Redesign footer with two-group layout (nav + legal), WCAG AA contrast, 48px touch targets; refactor NavBar to consume shared site-links config**: Footer now has Site navigation (Calculator, FAQ) and Legal (Privacy Policy, Terms of Service) groups; desktop ≥640px: side-by-side centered; mobile: stacked vertically centered; link underline styles and hover states; 48px min-height touch targets; NavBar imports NAV_LINKS from `lib/constants/site-links` for both desktop and mobile links.
+- **Add shared site-links config; fix footer contrast tokens for WCAG AA legibility**: Added `lib/constants/site-links.ts` (NAV_LINKS, LEGAL_LINKS) for nav/footer parity; updated footer tokens `--footer-text`, `--footer-link`, `--footer-link-hover` to `--text-on-primary`/`--color-white` and added `--footer-link-underline`, `--footer-link-hover-underline`, `--footer-gap-x`, `--footer-group-gap`.
+- **Lowered nav title breakpoint from 480px to 420px (Phase 2e)**: New `--breakpoint-xs` token — "Fair Share" title now visible on more devices.
+- **Fixed nav links appearing alongside menu button below 640px (Phase 2d)**: Removed `display: flex` from `.nav-links-centre` in `app/globals.css` so visibility is controlled only by `.nav-links-desktop` (hidden by default, `display: flex` at ≥640px). Below 640px only the Menu button is visible; at 640px+ only the centred Calculator/FAQ links are visible.
+- **Nav fixes (Phase 2c)**: Menu button moved to far-right; right section order is now [CurrencySelector (on / only)] [Menu]. Auth UI hidden (preserved for re-enablement). Accessibility: nav `aria-label="Main navigation"`; Menu button `aria-haspopup="menu"`, `aria-controls="nav-mobile-menu"`; dropdown `id="nav-mobile-menu"`, `role="menu"`; links `role="menuitem"`; Escape closes menu and returns focus to Menu button; focus moves to first link on open and back to Menu button on close; arrow Up/Down navigation between menuitems.
+- **Fixed nav layout (Phase 2b)**: Centred Calculator/FAQ links on desktop to prevent layout shift when CurrencySelector shows/hides between pages; increased nav link breakpoint to 640px; Menu button uses Button component for consistent styling.
+- **Footer GA4 params and fallback**: Aligned API_REFERENCE.md `footer_link_clicked` `link` values with implementation (`"privacy"`, `"terms"`); hardened footer eventParams fallback to use `replace(/\s+/g, "_")` for unknown labels.
 - **Fixed expense row alignment**: Delete button now aligns with input fields. Removed paddingTop from delete column (was compensating for FormField labels that don't exist in expense rows). Added ErrorMessage placeholder to label column for consistent column heights. Removed unused `--label-line-height` token.
 - **Simplified IconButton to single 48px size, removed size prop**: IconButton no longer has sm/md variants; all instances use `--icon-button-size` (48px) and `--icon-button-icon-size` (20px). Fixed expense row delete button alignment with input fields (paddingTop from label + gap tokens so delete column aligns with top of inputs).
 - **Consistent 48px touch target**: All interactive components (Button, Input, CurrencySelector, IconButton) enforce a minimum height of 48px via `--touch-target-min-height`. IconButton uses single size. Improves mobile usability and visual consistency.
@@ -79,7 +92,7 @@
 - URL param loading: `?id=` fetches share from backend; `name1`, `salary1`, etc. restore legacy share links.
 - UI components: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar.
 - FAQ section below calculator (expandable accordion).
-- Calculator page: SSR shell, H1, FaqSection, JSON-LD (WebApplication), metadata (title, description, canonical, OG).
+- Calculator page: SSR shell, H1, CalculatorClient, JSON-LD (WebApplication), metadata (title, description, canonical, OG). FAQ content on dedicated `/faq` page; FAQ CTAs styled as primary buttons.
 - Root layout: Josefin Sans + Assistant fonts, Material Symbols, metadata.
 
 ### Changed

@@ -93,10 +93,10 @@ The root route IS the product. 91% of traffic lands here from organic search. Th
 - Same canonical URL: `https://www.fairsharecalculator.com`
 - Same structured data (JSON-LD WebApplication schema)
 - Same Open Graph / Twitter Card meta
-- Same FAQ content (rendered server-side, not hydration-dependent)
+- FAQ content available (full content on `/faq`, server-rendered with FAQPage JSON-LD; root has no inline summary)
 - Same H1, H2, H3 hierarchy for crawlers
 
-The calculator form itself is a client component (needs interactivity), but the page shell — header, FAQ section, structured data — is server-rendered HTML.
+The calculator form itself is a client component (needs interactivity), but the page shell — header, structured data — is server-rendered HTML. Full FAQ content lives on the dedicated `/faq` page (server-rendered, FAQPage JSON-LD).
 
 ---
 
@@ -449,8 +449,9 @@ These must be byte-for-byte identical (or improved) in V2:
 ```
 app/
 ├── (calculator)/
-│   ├── page.tsx                  # Main calculator page (SSR shell + client form)
-│   └── calculator-client.tsx     # Client component: full calculator experience
+│   └── page.tsx                  # Main calculator page (SSR shell + client form + JSON-LD)
+├── faq/
+│   └── page.tsx                  # FAQ page (server-rendered; content + FAQPage JSON-LD)
 ├── (auth)/
 │   ├── login/
 │   │   ├── page.tsx              # Login page
@@ -490,7 +491,6 @@ components/
 │   ├── breakdown-card.tsx
 │   ├── explanation-card.tsx
 │   └── share-button.tsx
-├── faq-section.tsx               # Server component — SEO content
 ├── navigation.tsx                # Server wrapper
 └── navigation-client.tsx         # Client nav (sign in/out, dashboard link)
 

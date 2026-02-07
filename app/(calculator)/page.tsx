@@ -1,5 +1,4 @@
 import { CalculatorClient } from "@/components/calculator/calculator-client";
-import { FaqSection } from "@/components/faq-section";
 
 export default function CalculatorPage() {
   return (
@@ -46,9 +45,6 @@ export default function CalculatorPage() {
         {/* Calculator */}
         <CalculatorClient />
       </div>
-
-      {/* FAQ Section — outside the app shell, full width */}
-      <FaqSection />
 
       {/* JSON-LD Structured Data */}
       <script

@@ -1,0 +1,54 @@
+/* Footer layout and link styles — uses --footer-* tokens from globals.css */
+
+.footerInner {
+  max-width: var(--footer-max-width);
+  margin: 0 auto;
+  padding: var(--footer-padding-y) var(--footer-padding-x);
+}
+
+/* Mobile: stacked, centered */
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--footer-gap-x);
+}
+
+/* Desktop ≥640px: two groups side-by-side, centered */
+@media (min-width: 640px) {
+  .footerLinks {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--footer-group-gap);
+  }
+}
+
+.footerNav {
+  display: flex;
+  gap: var(--footer-gap-x);
+}
+
+.footerLink {
+  color: var(--footer-link);
+  font-size: var(--footer-font-size);
+  text-decoration: underline;
+  text-decoration-color: var(--footer-link-underline);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.footerLink:hover {
+  color: var(--footer-link-hover);
+  text-decoration-color: var(--footer-link-hover-underline);
+}
+
+.footerCopyright {
+  color: var(--footer-text);
+  font-size: var(--footer-font-size);
+  text-align: center;
+  margin-top: var(--space-4);
+}

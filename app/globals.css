@@ -207,6 +207,9 @@
 
   /* --- App Shell --- */
   --app-max-width: 410px;
+  --breakpoint-xs: 420px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 640px;
   --app-bg: var(--surface-app);
   --app-radius: var(--radius-2xl);
   --app-padding-y: var(--space-6);
@@ -389,12 +392,22 @@
   /* --- Navigation Bar --- */
   --nav-bg: var(--surface-app);
   --nav-height: 56px;
+  --nav-title-font-size: var(--font-size-lg);
   --nav-padding-x: var(--space-4);
   --nav-padding-y: var(--space-2);
   --nav-border-bottom: none;
   --nav-shadow: none;
   --nav-logo-size: 28px;
   --nav-z-index: 50;
+  --nav-link-font-size: var(--font-size-sm);
+  --nav-link-color: var(--text-secondary);
+  --nav-link-color-active: var(--text-primary);
+  --nav-link-font-weight: var(--font-weight-regular);
+  --nav-link-font-weight-active: var(--font-weight-semibold);
+  --nav-menu-bg: var(--surface-card);
+  --nav-menu-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --nav-menu-border-radius: var(--radius-md);
+  --nav-menu-padding: var(--space-2);
 
   /* --- Currency Selector --- */
   --currency-selector-bg: var(--input-bg);
@@ -435,6 +448,70 @@
   border-color: var(--input-border-focus);
 }
 
+/* Nav title: hidden below breakpoint, visible at 420px+ (matches --breakpoint-xs) */
+.nav-title {
+  display: none;
+  font-family: var(--font-family-heading);
+  font-size: var(--nav-title-font-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+@media (min-width: 420px) {
+  /* 420px matches --breakpoint-xs; CSS custom properties don't work in @media */
+  .nav-title {
+    display: inline;
+  }
+}
+
+/* Nav links: visible at 640px+ (matches --breakpoint-md), hidden below */
+.nav-links-desktop {
+  display: none;
+}
+@media (min-width: 640px) {
+  /* 640px matches --breakpoint-md; CSS custom properties don't work in @media */
+  .nav-links-desktop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}
+
+/* Absolutely centred link container (used with .nav-links-desktop) */
+.nav-links-centre {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Menu button: visible below 640px, hidden at 640px+ (matches --breakpoint-md) */
+.nav-menu-button {
+  display: flex;
+}
+@media (min-width: 640px) {
+  /* 640px matches --breakpoint-md; CSS custom properties don't work in @media */
+  .nav-menu-button {
+    display: none;
+  }
+}
+
+.nav-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--nav-menu-bg);
+  box-shadow: var(--nav-menu-shadow);
+  border-radius: var(--nav-menu-border-radius);
+  padding: var(--nav-menu-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 160px;
+  z-index: 50;
+}
+
 :root {
   /* --- FAQ Section --- */
   --faq-bg: var(--surface-app);
@@ -452,9 +529,13 @@
 
   /* --- Footer --- */
   --footer-bg: var(--surface-page);
-  --footer-text: var(--text-secondary);
-  --footer-link: var(--text-primary);
-  --footer-link-hover: var(--interactive-default);
+  --footer-text: var(--text-on-primary);
+  --footer-link: var(--text-on-primary);
+  --footer-link-hover: var(--color-white);
+  --footer-link-underline: rgba(255, 255, 255, 0.4);
+  --footer-link-hover-underline: rgba(255, 255, 255, 0.8);
+  --footer-gap-x: var(--space-6);
+  --footer-group-gap: var(--space-8);
   --footer-max-width: var(--faq-max-width);
   --footer-padding-y: var(--space-8);
   --footer-padding-x: var(--space-4);
