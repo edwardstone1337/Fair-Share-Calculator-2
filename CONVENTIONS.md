@@ -85,9 +85,9 @@ docs/
 ## State & Data Flow
 
 - Calculator: single source of truth in `useCalculator` (reducer state). Dispatch actions; no direct localStorage in UI.
-- Currency: global UI preference in React context (`useCurrency`), not in calculator reducer. Persisted in `fairshare_currency` (and optionally in `fairshare_form.currency`). Logged-in users: DB (`households.currency`) is source of truth on load; `setCurrency` also persists to DB (fire-and-forget). Share links and URL params carry currency; restore via `setCurrency(code)` when loading share.
+- Currency: global UI preference in React context (`useCurrency`), not in calculator reducer. Persisted in `fairshare_currency` (and optionally in `fairshare_form.currency`). Logged-in users: DB (`households.currency`) is source of truth on load; `setCurrency` also persists to DB (fire-and-forget). Config load restores currency from the saved configuration when present.
 - Validation: run at Calculate time; errors stored in state and read via `getError(field)` / `hasError(field)`.
-- Prefilled: when state is restored (localStorage or share link), parent sets `dataRestored` and passes `prefilledSalaries` / `prefilledNames` / `prefilledExpenses` to sections so `useInputTracking` does not fire `input_started` for pre-filled fields.
+- Prefilled: when state is restored (localStorage or config load), parent sets `dataRestored` and passes `prefilledSalaries` / `prefilledNames` / `prefilledExpenses` to sections so `useInputTracking` does not fire `input_started` for pre-filled fields.
 
 ## Error Handling
 

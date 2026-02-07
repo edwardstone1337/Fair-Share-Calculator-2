@@ -149,7 +149,7 @@ Fired from `components/calculator/calculator-client.tsx`. GA4 custom params are 
 
 ### localStorage keys (calculator / auth)
 
-- **fairshare_form**: Calculator form data (names, salaries, expenses); see ARCHITECTURE and `useCalculator`. Written by the hook on state change; read on mount and when restoring share/config.
+- **fairshare_form**: Calculator form data (names, salaries, expenses); see ARCHITECTURE and `useCalculator`. Written by the hook on state change; read on mount and when restoring config.
 - **fairshare_pending_save**: Set to `'true'` when an anonymous user taps **Save Configuration** on the results screen (only when auth is enabled); client then redirects to `/login`. Form data remains in `fairshare_form` so the user can save after signing in (e.g. from dashboard or after returning to calculator).
 
 ### fairshare_pending_save migration flow (dashboard)
@@ -199,7 +199,7 @@ When the user lands on `/dashboard` after OAuth (e.g. following the Save → log
 
 ### `useCalculator(options?: UseCalculatorOptions)`
 
-**Options**: `onDataRestored?: () => void` — called once when state is restored from localStorage (not on share-link restore; client fires `data_restored` for both).
+**Options**: `onDataRestored?: () => void` — called once when state is restored from localStorage (not when restoring from `?config=`; client fires `data_restored` for both).
 
 **Returns**: `state`, `dispatch`, `calculate`, `backToEdit`, `result`, `errors`, `getError`, `hasError`. On first load with saved data, restores then calls `onDataRestored` and fires `data_restored` via gtag.
 
