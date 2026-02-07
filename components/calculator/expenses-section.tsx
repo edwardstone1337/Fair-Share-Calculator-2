@@ -102,11 +102,13 @@ export function ExpensesSection({
           ))}
           </div>
         </div>
-        <ErrorMessage
-          id="expenses-global-error"
-          message={globalError}
-          visible={!!globalError}
-        />
+        {globalError && (
+          <ErrorMessage
+            id="expenses-global-error"
+            message={globalError}
+            visible={true}
+          />
+        )}
         <Button
           type="button"
           variant="secondary"

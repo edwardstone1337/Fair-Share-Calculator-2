@@ -12,6 +12,10 @@ import { useInputTracking } from "@/lib/hooks/use-input-tracking";
 import { useCurrency } from "@/lib/contexts/currency-context";
 
 export interface IncomeSectionProps {
+  person1Name?: string;
+  person2Name?: string;
+  person1NameError?: string;
+  person2NameError?: string;
   person1Salary: string;
   person2Salary: string;
   person1SalaryVisible: boolean;
@@ -20,6 +24,10 @@ export interface IncomeSectionProps {
   person2Error?: string;
   /** When true, inputs are treated as pre-filled (no input_started) */
   prefilledSalaries?: boolean;
+  /** When true, name inputs are treated as pre-filled (no input_started) */
+  prefilledNames?: boolean;
+  onPerson1NameChange?: (value: string) => void;
+  onPerson2NameChange?: (value: string) => void;
   onPerson1SalaryChange: (value: string) => void;
   onPerson2SalaryChange: (value: string) => void;
   onTogglePerson1Visibility: () => void;
@@ -28,6 +36,10 @@ export interface IncomeSectionProps {
 }
 
 export function IncomeSection({
+  person1Name = "",
+  person2Name = "",
+  person1NameError,
+  person2NameError,
   person1Salary,
   person2Salary,
   person1SalaryVisible,
@@ -35,6 +47,9 @@ export function IncomeSection({
   person1Error,
   person2Error,
   prefilledSalaries = false,
+  prefilledNames = false,
+  onPerson1NameChange = () => {},
+  onPerson2NameChange = () => {},
   onPerson1SalaryChange,
   onPerson2SalaryChange,
   onTogglePerson1Visibility,
@@ -42,6 +57,16 @@ export function IncomeSection({
   onCalculate,
 }: IncomeSectionProps) {
   const { currency } = useCurrency();
+  const nameTracking1 = useInputTracking({
+    fieldId: "person1-name",
+    fieldType: "name",
+    prefilled: prefilledNames,
+  });
+  const nameTracking2 = useInputTracking({
+    fieldId: "person2-name",
+    fieldType: "name",
+    prefilled: prefilledNames,
+  });
   const tracking1 = useInputTracking({
     fieldId: "person1-salary",
     fieldType: "salary",
@@ -80,9 +105,72 @@ export function IncomeSection({
     <Card>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--card-gap)" }}>
         <SectionHeader
-          title="Income for Bill Splitting"
-          description="Enter your after-tax income to calculate proportional bill splitting based on income."
+          title="Your Incomes"
+          description="Enter names and after-tax salaries to split bills proportionally based on income."
         />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "var(--space-4)",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ flex: "1 1 0", minWidth: 0 }}>
+            <Label htmlFor="person1-name">Your name</Label>
+            <div style={{ marginTop: "var(--space-1)" }}>
+              <Input
+                id="person1-name"
+                type="text"
+                value={person1Name}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onPerson1NameChange?.(v);
+                  nameTracking1.onInput(v);
+                }}
+                onFocus={nameTracking1.onFocus}
+                onBlur={nameTracking1.onBlur}
+                onKeyDown={handleKeyDown}
+                error={!!person1NameError}
+                aria-describedby={person1NameError ? "person1-name-error" : undefined}
+                maxLength={50}
+                aria-label="Your name"
+              />
+            </div>
+            <ErrorMessage
+              id="person1-name-error"
+              message={person1NameError}
+              visible={!!person1NameError}
+            />
+          </div>
+          <div style={{ flex: "1 1 0", minWidth: 0 }}>
+            <Label htmlFor="person2-name">Their name</Label>
+            <div style={{ marginTop: "var(--space-1)" }}>
+              <Input
+                id="person2-name"
+                type="text"
+                value={person2Name}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onPerson2NameChange?.(v);
+                  nameTracking2.onInput(v);
+                }}
+                onFocus={nameTracking2.onFocus}
+                onBlur={nameTracking2.onBlur}
+                onKeyDown={handleKeyDown}
+                error={!!person2NameError}
+                aria-describedby={person2NameError ? "person2-name-error" : undefined}
+                maxLength={50}
+                aria-label="Their name"
+              />
+            </div>
+            <ErrorMessage
+              id="person2-name-error"
+              message={person2NameError}
+              visible={!!person2NameError}
+            />
+          </div>
+        </div>
         <div
           style={{
             display: "flex",

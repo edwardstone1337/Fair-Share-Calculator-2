@@ -455,7 +455,7 @@ export default function ComponentsInventory() {
         fontSize: 'var(--font-size-sm)',
       }}>
         <p><strong>Included:</strong> All atoms, molecules (FormField, ExpenseRow, ResultsFooter), and organisms (SummaryCard, BreakdownCard, ExplanationCard) with realistic test data.</p>
-        <p style={{ marginTop: 'var(--space-2)' }}><strong>Rendered elsewhere:</strong> NavBar (visible at top of this page). IncomeSection, ExpensesSection, NamesSection require useCalculator state — tested via the main calculator page.</p>
+        <p style={{ marginTop: 'var(--space-2)' }}><strong>Rendered elsewhere:</strong> NavBar (visible at top of this page). IncomeSection, ExpensesSection require useCalculator state — tested via the main calculator page.</p>
         <p style={{ marginTop: 'var(--space-2)' }}><strong>Page-level:</strong> FAQ page (`app/faq/page.tsx`), BackToTopButton, CalculatorClient, and ResultsView are page-level compositions; calculator page is SSR shell + CalculatorClient + JSON-LD only.</p>
       </section>
       </div>

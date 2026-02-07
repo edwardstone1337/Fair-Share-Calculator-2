@@ -25,6 +25,7 @@ export function ValidationSummary({ errors, onTap }: ValidationSummaryProps) {
       <button
         type="button"
         onClick={onTap}
+        aria-label="Scroll to first error"
         style={{
           padding: 0,
           margin: 0,

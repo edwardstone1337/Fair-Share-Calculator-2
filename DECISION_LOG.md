@@ -1,6 +1,18 @@
 # Decision Log
 
-## [2026-02-07] - Removed Share Results feature
+## [2025-02-07] - Merged Names section into Income (two-card form)
+
+**Context**: Calculator had three cards (Income, Names, Expenses) with Calculate and ValidationSummary inside the Names card. We wanted a shorter form and a single primary CTA below the input cards.
+
+**Decision**: Remove `NamesSection` and merge name fields into `IncomeSection`. Rename section to "Your Incomes"; add name inputs (Your name / Their name) above salary inputs in the same card. Move Calculate button and ValidationSummary to a standalone block below the Expenses card. Conditional global ErrorMessage in ExpensesSection (render only when `globalError` is set) to remove dead space when no expense error.
+
+**Rationale**: Two cards reduce scroll and cognitive load; one Calculate block gives a single clear CTA; names and salaries are logically grouped as "who and how much." Validation and scroll-to-error already support person1Name/person2Name via existing field IDs.
+
+**Consequences**: NamesSection deleted. IncomeSection gains optional name props and useInputTracking for names. CalculatorClient passes name state/errors/callbacks to IncomeSection and renders Calculate + ValidationSummary in a div after ExpensesSection. ARCHITECTURE, CHANGELOG, components-inventory updated.
+
+---
+
+## [2025-02-07] - Removed Share Results feature
 
 **Context**: Share Results feature deprecated due to low usage. Usage data: 1% share rate (60 events vs 6,028 results viewed over 5 weeks, Jan 1 – Feb 7 2026). 44 unique users out of 2,067 who viewed results (2.1%). Cloudflare Worker (tight-firefly-c0dd) has 202 stored links and ~6 requests/day.
 

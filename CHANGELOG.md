@@ -4,6 +4,7 @@
 
 ### Removed
 
+- **NamesSection component** (`components/calculator/names-section.tsx`).
 - **Share Results button and all share-related code (2025-02-07)**: share API client, legacy URL builder, `?id=` and legacy query param loading. Cloudflare Worker to be decommissioned separately.
 - **Expense name input placeholder**: Removed placeholder text from expense name input — section description already provides examples; empty fields improve usability per NN Group research.
 - **Footer top border**: Removed for cleaner visual separation between main content and footer.
@@ -24,6 +25,9 @@
 
 ### Changed
 
+- **Merged Names section into Income section** — Form is now two cards instead of three. Section renamed to "Your Incomes" with combined name + salary fields.
+- **Calculate button and ValidationSummary moved to standalone block below Expenses section**.
+- **Fixed: Removed dead space in Expenses card when no global error is present**: ExpensesSection now renders global ErrorMessage only when globalError is set, eliminating ~48px gap between expense rows and Add Expense button.
 - **Docs: Updated validation error investigation with resolution notes and corrected metrics** (2025-02-07): Resolution (2025-02-07) section, blur-time data note, proposed next steps marked done/deferred/superseded; empty_expense_with_label confirmed dead; real blocker rate ~1.3%.
 - **validation_error GA event now fires only on Calculate attempt (not on blur) with field-level detail (error_count, error_fields, error_types)** (2025-02-07): Removed blur-time validation_error from use-input-tracking; submit-time validation_error fires in calculator-client when validateForm returns errors, with error_count, comma-separated error_fields and error_types, and returning_user. Historical blur-time data is not comparable to post-deploy data.
 - **Fixed: setTimeout cleanup in scrollToFirstError to prevent stale focus calls on unmount** (2025-02-07): scrollToFirstError now returns the timeout ID; CalculatorClient clears it on unmount.
@@ -31,7 +35,7 @@
 - **Fixed error message truncation (2025-02-07)**: ErrorMessage now uses minHeight and allows text wrapping so messages are fully readable on narrow viewports.
 - **Removed per-row validation error for label-only expense rows**: Label-only rows (e.g. "Rent" with no amount) are now silently ignored instead of showing "Please enter an expense amount"; global "at least one expense" check still catches all-empty / all-label-only cases.
 - **Reduced expense row-to-row spacing from var(--space-4) to var(--space-2) for tighter visual grouping.**
-- **Fixed inconsistent label-to-input spacing in Expenses section**: Header-to-first-row gap now uses var(--space-1) to match Income and Names sections.
+- **Fixed inconsistent label-to-input spacing in Expenses section**: Header-to-first-row gap now uses var(--space-1) to match Income section.
 - **Names section copy**: Removed redundant "optional" labels and placeholder text from Names section — asterisk convention handles required/optional distinction, empty fields improve usability per NN Group research.
 - **Calculator: Added bottom spacing between main content and footer**: Mirrored `paddingTop` with `paddingBottom: var(--space-6)` for visual symmetry.
 - **Back to top: Refactored into a reusable floating action button**: Fixed bottom-right, icon-only chevron-up (aria-label for screen readers), 400px scroll threshold (optional `threshold` prop), fade + slide animation, 48px touch target, primary button tokens and shadow; no longer uses shared Button component.

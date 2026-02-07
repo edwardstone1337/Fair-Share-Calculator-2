@@ -21,7 +21,7 @@ components/
   back-to-top-button.tsx   # Reusable floating back-to-top FAB (fixed bottom-right, icon-only, optional threshold); used on FAQ
   nav/                      # NavBar (logo + title ≥420px; Calculator/FAQ centred at ≥640px; right section [CurrencySelector on /] [Menu]; auth UI hidden, preserved), Footer (Privacy, Terms, copyright)
   ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton. Molecules: FormField. Analytics: TrackedLink, TrackedAnchor
-  calculator/               # Calculator organisms (IncomeSection, ExpensesSection, …)
+  calculator/               # Calculator organisms: IncomeSection (names + salaries), ExpensesSection, CalculatorClient, ResultsView, ValidationSummary, SummaryCard, BreakdownCard, ExplanationCard, ResultsFooter. Form: two cards + standalone Calculate + ValidationSummary block.
   dashboard/                # DashboardClient, ConfigCard (saved config list, rename, delete, load)
 
 lib/
@@ -71,7 +71,7 @@ docs/
 ## Components
 
 - **Default**: Server Components. Use `"use client"` only when needed (state, hooks, event handlers).
-- **Calculator**: Client boundary at `CalculatorClient`; sections are client components that receive props and callbacks.
+- **Calculator**: Client boundary at `CalculatorClient`; sections are client components that receive props and callbacks. Form layout: two cards (Your Incomes, Shared Bills & Expenses) then a standalone block with Calculate button and ValidationSummary.
 - **Props**: Explicit interfaces (e.g. `IncomeSectionProps`); no inline only types for public components.
 - **Form fields**: Use `FormField` for label + input + error when layout is standard; use `Input` with `prefix` for currency-prefixed fields. Icon-only actions: use `IconButton` with required `aria-label`. Calculator salary and expense amount inputs: use `type="text"` with `inputMode="numeric"` (not `type="number"`) for security and visibility when toggling; use `autoComplete="off"` to reduce browser autofill suggestions.
 

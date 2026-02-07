@@ -472,12 +472,10 @@ components/
 │   ├── income-section.tsx
 │   ├── expenses-section.tsx
 │   ├── expense-row.tsx           # MOLECULE — label + amount + delete
-│   ├── names-section.tsx
 │   ├── results-view.tsx          # ORGANISM — full results display
 │   ├── summary-card.tsx
 │   ├── breakdown-card.tsx
-│   ├── explanation-card.tsx
-│   └── share-button.tsx
+│   └── explanation-card.tsx
 ├── navigation.tsx                # Server wrapper
 └── navigation-client.tsx         # Client nav (sign in/out, dashboard link)
 

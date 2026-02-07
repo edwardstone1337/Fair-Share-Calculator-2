@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useCalculator } from "@/lib/hooks/use-calculator";
 import type { ExpenseInput } from "@/lib/calculator/types";
 import { validateForm } from "@/lib/calculator/validation";
@@ -19,8 +19,9 @@ import {
 import { formatWithCommas } from "@/lib/utils/format";
 import { IncomeSection } from "./income-section";
 import { ExpensesSection } from "./expenses-section";
-import { NamesSection } from "./names-section";
 import { ResultsView } from "./results-view";
+import { ValidationSummary } from "./validation-summary";
+import { Button } from "@/components/ui/button";
 import { Snackbar } from "@/components/ui/snackbar";
 import { logger } from "@/lib/utils/logger";
 
@@ -39,10 +40,10 @@ export function CalculatorClient() {
     result,
     getError,
   } = useCalculator({
-    onDataRestored: () => {
+    onDataRestored: useCallback(() => {
       returningUserRef.current = true;
       setDataRestored(true);
-    },
+    }, []),
   });
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -352,6 +353,10 @@ export function CalculatorClient() {
         }}
       >
         <IncomeSection
+          person1Name={state.person1Name}
+          person2Name={state.person2Name}
+          person1NameError={getError("person1Name")}
+          person2NameError={getError("person2Name")}
           person1Salary={state.person1Salary}
           person2Salary={state.person2Salary}
           person1SalaryVisible={state.person1SalaryVisible}
@@ -359,6 +364,13 @@ export function CalculatorClient() {
           person1Error={getError("person1Salary")}
           person2Error={getError("person2Salary")}
           prefilledSalaries={dataRestored}
+          prefilledNames={dataRestored}
+          onPerson1NameChange={(v) =>
+            dispatch({ type: "SET_PERSON1_NAME", value: v })
+          }
+          onPerson2NameChange={(v) =>
+            dispatch({ type: "SET_PERSON2_NAME", value: v })
+          }
           onPerson1SalaryChange={(v) =>
             dispatch({ type: "SET_PERSON1_SALARY", value: v })
           }
@@ -405,24 +417,15 @@ export function CalculatorClient() {
           onCalculate={handleCalculate}
         />
 
-        <NamesSection
-          person1Name={state.person1Name}
-          person2Name={state.person2Name}
-          person1Error={getError("person1Name")}
-          person2Error={getError("person2Name")}
-          prefilledNames={dataRestored}
-          validationErrors={state.validationErrors}
-          onValidationSummaryTap={() =>
-            scheduleScrollToError(state.validationErrors)
-          }
-          onPerson1NameChange={(v) =>
-            dispatch({ type: "SET_PERSON1_NAME", value: v })
-          }
-          onPerson2NameChange={(v) =>
-            dispatch({ type: "SET_PERSON2_NAME", value: v })
-          }
-          onCalculate={handleCalculate}
-        />
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+          <Button type="button" variant="primary" fullWidth onClick={handleCalculate}>
+            Calculate
+          </Button>
+          <ValidationSummary
+            errors={state.validationErrors}
+            onTap={() => scheduleScrollToError(state.validationErrors)}
+          />
+        </div>
       </div>
       <Snackbar
         message={errorMessage ?? ""}
