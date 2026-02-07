@@ -1,5 +1,29 @@
 # Decision Log
 
+## [2025-02-07] - Floating back-to-top: icon-only FAB (convention over text)
+
+**Context**: Back-to-top control was inline at bottom of FAQ with "↑ Back to Top" text. We wanted a reusable pattern that matches user expectation and doesn’t clutter content.
+
+**Decision**: Refactor `BackToTopButton` into a standalone floating action button: fixed bottom-right (z-index below nav), circular 48px, icon-only chevron-up. Use `aria-label="Back to top"` for screen readers. Appears after 400px scroll with fade+slide animation; optional `threshold` prop for reuse. Do not use the shared `Button` component; style with same design tokens. Reusable anywhere; currently only rendered on FAQ.
+
+**Rationale**: A floating ↑ in the bottom-right is the learned pattern (Material Design, major CMS themes, Wikipedia mobile). Text on a floating control would be unexpected; "don’t make me think" favours convention. Accessibility covered by aria-label.
+
+**Consequences**: ARCHITECTURE, API_REFERENCE, CONVENTIONS document the component and its placement; CHANGELOG notes the refactor.
+
+---
+
+## [2025-02-07] - Per-FAQ CTA tracking and secondary style (Phase 2b)
+
+**Context**: FAQ page had a single "Try the calculator" CTA pattern. We wanted conversion attribution by FAQ entry (which content drives users to the calculator) and a secondary visual style so CTAs don’t compete with primary actions.
+
+**Decision**: Add optional `source` prop to `FaqCtaLink`; pass to `TrackedLink` as `eventParams.source`. Place CTAs after FAQs 1, 2, 3, 5, 6, 8 and in the closing section with distinct sources (`faq_how_to_use`, `faq_how_calculated`, `faq_household_bills`, `faq_rent`, `faq_mortgage`, `faq_60_40`, `faq_closing`). Restyle `FaqCtaLink` from primary to secondary button tokens (`--button-secondary-bg-default`, `--button-secondary-border`, `--button-secondary-text`). No CTAs after FAQs 4, 7, 9, 10.
+
+**Rationale**: GA4 can segment conversions by `source`; secondary style keeps CTAs visible without dominating the page. Only key conversion-driving FAQs get a CTA.
+
+**Consequences**: API_REFERENCE and ARCHITECTURE document `source` and secondary styling; CONVENTIONS note optional source for FAQ CTAs.
+
+---
+
 ## [2025-02-07] - Wire GA4 tracking into NavBar, Footer, FAQ (Phase 2)
 
 **Context**: Phase 1 added `lib/analytics/events.ts`, `TrackedLink`, and `TrackedAnchor`. We needed to wire tracking into the three surfaces without changing visuals or converting server components to client unnecessarily.

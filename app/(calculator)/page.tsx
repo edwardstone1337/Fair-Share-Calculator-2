@@ -8,6 +8,7 @@ export default function CalculatorPage() {
         background: "var(--surface-page)",
         gap: "var(--space-6)",
         paddingTop: "var(--space-6)",
+        paddingBottom: "var(--space-6)",
       }}
     >
       {/* Calculator App Shell */}
@@ -37,8 +38,7 @@ export default function CalculatorPage() {
             Income-Based Bill Split Calculator
           </h1>
           <p style={{ fontSize: "var(--font-size-lg)", color: "var(--text-primary)" }}>
-            Split bills, rent, and shared expenses fairly based on income.
-            Perfect for roommates, couples, or any shared living situation.
+            Split bills, rent, and shared expenses fairly based on income. Built for couples sharing household costs.
           </p>
         </div>
 

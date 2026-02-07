@@ -2,8 +2,18 @@
 
 ## Unreleased
 
+### Removed
+
+- **Expense name input placeholder**: Removed placeholder text from expense name input — section description already provides examples; empty fields improve usability per NN Group research.
+- **Footer top border**: Removed for cleaner visual separation between main content and footer.
+- **Deleted orphaned legacy icon assets (Hide.svg, Show.svg)**: No longer referenced; app uses Material Icons via the Icon component.
+- **Moved QA_REPORT_V2.md to docs/historical/**: Keeps audit trail while decluttering root.
+
 ### Added
 
+- **aria-describedby on calculator inputs with validation errors (2025-02-07)**: Added aria-describedby to all calculator inputs with validation errors — screen readers now announce error messages when inputs receive focus.
+- **Validation error summary below Calculate button (2025-02-07)**: Added validation error summary below Calculate button — shows error count with tap-to-scroll to first error; uses role="alert" for screen reader announcement.
+- **Scroll-to-first-error on validation failure (2025-02-07)**: Added scroll-to-first-error on validation failure — Calculate button now scrolls viewport to the first errored field and focuses the input for immediate correction.
 - **Wire GA4 tracking for NavBar links, footer links, FAQ CTAs, and Buy Me a Coffee link**: NavBar fires `nav_link_clicked` (desktop/mobile/logo) and `nav_menu_opened` (menu open only); Footer uses `TrackedLink` with `footer_link_clicked`; FAQ page uses `TrackedLink` for "Try the calculator" and `TrackedAnchor` for Buy Me a Coffee with `faq_cta_clicked`.
 - **GA4 navigation event constants and TrackedLink/TrackedAnchor**: Event names in `lib/analytics/events.ts` (nav_link_clicked, nav_menu_opened, footer_link_clicked, faq_cta_clicked); reusable `TrackedLink` (Next.js Link + GA4 on click) and `TrackedAnchor` (standard `<a>` + GA4 on click) for click tracking in nav, footer, and FAQ.
 - **Redesigned navigation (Phase 2)**: Added Calculator and FAQ text links (desktop ≥640px), Menu dropdown (mobile <640px), active page states (`aria-current`, token-driven styling), conditional currency selector (visible on `/`, hidden on `/faq`).
@@ -13,7 +23,19 @@
 
 ### Changed
 
-- **Remove "How It Works" section from calculator page; convert FAQ "Try the calculator" links to branded buttons**: Calculator page no longer shows the "How It Works" h2 and paragraph; FAQ page CTAs are now `<Link>` elements styled as primary buttons (same tokens as `Button` variant="primary"), 48px touch target, href="/", label "Try the calculator →".
+- **Fixed: setTimeout cleanup in scrollToFirstError to prevent stale focus calls on unmount** (2025-02-07): scrollToFirstError now returns the timeout ID; CalculatorClient clears it on unmount.
+- **Refreshed validation error copy to match conversational product tone (2025-02-07)**: Warmer, outcome-focused messages across salary, expense, and name validation.
+- **Fixed error message truncation (2025-02-07)**: ErrorMessage now uses minHeight and allows text wrapping so messages are fully readable on narrow viewports.
+- **Removed per-row validation error for label-only expense rows**: Label-only rows (e.g. "Rent" with no amount) are now silently ignored instead of showing "Please enter an expense amount"; global "at least one expense" check still catches all-empty / all-label-only cases.
+- **Reduced expense row-to-row spacing from var(--space-4) to var(--space-2) for tighter visual grouping.**
+- **Fixed inconsistent label-to-input spacing in Expenses section**: Header-to-first-row gap now uses var(--space-1) to match Income and Names sections.
+- **Names section copy**: Removed redundant "optional" labels and placeholder text from Names section — asterisk convention handles required/optional distinction, empty fields improve usability per NN Group research.
+- **Calculator: Added bottom spacing between main content and footer**: Mirrored `paddingTop` with `paddingBottom: var(--space-6)` for visual symmetry.
+- **Back to top: Refactored into a reusable floating action button**: Fixed bottom-right, icon-only chevron-up (aria-label for screen readers), 400px scroll threshold (optional `threshold` prop), fade + slide animation, 48px touch target, primary button tokens and shadow; no longer uses shared Button component.
+- **FAQ: Added per-FAQ tracked CTAs (secondary style) after key FAQ entries. Each CTA sends a unique source parameter to GA4 for conversion attribution.**
+- **SEO: Expanded FAQ page from 5 to 10 entries targeting high-impression search queries. Updated meta title and description. Added mortgage, rent, household bills, currency, and income gap FAQs. Updated JSON-LD FAQPage schema to include all 10 Q&A pairs.**
+- **SEO: Updated calculator page meta description, OG tags, and subtitle copy to focus on couples. Added metadataBase. Updated copyright year.**
+- **Remove "How It Works" section from calculator page; convert FAQ "Try the calculator" links to branded buttons**: Calculator page no longer shows the "How It Works" h2 and paragraph; FAQ page CTAs are `<Link>` elements (later restyled to secondary with per-FAQ GA4 source), 48px touch target, href="/", label "Try the calculator →".
 - **Redesign footer with two-group layout (nav + legal), WCAG AA contrast, 48px touch targets; refactor NavBar to consume shared site-links config**: Footer now has Site navigation (Calculator, FAQ) and Legal (Privacy Policy, Terms of Service) groups; desktop ≥640px: side-by-side centered; mobile: stacked vertically centered; link underline styles and hover states; 48px min-height touch targets; NavBar imports NAV_LINKS from `lib/constants/site-links` for both desktop and mobile links.
 - **Add shared site-links config; fix footer contrast tokens for WCAG AA legibility**: Added `lib/constants/site-links.ts` (NAV_LINKS, LEGAL_LINKS) for nav/footer parity; updated footer tokens `--footer-text`, `--footer-link`, `--footer-link-hover` to `--text-on-primary`/`--color-white` and added `--footer-link-underline`, `--footer-link-hover-underline`, `--footer-gap-x`, `--footer-group-gap`.
 - **Lowered nav title breakpoint from 480px to 420px (Phase 2e)**: New `--breakpoint-xs` token — "Fair Share" title now visible on more devices.

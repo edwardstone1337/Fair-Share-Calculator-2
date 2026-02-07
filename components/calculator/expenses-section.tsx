@@ -51,7 +51,7 @@ export function ExpensesSection({
           title="Shared Bills & Expenses"
           description="Enter rent, utilities, groceries, or any shared bills to split based on income."
         />
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-1)" }}>
           <div
             className="flex flex-row"
             style={{
@@ -86,6 +86,7 @@ export function ExpensesSection({
               }}
             />
           </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
           {expenses.map((expense, index) => (
             <ExpenseRow
               key={expense.id}
@@ -99,6 +100,7 @@ export function ExpensesSection({
               onKeyDown={handleKeyDown}
             />
           ))}
+          </div>
         </div>
         <ErrorMessage
           id="expenses-global-error"

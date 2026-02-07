@@ -118,6 +118,7 @@ export function IncomeSection({
                 onBlur={tracking1.onBlur}
                 onKeyDown={handleKeyDown}
                 error={!!person1Error}
+                aria-describedby={person1Error ? "person1-salary-error" : undefined}
                 style={
                   !person1SalaryVisible
                     ? ({
@@ -175,6 +176,7 @@ export function IncomeSection({
                 onBlur={tracking2.onBlur}
                 onKeyDown={handleKeyDown}
                 error={!!person2Error}
+                aria-describedby={person2Error ? "person2-salary-error" : undefined}
                 style={
                   !person2SalaryVisible
                     ? ({

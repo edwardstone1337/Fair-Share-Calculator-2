@@ -21,16 +21,17 @@ const assistant = Assistant({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.fairsharecalculator.com"),
   title:
     "Income-Based Bill Split Calculator - Fair Share Calculator for Bills, Rent & Expenses",
   description:
-    "Split bills based on income with our Fair Share Calculator. Calculate proportional rent, utilities, and expense splitting for roommates, couples, or any shared living situation. Free income-based bill splitting tool with instant results.",
+    "Split bills, rent, and expenses fairly based on income. Free calculator for couples — calculate your proportional share of rent, utilities, mortgage, and household costs instantly.",
   keywords:
-    "bill split calculator, split bills based on income, income based bill splitting, rent split calculator, splitting bills based on income calculator, fair share calculator, bill split calculator based on income, how to split bills based on income, split bills calculator, fair bill split calculator, rent split based on income, salary split calculator, bills split calculator, split bills by income calculator, fair split calculator, income based percentage split, proportional expense splitting, roommates bill splitting, shared expense calculator",
+    "bill split calculator, split bills based on income, income based bill splitting, rent split calculator, splitting bills based on income calculator, fair share calculator, bill split calculator based on income, how to split bills based on income, split bills calculator, fair bill split calculator, rent split based on income, salary split calculator, bills split calculator, split bills by income calculator, fair split calculator, income based percentage split, proportional expense splitting, shared expense calculator, mortgage split calculator, couples bill split calculator",
   openGraph: {
     title: "Income-Based Bill Split Calculator - Fair Share Calculator",
     description:
-      "Split bills based on income with our free calculator. Perfect for roommates, couples, or any shared living situation. Calculate proportional rent, utilities, and expense splitting instantly.",
+      "Split bills, rent, and expenses fairly based on income. Free calculator for couples — calculate your proportional share of rent, utilities, mortgage, and household costs instantly.",
     url: "https://www.fairsharecalculator.com",
     images: ["/images/Metadata-Image.jpg"],
   },

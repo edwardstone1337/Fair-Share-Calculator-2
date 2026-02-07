@@ -18,13 +18,14 @@ app/
   globals.css               # All design tokens (Layer 1–3)
 
 components/
+  back-to-top-button.tsx   # Reusable floating back-to-top FAB (fixed bottom-right, icon-only, optional threshold); used on FAQ
   nav/                      # NavBar (logo + title ≥420px; Calculator/FAQ centred at ≥640px; right section [CurrencySelector on /] [Menu]; auth UI hidden, preserved), Footer (Privacy, Terms, copyright)
   ui/                       # Atoms: Button, Card, Input, Label, ErrorMessage, SectionHeader, Snackbar, CurrencySelector, Icon, IconButton. Molecules: FormField. Analytics: TrackedLink, TrackedAnchor
   calculator/               # Calculator organisms (IncomeSection, ExpensesSection, …)
   dashboard/                # DashboardClient, ConfigCard (saved config list, rename, delete, load)
 
 lib/
-  calculator/               # compute.ts, types.ts, validation.ts (pure, no React)
+  calculator/               # compute.ts, types.ts, validation.ts, scroll-to-error.ts (pure, no React)
   constants/                # currencies.ts, site-links.ts (NAV_LINKS, LEGAL_LINKS)
   contexts/                 # currency-context.tsx (CurrencyProvider, useCurrency)
   hooks/                    # use-calculator.ts, use-input-tracking.ts
@@ -38,6 +39,10 @@ middleware.ts               # Root: session refresh, /dashboard protect, /login 
 
 supabase/
   migrations/               # SQL migrations (e.g. 001_foundation_schema.sql); run manually in Supabase
+
+docs/
+  historical/               # Archived reports (e.g. QA_REPORT_V2.md); audit trail, not actively referenced
+  issues/                   # Issue investigations and ad-hoc notes
 ```
 
 ## Naming
@@ -75,7 +80,7 @@ supabase/
 - **Event names**: `lib/analytics/events.ts` (e.g. `NAV_LINK_CLICKED`, `FOOTER_LINK_CLICKED`, `FAQ_CTA_CLICKED`). Use constants; do not hardcode event strings.
 - **Server components**: For internal links that need click tracking use `TrackedLink` from `@/components/ui/tracked-link` (props: `eventName`, `eventParams`). For external links use `TrackedAnchor` from `@/components/ui/tracked-anchor`.
 - **Client components**: Use `trackEvent(eventName, params)` from `@/lib/analytics/gtag` in `onClick` handlers (e.g. NavBar). No need to wrap in TrackedLink when the component already has access to hooks.
-- **Params**: Match API_REFERENCE.md Navigation Events table (e.g. footer `link` is label lowercased with spaces → `_`).
+- **Params**: Match API_REFERENCE.md Navigation Events table (e.g. footer `link` is label lowercased with spaces → `_`). FAQ "Try the calculator" CTAs: pass optional `source` (e.g. `faq_rent`, `faq_closing`) via `eventParams` for per-CTA attribution.
 
 ## State & Data Flow
 
@@ -86,6 +91,7 @@ supabase/
 
 ## Error Handling
 
+- **Deferred operations (setTimeout/setInterval)**: Functions that schedule timeouts should return the ID so callers can clear on unmount. Callers store the ID in a ref and clear it in `useEffect` cleanup. Example: `scrollToFirstError` returns `ReturnType<typeof setTimeout> | null`; `CalculatorClient` uses `scrollToErrorTimeoutRef` and clears in effect cleanup.
 - Validation: return `ValidationResult` with `errors` array; UI shows per-field messages.
 - localStorage: save/load in hook; failures are silent (no user-facing error for full/disabled storage).
 - **Auth**: OAuth callback route handler wrapped in try/catch; on any error redirect to `/auth/error`. Login page: `signInWithOAuth` in try/catch/finally; set error state on catch, `setLoading(false)` in finally; display error with `ErrorMessage` below button; clear error when user clicks sign-in again.

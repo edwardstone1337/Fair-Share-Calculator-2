@@ -17,7 +17,6 @@ export function Footer() {
       style={{
         width: "100%",
         background: "var(--footer-bg)",
-        borderTop: "1px solid var(--footer-divider)",
       }}
     >
       <div className={styles.footerInner}>
@@ -49,7 +48,7 @@ export function Footer() {
             ))}
           </nav>
         </div>
-        <p className={styles.footerCopyright}>© 2025 Fair Share Calculator</p>
+        <p className={styles.footerCopyright}>© 2025–2026 Fair Share Calculator</p>
       </div>
     </footer>
   );

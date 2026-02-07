@@ -142,7 +142,7 @@ Event names live in `lib/analytics/events.ts`. Use `TrackedLink` (internal) or `
 | `nav_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"home"`; optional `source`: `"desktop"` \| `"mobile_menu"` \| `"logo"` |
 | `nav_menu_opened` | (none); fired on menu open only |
 | `footer_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"privacy"` \| `"terms"` (from label lowercased, spaces → `_`) |
-| `faq_cta_clicked` | `cta`: `"try_calculator"` \| `"buy_me_a_coffee"`; optional `section` |
+| `faq_cta_clicked` | `cta`: `"try_calculator"` \| `"buy_me_a_coffee"`. For `try_calculator`, optional `source`: `"faq_how_to_use"` \| `"faq_how_calculated"` \| `"faq_household_bills"` \| `"faq_rent"` \| `"faq_mortgage"` \| `"faq_60_40"` \| `"faq_closing"` (per-CTA attribution). |
 
 ---
 
@@ -258,7 +258,7 @@ Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_
 ### App route: `/faq`
 
 **Auth**: None. Public static page.  
-**Behavior**: Server-rendered FAQ page; metadata (title "FAQ — Fair Share Calculator", description targeting couples/spouse bill splitting); inline FAQPage JSON-LD (`mainEntity`: 5 Question/Answer pairs); content uses `--faq-*` tokens; "Try the calculator" CTAs are `TrackedLink` (GA `faq_cta_clicked`, cta `try_calculator`) styled as primary buttons (48px touch target, href `/`); Buy Me a Coffee is `TrackedAnchor` (GA `faq_cta_clicked`, cta `buy_me_a_coffee`); `BackToTopButton` at bottom. In sitemap: priority 0.7, changeFrequency monthly.
+**Behavior**: Server-rendered FAQ page; metadata (title/description targeting couples, bill splitting); FAQPage JSON-LD (`mainEntity`: 10 Question/Answer pairs); content uses `--faq-*` tokens; "Try the calculator" CTAs after selected FAQs are `TrackedLink` (GA `faq_cta_clicked`, cta `try_calculator`, optional `source` for attribution) styled as secondary buttons (48px touch target, href `/`); Buy Me a Coffee is `TrackedAnchor` (GA `faq_cta_clicked`, cta `buy_me_a_coffee`); floating `BackToTopButton` (fixed bottom-right, icon-only, appears after 400px scroll; optional `threshold` prop). In sitemap: priority 0.7, changeFrequency monthly.
 
 ---
 

@@ -16,13 +16,13 @@ export function validateForm(state: CalculatorFormState): ValidationResult {
   if (state.person1Name.trim().length > MAX_NAME_LENGTH) {
     errors.push({
       field: "person1Name",
-      message: "Name must be 50 characters or less",
+      message: "Keep names to 50 characters or fewer",
     });
   }
   if (state.person2Name.trim().length > MAX_NAME_LENGTH) {
     errors.push({
       field: "person2Name",
-      message: "Name must be 50 characters or less",
+      message: "Keep names to 50 characters or fewer",
     });
   }
 
@@ -31,7 +31,7 @@ export function validateForm(state: CalculatorFormState): ValidationResult {
   if (isNaN(salary1) || salary1 <= 0 || salary1 > MAX_SALARY) {
     errors.push({
       field: "person1Salary",
-      message: "Please enter a valid salary amount",
+      message: "Enter a take-home salary to get started",
     });
   }
 
@@ -39,44 +39,32 @@ export function validateForm(state: CalculatorFormState): ValidationResult {
   if (isNaN(salary2) || salary2 <= 0 || salary2 > MAX_SALARY) {
     errors.push({
       field: "person2Salary",
-      message: "Please enter a valid salary amount",
+      message: "Enter a take-home salary to get started",
     });
   }
 
   // --- Expenses ---
-  // V1 rules:
-  //   - Empty amount + empty label = skip (OK)
+  // Expense row rules:
+  //   - Empty amount = skip (label-only or both empty; row silently ignored)
   //   - Amount + empty label = OK (label defaults to "Expense")
-  //   - Empty amount + label present = ERROR (needs amount)
   //   - Amount + label = OK
   //   - Amount must be > 0 and ≤ max
-  //   - At least one valid expense required
+  //   - At least one valid expense required (validExpenseCount === 0 → global error)
 
   let validExpenseCount = 0;
 
   state.expenses.forEach((expense) => {
     const rawAmount = expense.amount.replace(/,/g, "").trim();
-    const label = expense.label.trim();
 
-    if (rawAmount === "" && label === "") {
-      // Skip — both empty is OK
-      return;
-    }
-
-    if (rawAmount === "" && label !== "") {
-      // Label present but no amount — error
-      errors.push({
-        field: `expense-${expense.id}`,
-        message: "Please enter an expense amount",
-      });
-      return;
+    if (rawAmount === "") {
+      return; // Skip — no amount: row ignored (label-only or both empty)
     }
 
     const amount = parseExpenseAmount(expense.amount);
     if (isNaN(amount) || amount <= 0 || amount > MAX_EXPENSE) {
       errors.push({
         field: `expense-${expense.id}`,
-        message: "Please enter a valid expense amount",
+        message: "Enter an expense amount",
       });
       return;
     }
@@ -88,7 +76,7 @@ export function validateForm(state: CalculatorFormState): ValidationResult {
     errors.push({
       field: "expenses-global",
       message:
-        "Please enter at least one expense amount to calculate",
+        "Add at least one expense to see your split",
     });
   }
 

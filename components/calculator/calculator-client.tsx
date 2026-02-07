@@ -10,6 +10,7 @@ import {
 } from "@/lib/calculator/share";
 import type { ExpenseInput } from "@/lib/calculator/types";
 import { validateForm } from "@/lib/calculator/validation";
+import { scrollToFirstError } from "@/lib/calculator/scroll-to-error";
 import {
   trackEvent,
   bucketExpenseAmount,
@@ -57,6 +58,24 @@ export function CalculatorClient() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
+  const scrollToErrorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up scroll-to-error timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollToErrorTimeoutRef.current !== null) {
+        clearTimeout(scrollToErrorTimeoutRef.current);
+        scrollToErrorTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  const scheduleScrollToError = (errors: { field: string; message: string }[]) => {
+    if (scrollToErrorTimeoutRef.current !== null) {
+      clearTimeout(scrollToErrorTimeoutRef.current);
+    }
+    scrollToErrorTimeoutRef.current = scrollToFirstError(errors);
+  };
 
   // Sync step with URL hash on mount
   useEffect(() => {
@@ -303,6 +322,7 @@ export function CalculatorClient() {
         error_type: errorType,
         returning_user: returningUserRef.current,
       });
+      scheduleScrollToError(errs);
       return;
     }
 
@@ -524,6 +544,10 @@ export function CalculatorClient() {
           person1Error={getError("person1Name")}
           person2Error={getError("person2Name")}
           prefilledNames={dataRestored}
+          validationErrors={state.validationErrors}
+          onValidationSummaryTap={() =>
+            scheduleScrollToError(state.validationErrors)
+          }
           onPerson1NameChange={(v) =>
             dispatch({ type: "SET_PERSON1_NAME", value: v })
           }

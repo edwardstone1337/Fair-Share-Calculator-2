@@ -69,6 +69,7 @@ export function ExpenseRow({
           onBlur={amountTracking.onBlur}
           onKeyDown={onKeyDown}
           error={!!error}
+          aria-describedby={error ? `${amountId}-error` : undefined}
           aria-label="Expense amount"
         />
         <ErrorMessage
@@ -81,7 +82,6 @@ export function ExpenseRow({
         <Input
           id={labelId}
           type="text"
-          placeholder="e.g. Rent, Groceries"
           value={expense.label}
           onChange={(e) => {
             const v = e.target.value;

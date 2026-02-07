@@ -22,9 +22,8 @@ export function ErrorMessage({
       style={{
         fontSize: "var(--error-font-size)",
         color: "var(--error-text)",
-        height: "var(--space-4)",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
+        minHeight: "var(--space-4)",
+        overflow: "visible",
         opacity: visible ? 1 : 0,
         transition: "opacity 0.2s ease",
       }}

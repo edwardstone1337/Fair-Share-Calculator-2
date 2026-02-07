@@ -524,16 +524,15 @@ public/
 ├── robots.txt
 ├── sitemap.xml
 ├── google81ca022cf87256b3.html
-├── images/
-│   ├── logoIcon.png
-│   └── Metadata-Image.jpg
-├── Show.svg
-├── Hide.svg
-└── lotus.png
+└── images/
+    ├── logoIcon.png
+    ├── lotus.png
+    └── Metadata-Image.jpg
 
 supabase/
 └── migrations/
-    └── 001_initial_schema.sql    # All tables, RLS, triggers, functions
+    ├── 001_foundation_schema.sql       # Households, household_members, configurations, expenses; RLS; run manually
+    └── 002_soft_delete_and_currency_pref.sql   # Soft delete, config limit, currency pref; run manually
 ```
 
 ---
