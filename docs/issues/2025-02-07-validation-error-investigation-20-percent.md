@@ -13,6 +13,16 @@
 
 ---
 
+## Resolution (2025-02-07)
+
+- **validation_error** GA events now fire only on Calculate attempt, not on blur. Historical data before 2025-02-07 is blur-time noise and not comparable.
+- **empty_expense_with_label** confirmed dead — no code path exists. The 228 historical events are legacy; this error type will not appear in future data.
+- New **validation_error** parameters: `error_count`, `error_fields` (comma-separated field IDs), `error_types` (comma-separated unique types), `returning_user`.
+- Real blocker rate estimated at **~1.3%** (27 of 2,093 calculate attempts failed), down from the misleading 18.4% blur-noise figure.
+- **Next step:** review one week of post-deploy data to confirm real error rate and identify top failing fields.
+
+---
+
 ## Current State vs Expected
 
 | Aspect | Current | Expected |
@@ -42,6 +52,8 @@
 | invalid_format | 77 | 58 | 5% |
 | too_large | 2 | 2 | <1% |
 
+*Note: This data reflects blur-time tracking (pre 2025-02-07). See Resolution section above.*
+
 ---
 
 ## Mapping error_type → Code
@@ -62,7 +74,7 @@
 
 1. **Input order** — Users may fill Expenses first (e.g. rent) and leave Salaries for last, then hit Calculate. Order might cause "missing" salary errors.
 2. **Salaries-first friction** — Income section appears first; users may not realise both salaries are required, or may intend to return and forget.
-3. **Blur vs Submit** — Most validation_error comes from blur (use-input-tracking). Users might fix errors before clicking Calculate, but the 18.4% figure suggests many don’t reach Calculate successfully.
+3. **Blur vs Submit** — Most validation_error comes from blur (use-input-tracking). Users might fix errors before clicking Calculate, but the 18.4% figure suggests many don't reach Calculate successfully.
 4. **Copy / guidance** — Current copy may not make required fields clear enough; see related issue `2025-02-07-calculator-error-truncation-and-copy.md`.
 
 ---
@@ -82,10 +94,10 @@
 
 ## Proposed Next Steps
 
-1. **Data** — Cross-tab GA: validation_error by `field_id` (person1Salary vs person2Salary) to see if one salary is missed more often.
-2. **Exploration** — A/B test: reorder sections (e.g. Expenses before Income) or add inline hints ("Both salaries required") to see impact on validation_error rate.
-3. **Copy** — Align error messages with FAQ tone and clarity (see error truncation issue).
-4. **Audit** — Confirm whether `empty_expense_with_label` is still emitted; remove or update if legacy.
+1. **Data** — Cross-tab GA: validation_error by `field_id` (person1Salary vs person2Salary) to see if one salary is missed more often. → **Superseded** — new submit-time tracking provides field-level detail directly (`error_fields`, `error_types`).
+2. **Exploration** — A/B test: reorder sections (e.g. Expenses before Income) or add inline hints ("Both salaries required") to see impact on validation_error rate. → **Deferred** — reassess after reviewing post-deploy data.
+3. **Copy** — Align error messages with FAQ tone and clarity (see error truncation issue). → **Unchanged** — still relevant.
+4. **Audit** — Confirm whether `empty_expense_with_label` is still emitted; remove or update if legacy. → **Done** — confirmed dead, no code path exists.
 
 ---
 

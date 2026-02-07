@@ -11,14 +11,12 @@ export type SaveState = "idle" | "saving" | "saved" | "error";
 
 export interface ResultsFooterProps {
   onBackToEdit: () => void;
-  onShare: () => void;
   onSave?: () => void;
   saveState?: SaveState;
 }
 
 export function ResultsFooter({
   onBackToEdit,
-  onShare,
   onSave,
   saveState,
 }: ResultsFooterProps) {
@@ -68,9 +66,6 @@ export function ResultsFooter({
           )}
         </Button>
       )}
-      <Button variant="primary" fullWidth onClick={onShare}>
-        Share Results
-      </Button>
       <a
         href="https://www.buymeacoffee.com/edthedesigner"
         target="_blank"

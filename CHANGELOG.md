@@ -4,6 +4,7 @@
 
 ### Removed
 
+- **Share Results button and all share-related code (2025-02-07)**: share API client, legacy URL builder, `?id=` and legacy query param loading. Cloudflare Worker to be decommissioned separately.
 - **Expense name input placeholder**: Removed placeholder text from expense name input — section description already provides examples; empty fields improve usability per NN Group research.
 - **Footer top border**: Removed for cleaner visual separation between main content and footer.
 - **Deleted orphaned legacy icon assets (Hide.svg, Show.svg)**: No longer referenced; app uses Material Icons via the Icon component.
@@ -23,6 +24,8 @@
 
 ### Changed
 
+- **Docs: Updated validation error investigation with resolution notes and corrected metrics** (2025-02-07): Resolution (2025-02-07) section, blur-time data note, proposed next steps marked done/deferred/superseded; empty_expense_with_label confirmed dead; real blocker rate ~1.3%.
+- **validation_error GA event now fires only on Calculate attempt (not on blur) with field-level detail (error_count, error_fields, error_types)** (2025-02-07): Removed blur-time validation_error from use-input-tracking; submit-time validation_error fires in calculator-client when validateForm returns errors, with error_count, comma-separated error_fields and error_types, and returning_user. Historical blur-time data is not comparable to post-deploy data.
 - **Fixed: setTimeout cleanup in scrollToFirstError to prevent stale focus calls on unmount** (2025-02-07): scrollToFirstError now returns the timeout ID; CalculatorClient clears it on unmount.
 - **Refreshed validation error copy to match conversational product tone (2025-02-07)**: Warmer, outcome-focused messages across salary, expense, and name validation.
 - **Fixed error message truncation (2025-02-07)**: ErrorMessage now uses minHeight and allows text wrapping so messages are fully readable on narrow viewports.

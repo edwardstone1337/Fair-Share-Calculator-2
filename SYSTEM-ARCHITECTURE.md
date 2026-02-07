@@ -31,7 +31,6 @@ Fair Share Calculator is an income-based bill split calculator for couples and r
 | **Hosting** | Vercel (auto-deploy from `main`) |
 | **Analytics** | GA4 (G-TQZ0HGB3MT), Hotjar (4934822), Microsoft Clarity (kyx62gpbw4) |
 | **Ads** | Google AdSense (pub-4075743460011014) |
-| **Legacy share links** | Cloudflare Worker (tight-firefly-c0dd.edwardstone1337.workers.dev) — read-only, kept alive indefinitely |
 | **Payments** | Stripe (future — not V2 launch scope) |
 
 ---
@@ -83,7 +82,6 @@ All spacing uses the 8px grid: 0, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64. N
 | `/auth/callback` | OAuth/magic-link code exchange | Internal | Route Handler |
 | `/auth/error` | Auth error display | Public | Client |
 | `/dashboard` | Saved configurations, account settings | **Protected** | SSR + Client |
-| `/share/[id]` | Read-only shared results view (V2 share links) | Public | SSR |
 | **404** | Not found page | Public | Static |
 
 ### SEO-Critical Route: `/`
@@ -339,20 +337,9 @@ interface CalculatorState {
 
 ---
 
-## Share Link Compatibility
+## Config Loading
 
-### Legacy Links (must keep working)
-
-1. **Backend short links:** `fairsharecalculator.com?id=xxx` → V2 detects `?id=` param → fetches from Cloudflare Worker API → pre-fills calculator and auto-calculates
-2. **Query param links:** `fairsharecalculator.com?name1=...&salary1=...&expenses=[...]` → V2 parses query params → pre-fills calculator
-
-### V2 Share Links (new)
-
-1. User clicks "Share" → server action creates `share_links` row with snapshot → returns `/share/[id]` URL
-2. Recipient opens `/share/[id]` → server-rendered read-only results page
-3. "Try with your own numbers" CTA → navigates to `/` (calculator)
-
-For anonymous users who click Share: fall back to the Cloudflare Worker (same as V1) since they can't create share_links rows without auth.
+Dashboard "Load" links to `/?config={id}`. On load, `getConfiguration(id)` populates the calculator form and sets step to input; URL param is then removed.
 
 ---
 
@@ -383,7 +370,7 @@ export function trackEvent(eventName: string, params?: Record<string, unknown>) 
 | `calculate_clicked` | Calculate button clicked |
 | `calculate_attempt` | Calculation completes (success/error) |
 | `results_viewed` | Results panel shown |
-| `share_results` | Share and copy succeeds |
+| ~~`share_results`~~ | *(Removed 2026-02-07 with Share feature)* |
 | `salary_toggle` | Show/hide salary |
 | `back_to_edit_clicked` | Back to edit from results |
 | `data_restored` | Data loaded from localStorage |
@@ -546,7 +533,7 @@ Next.js + TypeScript + Tailwind v4 scaffolding. Design tokens. File structure. S
 Port calculator UI to React components. Port calculation logic to `lib/calculator/compute.ts`. localStorage persistence. Step navigation (input ↔ results). All V1 functionality working identically. FAQ section (server-rendered).
 
 ### Phase 3 — SEO & Analytics
-All meta tags, structured data, canonical URL. GA4 + Hotjar + Clarity script integration. All V1 tracking events firing. AdSense integration. Legacy share link compatibility (?id= and query params).
+All meta tags, structured data, canonical URL. GA4 + Hotjar + Clarity script integration. All V1 tracking events firing. AdSense integration. Config loading via `?config=` from dashboard.
 
 ### Phase 4 — Currency Support
 Currency selector component. Formatted inputs with currency symbol. localStorage persistence for anonymous users. Currency formatting in results.

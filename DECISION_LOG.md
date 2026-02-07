@@ -1,5 +1,29 @@
 # Decision Log
 
+## [2026-02-07] - Removed Share Results feature
+
+**Context**: Share Results feature deprecated due to low usage. Usage data: 1% share rate (60 events vs 6,028 results viewed over 5 weeks, Jan 1 – Feb 7 2026). 44 unique users out of 2,067 who viewed results (2.1%). Cloudflare Worker (tight-firefly-c0dd) has 202 stored links and ~6 requests/day.
+
+**Decision**: Remove all share-related code from the app. Delete `lib/calculator/share.ts`. Remove Share Results button, handleShare, share API client, legacy URL builder, `?id=` and legacy query param loading. Worker left alive temporarily; will be decommissioned separately.
+
+**Rationale**: Maintenance cost outweighs value at 1% usage. App-side removal complete; Worker decommission is separate.
+
+**Consequences**: Share links (`?id=`) and legacy query params no longer load. Config loading (`?config=`) unchanged. DECISION_LOG, CHANGELOG, ARCHITECTURE, API_REFERENCE, SYSTEM-ARCHITECTURE updated.
+
+---
+
+## [2025-02-07] - validation_error analytics: submit-time only (no blur)
+
+**Context**: GA4 validation_error events were fired on blur in use-input-tracking for salary and expense_amount. ~82% of events were "missing" (user had not finished filling the form), so the 18.4% "error rate" was misleading. We needed signal only when the user actually attempted Calculate and hit validation.
+
+**Decision**: Remove all validation_error tracking from use-input-tracking blur handlers. Fire a single validation_error event in calculator-client handleCalculate when validateForm(state) returns errors (i.e. calculation blocked by validation). Params: error_count, error_fields (comma-separated field IDs), error_types (comma-separated unique types derived from field: missing_expense, missing, invalid_format, name_too_long), returning_user. Fire before the existing calculate_attempt (status error). Visual validation (red borders, messages) unchanged.
+
+**Rationale**: Blur-time events conflate "field left empty while tabbing" with "user tried to calculate and failed." Submit-time gives real blocker rate and field-level detail for prioritization. GA4 custom params must be string/number, hence comma-separated strings for lists.
+
+**Consequences**: Historical validation_error data before 2025-02-07 is not comparable (blur noise). empty_expense_with_label no longer appears (was legacy; no code path). API_REFERENCE and ARCHITECTURE document submit-time event and params; use-input-tracking has an in-file note about the change.
+
+---
+
 ## [2025-02-07] - Floating back-to-top: icon-only FAB (convention over text)
 
 **Context**: Back-to-top control was inline at bottom of FAQ with "↑ Back to Top" text. We wanted a reusable pattern that matches user expectation and doesn’t clutter content.

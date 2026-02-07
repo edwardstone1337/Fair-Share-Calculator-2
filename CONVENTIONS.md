@@ -99,6 +99,7 @@ docs/
 ## Analytics
 
 - All GA4 events via `trackEvent(eventName, params)` from `lib/analytics/gtag.ts`. Never throw; no-op if gtag missing.
+- **validation_error**: Fires only on Calculate attempt (in calculator-client when validateForm returns errors), with field-level params (error_count, error_fields, error_types). Not fired on blur; use-input-tracking no longer emits it.
 - New form sections with inputs: use `useInputTracking` and accept a `prefilled*` prop when data can be restored; pass to hook so restored data doesn’t fire `input_started`.
 
 ## Database

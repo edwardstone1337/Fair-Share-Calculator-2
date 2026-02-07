@@ -1,5 +1,9 @@
 "use client";
 
+// NOTE: validation_error GA events were removed from blur handlers on 2025-02-07.
+// Historical validation_error data before this date is blur-time noise and not comparable
+// to post-deploy data, which fires only on Calculate attempt (see calculator-client.tsx).
+
 import { useRef, useCallback } from "react";
 import { trackEvent } from "@/lib/analytics/gtag";
 
@@ -48,41 +52,6 @@ export function useInputTracking({
           field_type: fieldType,
           has_value: true,
         });
-      }
-
-      // Track validation_error on blur for salary and expense_amount fields
-      if (fieldType === "salary" || fieldType === "expense_amount") {
-        const rawValue = currentValue.replace(/,/g, "").trim();
-        let errorType: string | null = null;
-
-        if (fieldType === "salary") {
-          if (rawValue === "") {
-            errorType = "missing";
-          } else {
-            const numValue = parseFloat(rawValue);
-            if (isNaN(numValue) || numValue <= 0) {
-              errorType = "invalid_format";
-            } else if (numValue > 999999999) {
-              errorType = "too_large";
-            }
-          }
-        } else if (fieldType === "expense_amount") {
-          if (rawValue !== "") {
-            const numValue = parseFloat(rawValue);
-            if (isNaN(numValue) || numValue <= 0) {
-              errorType = "invalid_format";
-            } else if (numValue > 999999999) {
-              errorType = "too_large";
-            }
-          }
-        }
-
-        if (errorType) {
-          trackEvent("validation_error", {
-            field_id: fieldId,
-            error_type: errorType,
-          });
-        }
       }
     },
     [fieldId, fieldType]

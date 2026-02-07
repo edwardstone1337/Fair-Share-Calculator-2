@@ -11,7 +11,6 @@ import { ResultsFooter, type SaveState } from "./results-footer";
 export interface ResultsViewProps {
   result: CalculatorResult;
   onBackToEdit: () => void;
-  onShare: () => void;
   onSave?: () => void;
   saveState?: SaveState;
   resultsHeadingRef?: React.RefObject<HTMLHeadingElement | null>;
@@ -20,7 +19,6 @@ export interface ResultsViewProps {
 export function ResultsView({
   result,
   onBackToEdit,
-  onShare,
   onSave,
   saveState,
   resultsHeadingRef,
@@ -66,7 +64,6 @@ export function ResultsView({
       />
       <ResultsFooter
         onBackToEdit={onBackToEdit}
-        onShare={onShare}
         {...(onSave !== undefined && saveState !== undefined
           ? { onSave, saveState }
           : {})}

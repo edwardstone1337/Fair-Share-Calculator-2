@@ -16,7 +16,5 @@ export function getServerEnv() {
     SUPABASE_URL: SUPABASE_URL ?? "",
     SUPABASE_ANON_KEY: SUPABASE_ANON_KEY ?? "",
     SITE_URL: SITE_URL ?? "http://localhost:3000",
-    // Optional — falls back to hardcoded default in share.ts
-    NEXT_PUBLIC_SHARE_API_URL: process.env.NEXT_PUBLIC_SHARE_API_URL,
   };
 }

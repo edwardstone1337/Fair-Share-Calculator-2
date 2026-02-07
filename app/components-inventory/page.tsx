@@ -337,7 +337,6 @@ export default function ComponentsInventory() {
             <div style={{ maxWidth: '410px' }}>
               <ResultsFooter
                 onBackToEdit={noop}
-                onShare={noop}
                 onSave={noop}
                 saveState="idle"
               />

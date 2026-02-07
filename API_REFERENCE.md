@@ -61,32 +61,6 @@ Rules:
 
 ---
 
-## Share Module (`lib/calculator/share.ts`)
-
-Cloudflare Worker backend. Base URL: `process.env.NEXT_PUBLIC_SHARE_API_URL` or fallback `https://tight-firefly-c0dd.edwardstone1337.workers.dev`.
-
-### `ShareState`
-
-```ts
-{ name1, name2, salary1, salary2, expenses: { amount: string; label: string }[], currency?: string }
-```
-
-`currency`: optional ISO 4217 code (e.g. `'USD'`). Included in POST body and legacy URL params; restored when loading share link.
-
-### `shareViaBackend(state: ShareState): Promise<string>`
-
-POST `/share` with JSON body. Returns share URL: `{origin}{path}?id={id}`. Throws on non-2xx.
-
-### `buildLegacyShareUrl(state: ShareState): string`
-
-Builds query-param URL: `?name1=...&salary1=...&expenses=...`. Fallback when backend fails.
-
-### `loadFromShareId(id: string): Promise<ShareState>`
-
-GET `/share/:id`. Validates id (alphanumeric, underscore, hyphen; max 100 chars). Returns ShareState. Throws on invalid id or non-2xx.
-
----
-
 ## Utils (`lib/utils/`)
 
 ### `format.ts`
@@ -143,6 +117,15 @@ Event names live in `lib/analytics/events.ts`. Use `TrackedLink` (internal) or `
 | `nav_menu_opened` | (none); fired on menu open only |
 | `footer_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"privacy"` \| `"terms"` (from label lowercased, spaces → `_`) |
 | `faq_cta_clicked` | `cta`: `"try_calculator"` \| `"buy_me_a_coffee"`. For `try_calculator`, optional `source`: `"faq_how_to_use"` \| `"faq_how_calculated"` \| `"faq_household_bills"` \| `"faq_rent"` \| `"faq_mortgage"` \| `"faq_60_40"` \| `"faq_closing"` (per-CTA attribution). |
+
+### Calculator events
+
+Fired from `components/calculator/calculator-client.tsx`. GA4 custom params are string or number; arrays sent as comma-separated strings.
+
+| Event | When | Params |
+|-------|------|--------|
+| `validation_error` | Once per Calculate click when `validateForm(state)` returns errors (before `calculate_attempt` with status error). Not fired on blur. | `error_count`: number; `error_fields`: string (comma-separated field IDs, e.g. `person1Salary,person2Salary`); `error_types`: string (comma-separated unique types: `missing_expense`, `missing`, `invalid_format`, `name_too_long`); `returning_user`: boolean. |
+| `calculate_attempt` | On every Calculate click. | On error: `status: "error"`, `error_type`: `"missing_expense"` \| `"missing_salary"` \| `"validation_error"`, `returning_user`. On success: `status: "success"`, `expense_count`, `has_names`, `has_labels`, `total_expense_bucket`, `time_to_calculate_ms`, `returning_user`. |
 
 ---
 
@@ -224,17 +207,17 @@ When the user lands on `/dashboard` after OAuth (e.g. following the Save → log
 
 **Options**: `fieldId: string`, `fieldType: "name" | "salary" | "expense_label" | "expense_amount"`, `prefilled?: boolean`. When `prefilled` is true, `input_started` is not fired.
 
-**Returns**: `{ onFocus, onInput, onBlur }` — wire to input. Fires: `input_started` (first non-empty input), `input_completed` (blur + value changed), `validation_error` (blur, salary/expense_amount only, when value invalid/missing/too large).
+**Returns**: `{ onFocus, onInput, onBlur }` — wire to input. Fires: `input_started` (first non-empty input), `input_completed` (blur + value changed). Does **not** fire `validation_error` (moved to submit-time in calculator-client; see Calculator events below).
 
 ---
 
 ## Environment (`lib/env.ts`)
 
-Required and optional variables are listed in `.env.example` (Supabase, Share API).
+Required and optional variables are listed in `.env.example` (Supabase).
 
-#### `getServerEnv(): { SUPABASE_URL, SUPABASE_ANON_KEY, SITE_URL, NEXT_PUBLIC_SHARE_API_URL? }`
+#### `getServerEnv(): { SUPABASE_URL, SUPABASE_ANON_KEY, SITE_URL }`
 
-Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SHARE_API_URL`. Logs warnings (via `logger`) if Supabase vars missing; returns empty string for URL/key and `http://localhost:3000` for SITE_URL if unset. Share API URL is optional; client uses it in `share.ts` when set. `SUPABASE_SERVICE_ROLE_KEY` (in `.env.example`) is for future server-side use only; not read by `getServerEnv`.
+Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`. Logs warnings (via `logger`) if Supabase vars missing; returns empty string for URL/key and `http://localhost:3000` for SITE_URL if unset. `SUPABASE_SERVICE_ROLE_KEY` (in `.env.example`) is for future server-side use only; not read by `getServerEnv`.
 
 ---
 

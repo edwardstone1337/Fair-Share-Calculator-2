@@ -2,12 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useCalculator } from "@/lib/hooks/use-calculator";
-import {
-  shareViaBackend,
-  buildLegacyShareUrl,
-  loadFromShareId,
-  type ShareState,
-} from "@/lib/calculator/share";
 import type { ExpenseInput } from "@/lib/calculator/types";
 import { validateForm } from "@/lib/calculator/validation";
 import { scrollToFirstError } from "@/lib/calculator/scroll-to-error";
@@ -30,7 +24,6 @@ import { ResultsView } from "./results-view";
 import { Snackbar } from "@/components/ui/snackbar";
 import { logger } from "@/lib/utils/logger";
 
-const SNACKBAR_MESSAGE = "Calculation link copied to clipboard!";
 const authEnabled = process.env.NEXT_PUBLIC_AUTH_ENABLED === "true";
 
 export function CalculatorClient() {
@@ -52,7 +45,6 @@ export function CalculatorClient() {
     },
   });
 
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "error"
@@ -107,7 +99,7 @@ export function CalculatorClient() {
     }
   }, [state.step, result, dispatch]);
 
-  // URL param loading (?config=, ?id=, or legacy params) — runs after mount, overrides localStorage
+  // URL param loading (?config=) — runs after mount, overrides localStorage
   useEffect(() => {
     let cancelled = false;
 
@@ -115,7 +107,6 @@ export function CalculatorClient() {
       typeof window !== "undefined" ? window.location.search : ""
     );
     const configId = params.get("config");
-    const id = params.get("id");
 
     const fireDataRestored = (payload: {
       has_names: boolean;
@@ -137,7 +128,6 @@ export function CalculatorClient() {
       window.history.replaceState(null, "", newUrl);
     };
 
-    // ?config= takes precedence over ?id=
     if (configId) {
       getConfiguration(configId)
         .then((result) => {
@@ -190,113 +180,6 @@ export function CalculatorClient() {
         cancelled = true;
       };
     }
-
-    if (id) {
-      loadFromShareId(id)
-        .then((data) => {
-          if (cancelled) return;
-          const name1 = data.name1 || "";
-          const name2 = data.name2 || "";
-          const salary1 = data.salary1 || "";
-          const salary2 = data.salary2 || "";
-          const expenses = Array.isArray(data.expenses)
-            ? data.expenses.map((e) => ({
-                id: crypto.randomUUID(),
-                amount: e.amount || "",
-                label: e.label || "",
-              }))
-            : [{ id: crypto.randomUUID(), amount: "", label: "" }];
-
-          dispatch({
-            type: "RESTORE_STATE",
-            state: {
-              person1Name: name1,
-              person2Name: name2,
-              person1Salary: salary1,
-              person2Salary: salary2,
-              expenses,
-            },
-          });
-          if (data.currency) {
-            setCurrency(data.currency);
-          }
-
-          const expensesWithAmount = expenses.filter(
-            (e) => e.amount.replace(/,/g, "").trim() !== ""
-          );
-          fireDataRestored({
-            has_names: !!(name1.trim() || name2.trim()),
-            has_salaries: !!(salary1.replace(/,/g, "").trim() || salary2.replace(/,/g, "").trim()),
-            has_expenses: expensesWithAmount.length > 0,
-            expense_count: expensesWithAmount.length,
-          });
-        })
-        .catch((err) => {
-          if (cancelled) return;
-          logger.error("Failed to load shared configuration", err);
-          setErrorMessage(
-            "Could not load shared link. Please check the URL and try again."
-          );
-        });
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    const name1 = params.get("name1");
-    const salary1 = params.get("salary1");
-    if (name1 || salary1) {
-      const expensesRaw = params.get("expenses");
-      let expenses: ExpenseInput[] = [
-        { id: crypto.randomUUID(), amount: "", label: "" },
-      ];
-
-      if (expensesRaw) {
-        try {
-          const parsed = JSON.parse(expensesRaw);
-          if (Array.isArray(parsed)) {
-            expenses = parsed.map(
-              (e: { amount?: string; label?: string }) => ({
-                id: crypto.randomUUID(),
-                amount: e.amount || "",
-                label: e.label || "",
-              })
-            );
-          }
-        } catch {
-          // Ignore parse errors
-        }
-      }
-
-      const person1Name = params.get("name1") || "";
-      const person2Name = params.get("name2") || "";
-      const person1Salary = params.get("salary1") || "";
-      const person2Salary = params.get("salary2") || "";
-
-      dispatch({
-        type: "RESTORE_STATE",
-        state: {
-          person1Name,
-          person2Name,
-          person1Salary,
-          person2Salary,
-          expenses,
-        },
-      });
-
-      const currencyParam = params.get("currency");
-      if (currencyParam) setCurrency(currencyParam);
-
-      const expensesWithAmount = expenses.filter(
-        (e) => e.amount.replace(/,/g, "").trim() !== ""
-      );
-      fireDataRestored({
-        has_names: !!(person1Name.trim() || person2Name.trim()),
-        has_salaries: !!(person1Salary.replace(/,/g, "").trim() || person2Salary.replace(/,/g, "").trim()),
-        has_expenses: expensesWithAmount.length > 0,
-        expense_count: expensesWithAmount.length,
-      });
-    }
   }, [dispatch, setCurrency]);
 
   const handleCalculate = () => {
@@ -307,6 +190,27 @@ export function CalculatorClient() {
     if (!calcResult) {
       const validation = validateForm(state);
       const errs = validation.errors;
+
+      // Submit-time validation_error (field-level detail); GA4 params are string or number
+      const errorFields = errs.map((e) => e.field).join(",");
+      const errorTypeSet = new Set<string>();
+      for (const e of errs) {
+        if (e.field === "expenses-global") errorTypeSet.add("missing_expense");
+        else if (e.field === "person1Salary" || e.field === "person2Salary")
+          errorTypeSet.add("missing");
+        else if (e.field.startsWith("expense-")) errorTypeSet.add("invalid_format");
+        else if (e.field === "person1Name" || e.field === "person2Name")
+          errorTypeSet.add("name_too_long");
+      }
+      const errorTypes = [...errorTypeSet].join(",");
+
+      trackEvent("validation_error", {
+        error_count: errs.length,
+        error_fields: errorFields,
+        error_types: errorTypes,
+        returning_user: returningUserRef.current,
+      });
+
       const hasExpenseError = errs.some((e) => e.field.startsWith("expense"));
       const hasSalaryError = errs.some(
         (e) => e.field.startsWith("person") && e.field.includes("Salary")
@@ -410,36 +314,6 @@ export function CalculatorClient() {
     }
   };
 
-  const handleShare = async () => {
-    const shareState: ShareState = {
-      name1: state.person1Name,
-      name2: state.person2Name,
-      salary1: state.person1Salary,
-      salary2: state.person2Salary,
-      expenses: state.expenses
-        .filter((e) => e.amount.replace(/,/g, "").trim() !== "")
-        .map((e) => ({ amount: e.amount, label: e.label || "Expense" })),
-      currency: currency.code,
-    };
-
-    try {
-      const shareUrl = await shareViaBackend(shareState);
-      await navigator.clipboard.writeText(shareUrl);
-      trackEvent("share_results", { method: "copy_link" });
-      setSnackbarVisible(true);
-    } catch {
-      try {
-        const legacyUrl = buildLegacyShareUrl(shareState);
-        await navigator.clipboard.writeText(legacyUrl);
-        trackEvent("share_results", { method: "copy_link" });
-        setSnackbarVisible(true);
-      } catch (err) {
-        logger.error("Failed to copy share link", err);
-        setErrorMessage("Could not copy link. Please try again.");
-      }
-    }
-  };
-
   const resultWithCurrency = result
     ? { ...result, currencySymbol: currency.symbol }
     : null;
@@ -452,18 +326,11 @@ export function CalculatorClient() {
           <ResultsView
             result={resultWithCurrency}
             onBackToEdit={handleBackToEdit}
-            onShare={handleShare}
             onSave={authEnabled ? handleSave : undefined}
             saveState={authEnabled ? saveState : "idle"}
             resultsHeadingRef={resultsHeadingRef}
           />
         </div>
-        <Snackbar
-          message={SNACKBAR_MESSAGE}
-          visible={snackbarVisible}
-          onHide={() => setSnackbarVisible(false)}
-          duration={3000}
-        />
         <Snackbar
           message={errorMessage ?? ""}
           visible={!!errorMessage}
@@ -557,12 +424,6 @@ export function CalculatorClient() {
           onCalculate={handleCalculate}
         />
       </div>
-      <Snackbar
-        message={SNACKBAR_MESSAGE}
-        visible={snackbarVisible}
-        onHide={() => setSnackbarVisible(false)}
-        duration={3000}
-      />
       <Snackbar
         message={errorMessage ?? ""}
         visible={!!errorMessage}
