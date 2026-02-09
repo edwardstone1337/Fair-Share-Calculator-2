@@ -18,8 +18,10 @@ import { sanitizeInput } from "@/lib/utils/format";
 import { trackEvent } from "@/lib/analytics/gtag";
 
 // --- Initial state ---
-function createInitialExpense(): ExpenseInput {
-  return { id: crypto.randomUUID(), amount: "", label: "" };
+const INITIAL_EXPENSE_ID = "expense-initial";
+
+function createInitialExpense(id: string = crypto.randomUUID()): ExpenseInput {
+  return { id, amount: "", label: "" };
 }
 
 const initialState: CalculatorFormState = {
@@ -29,7 +31,8 @@ const initialState: CalculatorFormState = {
   person2Salary: "",
   person1SalaryVisible: false,
   person2SalaryVisible: false,
-  expenses: [createInitialExpense()],
+  // Use a deterministic ID for SSR/client parity to avoid hydration mismatches.
+  expenses: [createInitialExpense(INITIAL_EXPENSE_ID)],
   step: "input",
   validationErrors: [],
   result: null,
