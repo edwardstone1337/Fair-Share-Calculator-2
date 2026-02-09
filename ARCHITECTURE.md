@@ -106,6 +106,28 @@ Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft
 - **Supabase** — Live. PostgreSQL + Auth (Google OAuth). Schema deployed (households, household_members, configurations, expenses, RLS, `on_auth_user_created` trigger). App uses anon key only; service role not used in app code.
 - **Analytics / Ads** — GA4 (G-TQZ0HGB3MT), Hotjar (hjid 4934822), Microsoft Clarity (kyx62gpbw4), Google AdSense (ca-pub-4075743460011014). Scripts in root layout via Next.js `Script` (strategy `afterInteractive`). Events via `lib/analytics/gtag.ts`; silent no-op if gtag unavailable.
 
+## Vercel Cost & Caching
+
+**How Vercel billing works** — Vercel charges for **Fast Origin Transfer** (data from serverless functions → edge) and **Function Invocations** (each serverless run). These apply only to **dynamic** routes — pages that run server-side code on every request. Static and ISR pages are served from the CDN edge and do not trigger serverless functions, so they cost almost nothing regardless of traffic.
+
+**Current setup (Feb 2026)** — All public, traffic-facing pages (`/`, `/faq`, `/privacy`, `/terms`, `/login`) are statically prerendered at build time. Calculator usage is entirely client-side (no server round-trip per calculation). Organic traffic (first-time visitors from search) hits the CDN, not serverless. Only `/dashboard` and `/auth/callback` are dynamic (per-user session via `cookies()`). Auth is feature-flagged off, so those routes see zero traffic.
+
+**What forces a page to become dynamic (and expensive)** — Any of these in a page or layout’s server render path:
+
+- `export const dynamic = 'force-dynamic'`
+- Calling `cookies()` or `headers()` from `next/headers`
+- Using Supabase’s `createServerClient` (which calls `cookies()` internally)
+- A parent layout doing any of the above (cascades to all child pages)
+
+**Rules**
+
+- **Never** add `cookies()`, `headers()`, or the Supabase server client to `app/layout.tsx` — that would make every page dynamic and cost on every page view.
+- **Never** add `export const dynamic = 'force-dynamic'` to public pages without explicit justification in a PR.
+- If a page mixes public and user-specific content: use ISR + client hydration — server component fetches public data with a cookie-free client, `export const revalidate = 86400`, and a child client component hydrates auth/user data on mount.
+- After any routing or layout change: run `npm run build` and check the route table — every public page should show **○ Static**, not **ƒ Dynamic**.
+
+**Quick diagnostic** — Run `npm run build` and check the route table at the bottom. If any public page shows **ƒ Dynamic** that previously showed **○ Static**, investigate before merging.
+
 ## Deployment
 
 Current: local dev (`next dev`). Production deployment and DNS strategy described in `SYSTEM-ARCHITECTURE.md`.

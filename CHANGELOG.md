@@ -13,6 +13,7 @@
 
 ### Added
 
+- **docs: Vercel cost & caching guidelines in ARCHITECTURE.md** — New "Vercel Cost & Caching" section: how Vercel billing works (Fast Origin Transfer, Function Invocations), current static vs dynamic setup, what forces dynamic rendering, rules (no cookies/headers/Supabase server client in root layout; no force-dynamic on public pages without justification; ISR + client hydration for mixed pages), and build-time route table check.
 - **aria-describedby on calculator inputs with validation errors (2025-02-07)**: Added aria-describedby to all calculator inputs with validation errors — screen readers now announce error messages when inputs receive focus.
 - **Validation error summary below Calculate button (2025-02-07)**: Added validation error summary below Calculate button — shows error count with tap-to-scroll to first error; uses role="alert" for screen reader announcement.
 - **Scroll-to-first-error on validation failure (2025-02-07)**: Added scroll-to-first-error on validation failure — Calculate button now scrolls viewport to the first errored field and focuses the input for immediate correction.
