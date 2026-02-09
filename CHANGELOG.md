@@ -22,6 +22,8 @@
 - **FAQ page (Phase 1)**: Moved FAQ to dedicated `/faq` page with FAQPage JSON-LD structured data; replaced inline FAQ on calculator page with "How It Works" summary and link to `/faq`; updated FAQ content language to focus on couples (spouse, partner, couples budgeting).
 - **Site title in nav**: Site title "Fair Share" in navigation bar, visible on viewports ≥ 420px (Phase 2e); link has `aria-label`, visible title has `aria-hidden` for consistent screen reader announcement (see DECISION_LOG).
 - **dev:clean script**: `npm run dev:clean` runs `rm -rf .next && next dev`. Documented in CONVENTIONS (Development workflow): use after modifying globals.css, deleting files, or renaming exports to avoid stale .next cache; do not run `npm run build` while dev server is running.
+- **Critical regression test gate (2026-02-09)**: Added `npm run test:critical` (Node test runner + TypeScript compile to `.tmp-tests`) with focused coverage for calculator core invariants (`validateForm`, `calculateShares`), save payload normalization (`buildExpensesPayload`), and post-login pending-save validation (`buildPendingSaveInput`).
+- **Atomic save migration (2026-02-09)**: Added migration `supabase/migrations/003_atomic_create_configuration.sql` with RPC `public.create_configuration_with_expenses(...)` and EXECUTE grant to `authenticated`.
 
 ### Changed
 
@@ -55,6 +57,9 @@
 - **Consistent 48px touch target**: All interactive components (Button, Input, CurrencySelector, IconButton) enforce a minimum height of 48px via `--touch-target-min-height`. IconButton uses single size. Improves mobile usability and visual consistency.
 - **Fixed inconsistent component heights**: All interactive elements (Button, Input, CurrencySelector, auth error link) now use `height: var(--touch-target-min-height)` instead of `minHeight`, so they render at exactly 48px. With `box-sizing: border-box`, padding and border are absorbed into the 48px box; previously min-height was ineffective because natural heights already exceeded 48px.
 - **CurrencySelector**: Pill radius (`--radius-pill`), custom dropdown arrow via CSS background (`--currency-selector-arrow-size`), and logical padding tokens (`--currency-selector-padding-inline-start/end`) for consistent 48px height and appearance.
+- **Save integrity hardening (2026-02-09)**: `CalculatorClient` save flow now uses `buildExpensesPayload` so amount-only rows are saved (label defaults to `"Expense"`) and invalid/blank amounts are excluded; behavior now matches calculator computation rules.
+- **Pending-save migration hardening (2026-02-09)**: Dashboard post-login migration now validates with `buildPendingSaveInput`; invalid salaries/expenses no longer get coerced to `0`, and invalid pending data is dropped safely by clearing `fairshare_pending_save`.
+- **Server action save path switched to atomic RPC (2026-02-09)**: `saveConfiguration` now calls `create_configuration_with_expenses` (single DB transaction) to avoid partial writes where config insert succeeds but expenses insert fails.
 
 ### Added
 
@@ -144,4 +149,3 @@
 ### Removed
 
 - Static `public/sitemap.xml` (replaced by `app/sitemap.ts`).
-

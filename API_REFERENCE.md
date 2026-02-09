@@ -43,7 +43,7 @@ Rules:
 
 - Names: max 50 chars.
 - Salaries: required, positive, ≤ 999_999_999; parsed via `parseSalary`.
-- Expenses: empty amount + empty label = skip; label without amount = error; amount must be valid and > 0; at least one valid expense required.
+- Expenses: empty amount rows are skipped (including label-only rows); amount must be valid and > 0; at least one valid expense required.
 - Field identifiers: `person1Name`, `person2Name`, `person1Salary`, `person2Salary`, `expense-{id}`, `expenses-global`.
 
 ---
@@ -58,6 +58,37 @@ Rules:
 - **CalculatorResult**: see `calculateShares` return shape; includes `currencySymbol: string` (hook/UI add from context).
 - **CalculateSharesResult**: `Omit<CalculatorResult, 'currencySymbol'>` — pure compute return; no symbol.
 - **SavedFormData**: shape used for localStorage (`name1`, `name2`, `salary1`, `salary2`, `expenses`, optional `currency`).
+
+---
+
+### `save-payload.ts`
+
+#### `buildExpensesPayload(expenses): { label: string; amount: number }[]`
+
+Builds save payload rows from calculator expense inputs.
+
+Rules:
+
+- Include rows only when amount parses to a positive number.
+- Blank labels are normalized to `"Expense"`.
+- Invalid/blank/negative amounts are excluded.
+
+Used by save flows to keep persistence behavior aligned with calculation behavior.
+
+---
+
+### `pending-save.ts`
+
+#### `buildPendingSaveInput(form: SavedFormData): PendingSaveInput | null`
+
+Builds and validates the pending-save payload used after login redirect.
+
+Rules:
+
+- Both salaries must parse to positive numbers.
+- At least one valid expense must remain after payload normalization.
+- Currency is normalized to uppercase 3-letter code, fallback `"USD"`.
+- Returns `null` when critical fields are invalid (no zero coercion).
 
 ---
 
@@ -157,8 +188,8 @@ Fired from `components/calculator/calculator-client.tsx`. GA4 custom params are 
 When the user lands on `/dashboard` after OAuth (e.g. following the Save → login redirect), `DashboardClient` runs a one-time migration on mount:
 
 1. **Check** `localStorage.getItem('fairshare_pending_save') === 'true'`.
-2. **Read** `localStorage.getItem('fairshare_form')` and parse as JSON. If the result is invalid or does not have at least one of `name1`, `name2`, `salary1`, `salary2`, clear `fairshare_pending_save` and exit.
-3. **Map** the parsed `SavedFormData` to `SaveConfigInput` (names, salaries parsed to numbers, expenses mapped, currency from form or `'USD'`).
+2. **Read** `localStorage.getItem('fairshare_form')` and parse as JSON. If invalid shape, clear `fairshare_pending_save` and exit.
+3. **Validate + map** via `buildPendingSaveInput(form)`. If salaries/expenses are invalid, clear `fairshare_pending_save` and exit (no zero-value fallback).
 4. **Call** `saveConfiguration(input)`. On success: re-fetch configs via `listConfigurations()` and update local state, show snackbar "Configuration saved from your calculator session." On failure: show error snackbar with the action’s error message (e.g. config limit).
 5. **Clear** `fairshare_pending_save` from localStorage in both success and failure cases.
 
@@ -256,6 +287,7 @@ All actions use `createClient()` from `@/lib/supabase/server`. Return type is `A
 #### `saveConfiguration(input: SaveConfigInput): Promise<ActionResult<{ id: string }>>`
 
 - **input**: `name?`, `person1Name`, `person2Name`, `person1Salary`, `person2Salary`, `expenses: { label, amount }[]`, `currency`. If `name` is omitted, defaults to current date formatted (e.g. "February 6, 2026").
+- **Behavior**: Atomic save via DB RPC `public.create_configuration_with_expenses(...)`; configuration row and expense rows are inserted in one transaction.
 - **Returns**: On success, `data: { id: string }` (new configuration id). On failure, `error: string`.
 - **Error cases**: Not authenticated; household not found; configuration limit reached (max 10) — "Configuration limit reached (max 10). Delete a saved configuration to make room."; other DB errors → generic message.
 
@@ -299,7 +331,7 @@ All actions use `createClient()` from `@/lib/supabase/server`. Return type is `A
 
 ## Database Schema (`supabase/migrations/`)
 
-Run migrations manually in Supabase SQL Editor. Server Actions (Phase 6b) perform CRUD via RLS. Foundation: `001_foundation_schema.sql`; soft delete and config limit: `002_soft_delete_and_currency_pref.sql`.
+Run migrations manually in Supabase SQL Editor. Server Actions perform CRUD via RLS. Foundation: `001_foundation_schema.sql`; soft delete and config limit: `002_soft_delete_and_currency_pref.sql`; atomic save RPC: `003_atomic_create_configuration.sql`.
 
 ### Tables
 
@@ -343,6 +375,13 @@ Run migrations manually in Supabase SQL Editor. Server Actions (Phase 6b) perfor
 
 - **`public.check_config_limit()`** — runs BEFORE INSERT on `configurations`. Counts non-deleted configs for the same household (`WHERE household_id = NEW.household_id AND deleted_at IS NULL`). If count ≥ 10, raises exception `Household configuration limit reached (max 10)` with `ERRCODE check_violation`.
 - **Trigger**: `trigger_check_config_limit` on `public.configurations`.
+
+### Atomic save RPC (Phase 6b, migration 003)
+
+- **`public.create_configuration_with_expenses(...)`** — inserts configuration and all expenses atomically (single transaction in Postgres).
+- Validates that `p_expenses` is a non-empty JSON array and each amount is > 0.
+- Label normalization: blank labels become `"Expense"`.
+- Granted to role `authenticated` (EXECUTE).
 
 ---
 

@@ -8,8 +8,8 @@ import {
 } from "@/lib/actions/configurations";
 import { ConfigCard } from "@/components/dashboard/config-card";
 import { Snackbar } from "@/components/ui/snackbar";
-import { parseSalary, parseExpenseAmount } from "@/lib/calculator/compute";
 import type { SavedFormData } from "@/lib/calculator/types";
+import { buildPendingSaveInput } from "@/lib/calculator/pending-save";
 
 export interface DashboardClientProps {
   initialConfigs: ConfigSummary[];
@@ -52,23 +52,11 @@ export function DashboardClient({ initialConfigs }: DashboardClientProps) {
     }
 
     const form = parsed as SavedFormData;
-    const person1Salary = parseSalary(form.salary1 ?? "");
-    const person2Salary = parseSalary(form.salary2 ?? "");
-    const expenses = (form.expenses ?? [])
-      .filter((e) => (e.label ?? "").trim() !== "" || parseExpenseAmount(e.amount ?? "") > 0)
-      .map((e) => ({
-        label: (e.label ?? "").trim() || "Expense",
-        amount: parseExpenseAmount(e.amount ?? "") || 0,
-      }));
-
-    const input = {
-      person1Name: (form.name1 ?? "").trim() || "Person 1",
-      person2Name: (form.name2 ?? "").trim() || "Person 2",
-      person1Salary: Number.isFinite(person1Salary) && person1Salary > 0 ? person1Salary : 0,
-      person2Salary: Number.isFinite(person2Salary) && person2Salary > 0 ? person2Salary : 0,
-      expenses,
-      currency: typeof form.currency === "string" && form.currency.length === 3 ? form.currency.toUpperCase() : "USD",
-    };
+    const input = buildPendingSaveInput(form);
+    if (!input) {
+      localStorage.removeItem("fairshare_pending_save");
+      return;
+    }
 
     let cancelled = false;
     void (async () => {

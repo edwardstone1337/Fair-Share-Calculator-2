@@ -91,49 +91,37 @@ export async function saveConfiguration(
 
   const supabase = await createClient();
   try {
-    const { data: config, error: configError } = await supabase
-      .from("configurations")
-      .insert({
-        household_id: householdId,
-        name,
-        person_1_name: input.person1Name,
-        person_2_name: input.person2Name,
-        person_1_salary: input.person1Salary,
-        person_2_salary: input.person2Salary,
-        currency: input.currency,
-      })
-      .select("id")
-      .single();
+    const { data: configId, error: configError } = await supabase.rpc(
+      "create_configuration_with_expenses",
+      {
+        p_household_id: householdId,
+        p_name: name,
+        p_person_1_name: input.person1Name,
+        p_person_2_name: input.person2Name,
+        p_person_1_salary: input.person1Salary,
+        p_person_2_salary: input.person2Salary,
+        p_currency: input.currency,
+        p_expenses: input.expenses,
+      }
+    );
 
     if (configError) {
-      if (configError.code === "23514") {
+      if (
+        configError.code === "23514" &&
+        typeof configError.message === "string" &&
+        configError.message.includes("configuration limit")
+      ) {
         return { success: false, error: CONFIG_LIMIT_ERROR };
       }
-      logger.error("configurations: saveConfiguration insert failed", configError);
+      logger.error("configurations: saveConfiguration rpc failed", configError);
       return { success: false, error: DB_ERROR };
     }
-    if (!config?.id) {
+    if (typeof configId !== "string" || !configId) {
       logger.error("configurations: saveConfiguration no id returned");
       return { success: false, error: DB_ERROR };
     }
 
-    if (input.expenses.length > 0) {
-      const expenseRows = input.expenses.map((e, i) => ({
-        configuration_id: config.id,
-        label: e.label,
-        amount: e.amount,
-        sort_order: i,
-      }));
-      const { error: expensesError } = await supabase
-        .from("expenses")
-        .insert(expenseRows);
-      if (expensesError) {
-        logger.error("configurations: saveConfiguration expenses insert failed", expensesError);
-        return { success: false, error: DB_ERROR };
-      }
-    }
-
-    return { success: true, data: { id: config.id } };
+    return { success: true, data: { id: configId } };
   } catch (err) {
     logger.error("configurations: saveConfiguration threw", err);
     return { success: false, error: DB_ERROR };

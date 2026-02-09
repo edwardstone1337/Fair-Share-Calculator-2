@@ -105,6 +105,7 @@ docs/
 ## Database
 
 - **Migrations**: `supabase/migrations/` (e.g. `001_foundation_schema.sql`). Run manually in Supabase SQL Editor; no automated runner in app.
+- **Migration ordering**: Apply DB migrations before deploying code that depends on them (example: `003_atomic_create_configuration.sql` must exist before app code calls `create_configuration_with_expenses`).
 - **RLS**: All public tables have RLS enabled. Policies use `auth.uid()` and `public.user_household_ids()`; never bypass with service role in app code.
 - **CRUD**: Server Actions in `lib/actions/` (configurations, user-preferences) perform CRUD via anon key + RLS; no service role in app code.
 
@@ -118,6 +119,10 @@ docs/
 ## Development workflow
 
 - Use `npm run dev:clean` after any session that modifies `globals.css`, deletes files, or renames exports. This clears the `.next` cache and prevents stale module errors. Do not run `npm run build` while the dev server is running.
+- Before merge/deploy, run the local release gate:
+  - `npm run test:critical`
+  - `npm run lint`
+  - `npm run build`
 
 ## New Features
 

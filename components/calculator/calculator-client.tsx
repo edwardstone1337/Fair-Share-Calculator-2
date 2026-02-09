@@ -17,6 +17,7 @@ import {
   getConfiguration,
 } from "@/lib/actions/configurations";
 import { formatWithCommas } from "@/lib/utils/format";
+import { buildExpensesPayload } from "@/lib/calculator/save-payload";
 import { IncomeSection } from "./income-section";
 import { ExpensesSection } from "./expenses-section";
 import { ResultsView } from "./results-view";
@@ -291,12 +292,7 @@ export function CalculatorClient() {
     }
 
     setSaveState("saving");
-    const expensesPayload = state.expenses
-      .filter((e) => e.amount.replace(/,/g, "").trim() !== "" && (e.label || "").trim() !== "")
-      .map((e) => ({
-        label: (e.label || "Expense").trim(),
-        amount: parseFloat(e.amount.replace(/,/g, "")) || 0,
-      }));
+    const expensesPayload = buildExpensesPayload(state.expenses);
 
     const result = await saveConfiguration({
       person1Name: state.person1Name,

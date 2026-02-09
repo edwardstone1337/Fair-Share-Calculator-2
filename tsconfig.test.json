@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".tmp-tests",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2020",
+    "lib": ["es2020"],
+    "types": ["node"],
+    "jsx": "preserve",
+    "incremental": false
+  },
+  "include": [
+    "lib/calculator/compute.ts",
+    "lib/calculator/pending-save.ts",
+    "lib/calculator/validation.ts",
+    "lib/calculator/types.ts",
+    "lib/calculator/save-payload.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

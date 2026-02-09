@@ -24,7 +24,7 @@ Fair Share Calculator is an income-based bill split calculator for couples and r
 
 ### Authenticated (Supabase)
 
-Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft_delete_and_currency_pref.sql` (soft delete: `deleted_at` on configurations and expenses; SELECT policies exclude soft-deleted rows; trigger `check_config_limit` limits households to 10 non-deleted configs). Run migrations manually in Supabase SQL Editor. App uses anon key only; CRUD via Server Actions in `lib/actions/` (configurations, user-preferences).
+Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft_delete_and_currency_pref.sql` (soft delete: `deleted_at` on configurations and expenses; SELECT policies exclude soft-deleted rows; trigger `check_config_limit` limits households to 10 non-deleted configs) and `003_atomic_create_configuration.sql` (RPC `create_configuration_with_expenses` for atomic config+expense writes). Run migrations manually in Supabase SQL Editor. App uses anon key only; CRUD via Server Actions in `lib/actions/` (configurations, user-preferences).
 
 - **households** — id, name, currency, created_at, updated_at. One created per user on signup via trigger.
 - **household_members** — household_id, user_id (auth.users), role (`owner` | `partner`). RLS: members can read; owners can insert/update/delete members.
@@ -43,9 +43,9 @@ Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft
 - **Middleware** — `middleware.ts` calls `lib/supabase/middleware.ts` `createClient(request)`; `supabase.auth.getUser()` refreshes session. Protects `/dashboard` (redirect to `/login` if unauthenticated); redirects authenticated users from `/login` to `/dashboard`. Matcher excludes static assets, images, robots, sitemap, ads.txt, verification file.
 - **Auth flow** — `/login`: client uses `lib/supabase/client.ts`, `signInWithOAuth({ provider: 'google', options: { redirectTo: origin/auth/callback } })`; wrapped in try/catch/finally — on throw shows inline error via `ErrorMessage`, resets loading in finally; error cleared on retry. `GET /auth/callback`: server client `exchangeCodeForSession(code)`; redirect to `/dashboard` or `/auth/error`; entire handler in try/catch so any unhandled exception also redirects to `/auth/error`. `/dashboard`: server client `getUser()`; redirect to `/login` if no user.
 - **Calculation** — Pure sync flow: `validateForm(state)` → `calculateShares(...)` in `lib/calculator/compute.ts`. No server round-trip.
-- **Save configuration** — Only when `NEXT_PUBLIC_AUTH_ENABLED === 'true'`: Save button is rendered; `CalculatorClient` checks auth (browser `createClient().auth.getUser()`). If anonymous: set `fairshare_pending_save`, redirect to `/login`. If authenticated: call `saveConfiguration`; success → "Saved", failure → error snackbar. When flag is unset, Save button is not shown.
+- **Save configuration** — Only when `NEXT_PUBLIC_AUTH_ENABLED === 'true'`: Save button is rendered; `CalculatorClient` checks auth (browser `createClient().auth.getUser()`). If anonymous: set `fairshare_pending_save`, redirect to `/login`. If authenticated: build expense payload from rows with valid positive amounts (blank labels default to `"Expense"`), then call `saveConfiguration`; success → "Saved", failure → error snackbar. Save is atomic in DB via RPC (`create_configuration_with_expenses`). When flag is unset, Save button is not shown.
 - **Load configuration** — Dashboard "Load" links to `/?config={id}`. On load, `getConfiguration(id)` populates form and sets step to input; URL param is then removed.
-- **Dashboard (post-OAuth)** — When the user lands on `/dashboard` after signing in, `DashboardClient` on mount checks `fairshare_pending_save`. If `'true'`, it reads `fairshare_form`, maps to `SaveConfigInput`, calls `saveConfiguration`; on success re-fetches configs and shows "Configuration saved from your calculator session."; then clears `fairshare_pending_save` (cleared on failure too).
+- **Dashboard (post-OAuth)** — When the user lands on `/dashboard` after signing in, `DashboardClient` on mount checks `fairshare_pending_save`. If `'true'`, it reads `fairshare_form` and validates/maps through `buildPendingSaveInput`; invalid/malformed data is rejected (no zero-value fallback), `fairshare_pending_save` is cleared, and no write is attempted. Valid input calls `saveConfiguration`; on success re-fetches configs and shows "Configuration saved from your calculator session."; `fairshare_pending_save` is cleared on success/failure.
 
 ## Design System
 
@@ -64,6 +64,8 @@ Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft
 | `app/faq/page.tsx` | FAQ page: metadata, 10 FAQs, FAQPage JSON-LD; "Try the calculator" CTAs (secondary style) with optional `source` (faq_how_to_use, faq_rent, faq_closing, etc.) for faq_cta_clicked; Buy Me a Coffee via TrackedAnchor; token-driven (`--faq-*`) |
 | `app/globals.css` | Design tokens (all 3 layers) |
 | `lib/calculator/compute.ts` | Pure calculation + parse + formatCurrency(num, symbol) |
+| `lib/calculator/save-payload.ts` | Save payload normalization (`buildExpensesPayload`) — include valid amount rows, default blank labels to `Expense` |
+| `lib/calculator/pending-save.ts` | Strict pending-save parser (`buildPendingSaveInput`) for post-login migration from localStorage |
 | `lib/calculator/validation.ts` | validateForm (salaries, expenses, names) |
 | `lib/calculator/scroll-to-error.ts` | scrollToFirstError(errors) — maps validation field keys to DOM IDs; smooth-scrolls to first errored input and focuses it; returns timeout ID for caller cleanup on unmount (used by CalculatorClient via scheduleScrollToError) |
 | `lib/calculator/types.ts` | Form state, result, validation types |
@@ -88,6 +90,8 @@ Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft
 | `app/dashboard/page.tsx` | Protected; listConfigurations; "Your Configurations" + config cards or empty state; DashboardClient + ConfigCard |
 | `app/dashboard-preview/layout.tsx` | Metadata only: noindex, nofollow, title "Dashboard Preview — Fair Share Calculator" |
 | `app/dashboard-preview/page.tsx` | Client; dummy ConfigSummary[]; query params empty/full; DashboardClient; temporary, not in sitemap/nav |
+| `supabase/migrations/003_atomic_create_configuration.sql` | DB RPC `create_configuration_with_expenses` for atomic configuration saves |
+| `tests/critical/*.test.ts` | Critical regression tests for calculator core rules and save/pending-save payload integrity |
 
 ## Authentication & Backend
 
@@ -105,3 +109,8 @@ Schema in `supabase/migrations/001_foundation_schema.sql`; extended by `002_soft
 ## Deployment
 
 Current: local dev (`next dev`). Production deployment and DNS strategy described in `SYSTEM-ARCHITECTURE.md`.
+
+Recommended local release gate before deploy:
+- `npm run test:critical`
+- `npm run lint`
+- `npm run build`
