@@ -4,6 +4,7 @@ import { Josefin_Sans, Assistant } from "next/font/google";
 import { CurrencyProvider } from "@/lib/contexts/currency-context";
 import { NavBar } from "@/components/nav/nav-bar";
 import { Footer } from "@/components/nav/footer";
+import { SharedFooter } from "@/components/shared-footer";
 import "./globals.css";
 
 const josefinSans = Josefin_Sans({
@@ -72,6 +73,7 @@ export default function RootLayout({
           <NavBar />
           {children}
           <Footer />
+          <SharedFooter />
         </CurrencyProvider>
         {/* Google Analytics (GA4) */}
         <Script
