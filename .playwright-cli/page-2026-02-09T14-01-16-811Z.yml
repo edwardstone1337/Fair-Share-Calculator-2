@@ -1,0 +1,101 @@
+- generic [ref=e1]:
+  - navigation "Main navigation" [ref=e2]:
+    - generic [ref=e3]:
+      - link "Fair Share Calculator home" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img [ref=e5]
+        - generic [ref=e6]: Fair Share
+      - generic [ref=e7]:
+        - link "Calculator" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "FAQ" [ref=e9] [cursor=pointer]:
+          - /url: /faq
+      - combobox "Select currency" [ref=e11] [cursor=pointer]:
+        - option "USD ($)"
+        - option "CAD (C$)"
+        - option "AUD (A$)"
+        - option "NZD (NZ$)"
+        - option "GBP (£)" [selected]
+        - option "INR (₹)"
+        - option "PHP (₱)"
+        - option "SGD (S$)"
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Income-Based Bill Split Calculator" [level=1] [ref=e15]
+        - paragraph [ref=e16]: Split bills, rent, and shared expenses fairly based on income. Built for couples sharing household costs.
+      - generic [ref=e102]:
+        - article [ref=e103]:
+          - heading "Your Fair Share Breakdown" [active] [level=2] [ref=e104]
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - generic [ref=e107]: Person 1
+              - generic [ref=e108]: £800.00
+              - generic [ref=e109]: 67% of total
+            - generic [ref=e111]:
+              - generic [ref=e112]: Person 2
+              - generic [ref=e113]: £400.00
+              - generic [ref=e114]: 33% of total
+          - generic [ref=e116]:
+            - generic [ref=e117]: Total Shared Expenses
+            - generic [ref=e118]: £1,200.00
+            - generic [ref=e119]: 1 expense combined
+        - article [ref=e120]:
+          - generic [ref=e121]:
+            - generic [ref=e122]: receipt_long
+            - heading "Expense Breakdown" [level=2] [ref=e123]
+          - generic [ref=e125]:
+            - generic [ref=e126]:
+              - generic [ref=e127]: Expense
+              - generic [ref=e128]: £1,200.00
+            - generic [ref=e129]:
+              - generic [ref=e130]: £800.00
+              - generic [ref=e131]: £400.00
+            - generic [ref=e132]:
+              - generic [ref=e133]: Person 1
+              - generic [ref=e134]: Person 2
+        - article [ref=e135]:
+          - generic [ref=e136]:
+            - generic [ref=e137]: lightbulb
+            - heading "How Fair Share Works" [level=2] [ref=e138]
+          - paragraph [ref=e139]: We look at what each person earns and work out a fair percentage.
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - generic [ref=e142]: "Person 1 pays:"
+              - generic [ref=e143]: 67% of each expense
+            - generic [ref=e144]:
+              - generic [ref=e145]: "Person 2 pays:"
+              - generic [ref=e146]: 33% of each expense
+          - paragraph [ref=e147]: We divide costs based on how much each of you contributes to your combined income. Person 1 earns £4,000 and Person 2 earns £2,000, which adds up to £6,000. That means Person 1 earns 67% of the total and Person 2 earns 33%, so for each expense Person 1 pays 67% and Person 2 pays 33%.
+        - generic [ref=e148]:
+          - button "← Edit details" [ref=e149]
+          - button "Save Configuration" [ref=e150]
+          - link "Buy me a coffee" [ref=e151] [cursor=pointer]:
+            - /url: https://www.buymeacoffee.com/edthedesigner
+            - img "Buy me a coffee" [ref=e152]
+  - contentinfo [ref=e73]:
+    - generic [ref=e74]:
+      - generic [ref=e75]:
+        - navigation "Site navigation" [ref=e76]:
+          - link "Calculator" [ref=e77] [cursor=pointer]:
+            - /url: /
+          - link "FAQ" [ref=e78] [cursor=pointer]:
+            - /url: /faq
+        - navigation "Legal" [ref=e79]:
+          - link "Privacy Policy" [ref=e80] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms of Service" [ref=e81] [cursor=pointer]:
+            - /url: /terms
+      - paragraph [ref=e82]: © 2025–2026 Fair Share Calculator
+  - generic [ref=e87] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e88]:
+      - img [ref=e89]
+    - generic [ref=e92]:
+      - button "Open issues overlay" [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e95]: "0"
+          - generic [ref=e96]: "1"
+        - generic [ref=e97]: Issue
+      - button "Collapse issues badge" [ref=e98]:
+        - img [ref=e99]
+  - alert [ref=e101]

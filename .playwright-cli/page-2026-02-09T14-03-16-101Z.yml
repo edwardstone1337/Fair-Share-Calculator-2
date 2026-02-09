@@ -1,0 +1,112 @@
+- generic [active] [ref=e1]:
+  - navigation "Main navigation" [ref=e2]:
+    - generic [ref=e3]:
+      - link "Fair Share Calculator home" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img [ref=e5]
+        - generic [ref=e6]: Fair Share
+      - generic [ref=e7]:
+        - link "Calculator" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "FAQ" [ref=e9] [cursor=pointer]:
+          - /url: /faq
+      - combobox "Select currency" [ref=e11] [cursor=pointer]:
+        - option "USD ($)"
+        - option "CAD (C$)"
+        - option "AUD (A$)"
+        - option "NZD (NZ$)"
+        - option "GBP (£)" [selected]
+        - option "INR (₹)"
+        - option "PHP (₱)"
+        - option "SGD (S$)"
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - heading "Income-Based Bill Split Calculator" [level=1] [ref=e15]
+        - paragraph [ref=e16]: Split bills, rent, and shared expenses fairly based on income. Built for couples sharing household costs.
+      - generic [ref=e17]:
+        - generic [ref=e154]:
+          - generic [ref=e155]:
+            - heading "Your Incomes" [level=2] [ref=e156]
+            - paragraph [ref=e157]: Enter names and after-tax salaries to split bills proportionally based on income.
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - text: Your name
+              - textbox "Your name" [ref=e161]
+              - alert [ref=e162]
+            - generic [ref=e163]:
+              - text: Their name
+              - textbox "Their name" [ref=e165]
+              - alert [ref=e166]
+          - generic [ref=e167]:
+            - generic [ref=e168]:
+              - generic [ref=e169]: "*Your salary"
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - generic: £
+                  - textbox "Your salary" [ref=e172]:
+                    - /placeholder: "0"
+                    - text: 4,000
+                - button "Show salary" [ref=e173] [cursor=pointer]:
+                  - generic [ref=e174]: visibility
+              - alert [ref=e175]
+            - generic [ref=e176]:
+              - generic [ref=e177]: "*Their salary"
+              - generic [ref=e178]:
+                - generic [ref=e179]:
+                  - generic: £
+                  - textbox "Their salary" [ref=e180]:
+                    - /placeholder: "0"
+                    - text: 2,000
+                - button "Show salary" [ref=e181] [cursor=pointer]:
+                  - generic [ref=e182]: visibility
+              - alert [ref=e183]
+        - generic [ref=e185]:
+          - generic [ref=e186]:
+            - heading "Shared Bills & Expenses" [level=2] [ref=e187]
+            - paragraph [ref=e188]: Enter rent, utilities, groceries, or any shared bills to split based on income.
+          - generic [ref=e189]:
+            - generic [ref=e190]:
+              - generic [ref=e191]: "* Amount"
+              - generic [ref=e192]: Expense
+            - generic [ref=e195]:
+              - generic [ref=e196]:
+                - generic [ref=e197]:
+                  - generic: £
+                  - textbox "Expense amount" [ref=e198]:
+                    - /placeholder: "0"
+                    - text: 1,200
+                - alert [ref=e199]
+              - generic [ref=e200]:
+                - textbox "Expense label" [ref=e201]
+                - alert [ref=e202]
+          - button "Add Expense" [ref=e204]:
+            - generic [ref=e205]: add
+            - text: Add Expense
+        - button "Calculate" [ref=e207]
+  - contentinfo [ref=e73]:
+    - generic [ref=e74]:
+      - generic [ref=e75]:
+        - navigation "Site navigation" [ref=e76]:
+          - link "Calculator" [ref=e77] [cursor=pointer]:
+            - /url: /
+          - link "FAQ" [ref=e78] [cursor=pointer]:
+            - /url: /faq
+        - navigation "Legal" [ref=e79]:
+          - link "Privacy Policy" [ref=e80] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms of Service" [ref=e81] [cursor=pointer]:
+            - /url: /terms
+      - paragraph [ref=e82]: © 2025–2026 Fair Share Calculator
+  - generic [ref=e87] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e88]:
+      - img [ref=e89]
+    - generic [ref=e92]:
+      - button "Open issues overlay" [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e95]: "0"
+          - generic [ref=e96]: "1"
+        - generic [ref=e97]: Issue
+      - button "Collapse issues badge" [ref=e98]:
+        - img [ref=e99]
+  - alert [ref=e101]
