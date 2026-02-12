@@ -147,7 +147,7 @@ Event names live in `lib/analytics/events.ts`. Use `TrackedLink` (internal) or `
 | `nav_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"home"`; optional `source`: `"desktop"` \| `"mobile_menu"` \| `"logo"` |
 | `nav_menu_opened` | (none); fired on menu open only |
 | `footer_link_clicked` | `link`: `"calculator"` \| `"faq"` \| `"privacy"` \| `"terms"` (from label lowercased, spaces → `_`) |
-| `faq_cta_clicked` | `cta`: `"try_calculator"` \| `"buy_me_a_coffee"`. For `try_calculator`, optional `source`: `"faq_how_to_use"` \| `"faq_how_calculated"` \| `"faq_household_bills"` \| `"faq_rent"` \| `"faq_mortgage"` \| `"faq_60_40"` \| `"faq_closing"` (per-CTA attribution). |
+| `faq_cta_clicked` | `cta`: `"try_calculator"` \| `"buy_me_a_coffee"` \| `"feedback_survey"` \| `"feedback_survey_button"`. For `try_calculator`, optional `source`: `"faq_how_to_use"` \| `"faq_how_calculated"` \| `"faq_household_bills"` \| `"faq_rent"` \| `"faq_mortgage"` \| `"faq_60_40"` \| `"faq_closing"` (per-CTA attribution). |
 
 ### Calculator events
 
@@ -155,6 +155,7 @@ Fired from `components/calculator/calculator-client.tsx`. GA4 custom params are 
 
 | Event | When | Params |
 |-------|------|--------|
+| `feedback_clicked` | Results footer feedback button click (opens Hotjar feedback survey in a new tab). | (none) |
 | `validation_error` | Once per Calculate click when `validateForm(state)` returns errors (before `calculate_attempt` with status error). Not fired on blur. | `error_count`: number; `error_fields`: string (comma-separated field IDs, e.g. `person1Salary,person2Salary`); `error_types`: string (comma-separated unique types: `missing_expense`, `missing`, `invalid_format`, `name_too_long`); `returning_user`: boolean. |
 | `calculate_attempt` | On every Calculate click. | On error: `status: "error"`, `error_type`: `"missing_expense"` \| `"missing_salary"` \| `"validation_error"`, `returning_user`. On success: `status: "success"`, `expense_count`, `has_names`, `has_labels`, `total_expense_bucket`, `time_to_calculate_ms`, `returning_user`. |
 
@@ -272,7 +273,7 @@ Reads `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_
 ### App route: `/faq`
 
 **Auth**: None. Public static page.  
-**Behavior**: Server-rendered FAQ page; metadata (title/description targeting couples, bill splitting); FAQPage JSON-LD (`mainEntity`: 10 Question/Answer pairs); content uses `--faq-*` tokens; "Try the calculator" CTAs after selected FAQs are `TrackedLink` (GA `faq_cta_clicked`, cta `try_calculator`, optional `source` for attribution) styled as secondary buttons (48px touch target, href `/`); Buy Me a Coffee is `TrackedAnchor` (GA `faq_cta_clicked`, cta `buy_me_a_coffee`); floating `BackToTopButton` (fixed bottom-right, icon-only, appears after 400px scroll; optional `threshold` prop). In sitemap: priority 0.7, changeFrequency monthly.
+**Behavior**: Server-rendered FAQ page; metadata (title/description targeting couples, bill splitting); FAQPage JSON-LD (`mainEntity`: 10 Question/Answer pairs); content uses `--faq-*` tokens; "Try the calculator" CTAs after selected FAQs are `TrackedLink` (GA `faq_cta_clicked`, cta `try_calculator`, optional `source` for attribution) styled as secondary buttons (48px touch target, href `/`); About This Site section adds support and feedback CTAs using `TrackedAnchor` (Buy Me a Coffee `cta: buy_me_a_coffee`; feedback link/button `cta: feedback_survey` and `cta: feedback_survey_button`); floating `BackToTopButton` (fixed bottom-right, icon-only, appears after 400px scroll; optional `threshold` prop). In sitemap: priority 0.7, changeFrequency monthly.
 
 ---
 

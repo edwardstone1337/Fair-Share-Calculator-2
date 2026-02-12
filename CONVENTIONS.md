@@ -80,7 +80,7 @@ docs/
 - **Event names**: `lib/analytics/events.ts` (e.g. `NAV_LINK_CLICKED`, `FOOTER_LINK_CLICKED`, `FAQ_CTA_CLICKED`). Use constants; do not hardcode event strings.
 - **Server components**: For internal links that need click tracking use `TrackedLink` from `@/components/ui/tracked-link` (props: `eventName`, `eventParams`). For external links use `TrackedAnchor` from `@/components/ui/tracked-anchor`.
 - **Client components**: Use `trackEvent(eventName, params)` from `@/lib/analytics/gtag` in `onClick` handlers (e.g. NavBar). No need to wrap in TrackedLink when the component already has access to hooks.
-- **Params**: Match API_REFERENCE.md Navigation Events table (e.g. footer `link` is label lowercased with spaces → `_`). FAQ "Try the calculator" CTAs: pass optional `source` (e.g. `faq_rent`, `faq_closing`) via `eventParams` for per-CTA attribution.
+- **Params**: Match API_REFERENCE.md Navigation Events table (e.g. footer `link` is label lowercased with spaces → `_`). FAQ CTA tracking uses `faq_cta_clicked` with explicit `cta` values (`try_calculator`, `buy_me_a_coffee`, `feedback_survey`, `feedback_survey_button`); for `try_calculator`, pass optional `source` (e.g. `faq_rent`, `faq_closing`) via `eventParams` for per-CTA attribution.
 
 ## State & Data Flow
 
@@ -99,6 +99,7 @@ docs/
 ## Analytics
 
 - All GA4 events via `trackEvent(eventName, params)` from `lib/analytics/gtag.ts`. Never throw; no-op if gtag missing.
+- Results footer feedback button uses `trackEvent("feedback_clicked")` and opens the Hotjar survey in a new tab.
 - **validation_error**: Fires only on Calculate attempt (in calculator-client when validateForm returns errors), with field-level params (error_count, error_fields, error_types). Not fired on blur; use-input-tracking no longer emits it.
 - New form sections with inputs: use `useInputTracking` and accept a `prefilled*` prop when data can be restored; pass to hook so restored data doesn’t fire `input_started`.
 

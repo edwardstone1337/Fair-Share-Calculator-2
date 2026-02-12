@@ -12,3 +12,6 @@ export const FOOTER_LINK_CLICKED = "footer_link_clicked";
 
 // FAQ
 export const FAQ_CTA_CLICKED = "faq_cta_clicked";
+
+// Feedback
+export const FEEDBACK_CLICKED = "feedback_clicked";

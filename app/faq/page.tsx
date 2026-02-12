@@ -173,6 +173,11 @@ const hrStyle = {
   margin: "var(--space-5) 0",
 } as const;
 
+const inlineAnchorStyle = {
+  color: "var(--text-heading)",
+  textDecoration: "underline",
+} as const;
+
 export default function FaqPage() {
   return (
     <>
@@ -829,6 +834,52 @@ export default function FaqPage() {
             <FaqCtaLink source="faq_closing" />
           </p>
 
+          <hr style={hrStyle} />
+
+          <h2
+            style={{
+              ...h2Style,
+              fontSize: "var(--faq-title-size)",
+              fontFamily: "var(--faq-title-family)",
+              fontWeight: "var(--faq-title-weight)",
+              marginTop: 0,
+            }}
+          >
+            About This Site
+          </h2>
+
+          <hr style={hrStyle} />
+
+          <h3 style={h3Style}>
+            Is there anything I can do to support this site?
+          </h3>
+          <p style={pStyle}>
+            That&apos;s really kind of you to ask! Just using the site and
+            finding it helpful is support enough for us. We built this because we
+            wanted it to exist, and knowing other couples are getting use out of
+            it is pretty awesome.
+          </p>
+          <p style={{ ...pStyle, marginTop: "var(--space-4)" }}>
+            But if you&apos;re feeling generous and want to buy us a coffee (or
+            tea, we&apos;re not picky!), you can do that at{" "}
+            <TrackedAnchor
+              href="https://www.buymeacoffee.com/edthedesigner"
+              target="_blank"
+              rel="noopener noreferrer"
+              eventName={FAQ_CTA_CLICKED}
+              eventParams={{ cta: "buy_me_a_coffee" }}
+              style={inlineAnchorStyle}
+            >
+              buymeacoffee.com/edthedesigner
+            </TrackedAnchor>
+            . It helps keep the site running and fuels our late-night coding
+            sessions when we&apos;re adding new features or fixing bugs.
+          </p>
+          <p style={{ ...pStyle, marginTop: "var(--space-4)" }}>
+            Most importantly though, if you know another couple who&apos;s been
+            struggling with how to split bills fairly, maybe send them our way.
+            That&apos;s the best kind of support there is!
+          </p>
           <TrackedAnchor
             href="https://www.buymeacoffee.com/edthedesigner"
             target="_blank"
@@ -844,6 +895,51 @@ export default function FaqPage() {
               style={{ border: "none", maxWidth: "100%" }}
             />
           </TrackedAnchor>
+
+          <hr style={hrStyle} />
+
+          <h3 style={h3Style}>Is there a way to give feedback?</h3>
+          <p style={pStyle}>
+            We&apos;d love to hear from you! If you have suggestions, spotted a
+            bug, or just want to tell us what you think, you can{" "}
+            <TrackedAnchor
+              href="https://surveys.hotjar.com/75994e9b-1ee0-4dae-a644-0609ee4c4ecf"
+              target="_blank"
+              rel="noopener noreferrer"
+              eventName={FAQ_CTA_CLICKED}
+              eventParams={{ cta: "feedback_survey" }}
+              style={inlineAnchorStyle}
+            >
+              share your feedback here
+            </TrackedAnchor>
+            .
+          </p>
+          <p style={{ marginTop: "var(--space-4)" }}>
+            <TrackedAnchor
+              href="https://surveys.hotjar.com/75994e9b-1ee0-4dae-a644-0609ee4c4ecf"
+              target="_blank"
+              rel="noopener noreferrer"
+              eventName={FAQ_CTA_CLICKED}
+              eventParams={{ cta: "feedback_survey_button" }}
+              className="flex justify-center items-center focus:outline-none border-none focus-visible:[outline:var(--focus-ring-width)_solid_var(--focus-ring-color)] focus-visible:[outline-offset:var(--focus-ring-offset)]"
+              style={{
+                minHeight: "var(--touch-target-min-height)",
+                height: "var(--touch-target-min-height)",
+                padding: "var(--button-padding-y) var(--button-padding-x)",
+                borderRadius: "var(--button-radius)",
+                fontFamily: "var(--button-font-family)",
+                fontSize: "var(--button-font-size)",
+                fontWeight: "var(--button-font-weight)",
+                lineHeight: 1.25,
+                background: "var(--button-secondary-bg-default)",
+                border: "var(--border-width-default) solid var(--button-secondary-border)",
+                color: "var(--button-secondary-text)",
+                textDecoration: "none",
+              }}
+            >
+              Give us feedback
+            </TrackedAnchor>
+          </p>
 
           <hr style={hrStyle} />
 
