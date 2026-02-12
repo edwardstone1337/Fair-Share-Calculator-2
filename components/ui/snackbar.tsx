@@ -30,7 +30,7 @@ export function Snackbar({
   const onHideRef = useRef(onHide);
   useEffect(() => {
     onHideRef.current = onHide;
-  });
+  }, [onHide]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");

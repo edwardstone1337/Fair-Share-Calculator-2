@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { notFound } from 'next/navigation';
 
 // Atoms
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,10 @@ const h3Style: React.CSSProperties = {
 };
 
 export default function ComponentsInventory() {
+  if (process.env.NODE_ENV === 'production') {
+    notFound();
+  }
+
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [currencyValue, setCurrencyValue] = useState('USD');
 

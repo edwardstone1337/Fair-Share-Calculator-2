@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed
+
+- **Snackbar useEffect dependency array**: Added `[onHide]` dependency to the ref-sync effect to prevent unnecessary reruns every render.
+- **Components inventory publicly reachable**: Gated `/components-inventory` to non-production (`notFound()` in production); added `robots: { index: false, follow: false }` metadata via layout to prevent indexing.
+- **Sitemap missing legal pages**: Added `/privacy` and `/terms` to sitemap entries (priority 0.3, monthly changeFrequency).
+
 ### Removed
 
 - **NamesSection component** (`components/calculator/names-section.tsx`).
@@ -13,6 +19,9 @@
 
 ### Added
 
+- **FAQ: About This Site + feedback entry (2026-02-12)**: Added a new "About This Site" section at the end of `/faq` with support copy, Buy Me a Coffee link/button, and a dedicated feedback entry linking to the Hotjar survey.
+- **Results screen feedback CTA (2026-02-12)**: Added a secondary "Give us feedback" button in `ResultsFooter` that opens the Hotjar survey in a new tab and tracks `feedback_clicked`.
+- **Results screen support card (2026-02-12)**: Added an "Enjoying Fair Share?" support card above footer actions on results, including personal CTA copy and the Buy Me a Coffee image button.
 - **docs: Vercel cost & caching guidelines in ARCHITECTURE.md** — New "Vercel Cost & Caching" section: how Vercel billing works (Fast Origin Transfer, Function Invocations), current static vs dynamic setup, what forces dynamic rendering, rules (no cookies/headers/Supabase server client in root layout; no force-dynamic on public pages without justification; ISR + client hydration for mixed pages), and build-time route table check.
 - **aria-describedby on calculator inputs with validation errors (2025-02-07)**: Added aria-describedby to all calculator inputs with validation errors — screen readers now announce error messages when inputs receive focus.
 - **Validation error summary below Calculate button (2025-02-07)**: Added validation error summary below Calculate button — shows error count with tap-to-scroll to first error; uses role="alert" for screen reader announcement.
@@ -28,6 +37,8 @@
 
 ### Changed
 
+- **Moved `feedback_clicked` event name to analytics constants for consistency.**
+- **FAQ support/feedback CTA tracking (2026-02-12)**: Added new FAQ CTA values for feedback (`feedback_survey`, `feedback_survey_button`) and inline support links use heading-color token styling with underline.
 - **Merged Names section into Income section** — Form is now two cards instead of three. Section renamed to "Your Incomes" with combined name + salary fields.
 - **Calculate button and ValidationSummary moved to standalone block below Expenses section**.
 - **Fixed: Removed dead space in Expenses card when no global error is present**: ExpensesSection now renders global ErrorMessage only when globalError is set, eliminating ~48px gap between expense rows and Add Expense button.
