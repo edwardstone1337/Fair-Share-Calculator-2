@@ -105,7 +105,7 @@ export const metadata: Metadata = {
     url: "https://www.fairsharecalculator.com/faq",
   },
   alternates: {
-    canonical: "https://www.fairsharecalculator.com/faq",
+    canonical: "https://www.fairsharecalculator.com/",
   },
 };
 

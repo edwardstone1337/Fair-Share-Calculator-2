@@ -19,6 +19,7 @@
 
 ### Added
 
+- **Homepage FAQ section restored for SEO (2026-02-16)**: Reintroduced a semantic FAQ section on `/` below the calculator with H2/H3+paragraph Q&A content sourced from current `/faq` copy; added FAQPage JSON-LD on the homepage and retained the dedicated `/faq` page.
 - **FAQ: About This Site + feedback entry (2026-02-12)**: Added a new "About This Site" section at the end of `/faq` with support copy, Buy Me a Coffee link/button, and a dedicated feedback entry linking to the Hotjar survey.
 - **Results screen feedback CTA (2026-02-12)**: Added a secondary "Give us feedback" button in `ResultsFooter` that opens the Hotjar survey in a new tab and tracks `feedback_clicked`.
 - **Results screen support card (2026-02-12)**: Added an "Enjoying Fair Share?" support card above footer actions on results, including personal CTA copy and the Buy Me a Coffee image button.
@@ -37,6 +38,7 @@
 
 ### Changed
 
+- **/faq canonical target**: Updated `/faq` canonical URL to homepage (`https://www.fairsharecalculator.com/`) to signal `/` as primary for overlapping FAQ intent.
 - **Moved `feedback_clicked` event name to analytics constants for consistency.**
 - **FAQ support/feedback CTA tracking (2026-02-12)**: Added new FAQ CTA values for feedback (`feedback_survey`, `feedback_survey_button`) and inline support links use heading-color token styling with underline.
 - **Merged Names section into Income section** — Form is now two cards instead of three. Section renamed to "Your Incomes" with combined name + salary fields.

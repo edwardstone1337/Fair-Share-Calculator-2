@@ -1,4 +1,8 @@
 import { CalculatorClient } from "@/components/calculator/calculator-client";
+import {
+  HomepageFaqSection,
+  HOMEPAGE_FAQ_JSON_LD,
+} from "@/components/homepage-faq-section";
 
 export default function CalculatorPage() {
   return (
@@ -46,6 +50,8 @@ export default function CalculatorPage() {
         <CalculatorClient />
       </div>
 
+      <HomepageFaqSection />
+
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
@@ -75,6 +81,12 @@ export default function CalculatorPage() {
               "Free bill split calculator",
             ],
           }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(HOMEPAGE_FAQ_JSON_LD),
         }}
       />
     </main>
