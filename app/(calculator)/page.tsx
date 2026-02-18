@@ -42,7 +42,7 @@ export default function CalculatorPage() {
             Income-Based Bill Split Calculator
           </h1>
           <p style={{ fontSize: "var(--font-size-lg)", color: "var(--text-primary)" }}>
-            Split bills, rent, and shared expenses fairly based on income. Built for couples sharing household costs.
+            Split bills, rent, and shared expenses fairly based on income. Built for couples sharing household costs. Used by partners and spouses across the US, UK, Canada, and Australia.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function CalculatorPage() {
             browserRequirements: "Requires JavaScript enabled",
             operatingSystem: "All",
             keywords:
-              "bill split calculator, income based splitting, rent split calculator, fair share calculator, split bills based on income",
+              "bill split calculator, bill splitter calculator, income based splitting, rent split calculator, fair share calculator, split bills based on income, equitable bill split, divide bills based on income",
             offers: {
               "@type": "Offer",
               price: "0",

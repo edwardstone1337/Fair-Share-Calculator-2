@@ -9,17 +9,17 @@ export const HOMEPAGE_FAQ_ITEMS: HomepageFaqItem[] = [
   {
     question: "Why Split Bills Based on Income?",
     answer:
-      "When one partner earns more than the other, splitting everything 50/50 can put uneven pressure on the lower earner. Income-based splitting means each person contributes according to what they can afford, so both partners keep a similar proportion of their income after shared costs. It's a straightforward way to keep things fair without overcomplicating your finances.",
+      "When one spouse or partner earns more than the other, splitting everything 50/50 can put uneven pressure on the lower earner. Income-based splitting means each person contributes according to what they can afford, so both partners keep a similar proportion of their income after shared costs. It's a straightforward way to keep things fair without overcomplicating your finances.",
   },
   {
     question: "How Is the Income-Based Split Calculated?",
     answer:
-      "The calculator uses a simple proportional formula: 1. Add both incomes together to get your combined household income. 2. Calculate each person's percentage by dividing each income by the combined total. 3. Apply that percentage to every shared expense. Example: You earn GBP 3,500/month, your partner earns GBP 2,500/month. Combined income: GBP 6,000. Your share: 58%. Your partner's share: 42%. For a GBP 1,200 rent payment: you pay GBP 700, your partner pays GBP 500. The same percentage applies to every expense you add, whether that's rent, utilities, groceries, or anything else you share.",
+      "The calculator uses a simple proportional formula to split bills by percentage of income: 1. Add both incomes together to get your combined household income. 2. Calculate each person's percentage by dividing each income by the combined total. 3. Apply that percentage to every shared expense. Example: You earn GBP 3,500/month, your partner earns GBP 2,500/month. Combined income: GBP 6,000. Your share: 58%. Your partner's share: 42%. For a GBP 1,200 rent payment: you pay GBP 700, your partner pays GBP 500. The same percentage applies to every expense you add, whether that's rent, utilities, groceries, or anything else you share.",
   },
   {
     question: "How Do Couples Split Household Bills Fairly?",
     answer:
-      "There's no single right way. It depends on what works for your relationship. But income-based splitting is one of the most popular approaches for couples with different salaries because it's transparent and easy to agree on. The idea is simple: instead of splitting everything down the middle, each person contributes a percentage of shared costs that matches their percentage of the household income. The partner who earns more pays a larger share in absolute terms, but both partners give up the same proportion of their income. This works well for rent, utilities, mortgage payments, groceries, and other recurring household costs. Some couples split everything this way; others use it just for the big shared expenses and handle personal spending separately. The key is having an open conversation about what feels fair to both of you. Having clear numbers to work from makes that conversation much easier.",
+      "There's no single right way. It depends on what works for your relationship. But income-based splitting is one of the most popular and equitable approaches for couples with different salaries because it's transparent and easy to agree on. The idea is simple: instead of splitting everything down the middle, each person contributes a percentage of shared costs that matches their percentage of the household income. The partner who earns more pays a larger share in absolute terms, but both partners give up the same proportion of their income. It's a fair way to divide bills based on income without overcomplicating your finances. This works well for rent, utilities, mortgage payments, groceries, and other recurring household costs. Some couples split everything this way; others use it just for the big shared expenses and handle personal spending separately. The key is having an open conversation about what feels fair to both of you. Having clear numbers to work from makes that conversation much easier.",
   },
   {
     question: "Is Income-Based Splitting Fairer Than 50/50?",
@@ -35,6 +35,26 @@ export const HOMEPAGE_FAQ_ITEMS: HomepageFaqItem[] = [
     question: "What Does a 60/40 or 70/30 Split Look Like?",
     answer:
       "The split ratio depends entirely on your incomes. Examples: Your income $5,000/mo, Partner's income $5,000/mo - Your share 50%, Their share 50%. Your income $6,000/mo, Partner's income $4,000/mo - Your share 60%, Their share 40%. Your income $7,000/mo, Partner's income $3,000/mo - Your share 70%, Their share 30%. Your income $8,000/mo, Partner's income $2,000/mo - Your share 80%, Their share 20%. What 60/40 looks like in practice: For $2,500 in monthly shared expenses, a 60/40 split means one partner pays $1,500 and the other pays $1,000. What 70/30 looks like: For the same $2,500, one partner pays $1,750 and the other pays $750. You don't need to pick a ratio yourself. Just enter your actual incomes and the calculator works out the exact percentages. The examples above are rounded for simplicity; your real split might be 63/37 or 71/29 depending on your actual salaries.",
+  },
+  {
+    question: "How Do I Use the Fair Share Calculator?",
+    answer:
+      "The calculator works in four simple steps: 1. Enter both incomes, type in your after-tax salaries. The calculator uses these to work out each person's proportional share. 2. Add your shared expenses, enter rent, utilities, groceries, or any bills you split together. You can add as many expenses as you need. 3. Add your names (optional), personalise the results, or leave blank to use the defaults. 4. Hit Calculate, you'll see a clear breakdown showing exactly how much each person pays for every expense. The calculator supports 8 currencies including USD, GBP, AUD, and CAD, and will automatically detect yours based on your location. You can change the currency at any time using the selector at the top of the page.",
+  },
+  {
+    question: "Can I Use This to Split Mortgage Payments?",
+    answer:
+      "Yes. The calculator works for any shared expense, including mortgage payments. Enter your monthly mortgage payment as an expense, and the calculator will split it proportionally based on your incomes, just like rent or utilities. Enter the amount you actually pay each month (principal plus interest). If your payment includes insurance or council tax/property tax held in escrow, you can either include the full amount or enter them as separate expenses. The calculator splits the payment amount. It doesn't account for equity, ownership percentages, or legal obligations. If the split of ownership matters for your situation, it's worth speaking to a financial advisor. You can add your mortgage alongside other household expenses to see a complete picture of how your shared costs break down.",
+  },
+  {
+    question: "Should I Use Gross or Net Income for Bill Splitting?",
+    answer:
+      "We recommend using your net (after-tax) income: the amount that actually hits your bank account each month. This gives you the most accurate split because it reflects what each person genuinely has available to spend. If you want to be even more precise, you can enter your income after all regular deductions: tax, national insurance or social security, pension contributions, health insurance, and any other automatic deductions from your pay. The calculator takes whatever number you enter and uses it directly. It doesn't apply any tax calculations or deductions automatically. That means you're in full control of how precise you want to be. Quick guide: Good enough for most couples, use your monthly take-home pay (after tax). More precise, subtract regular deductions like pension, insurance, and loan repayments first. Keep it consistent, whatever method you choose, make sure both partners calculate their income the same way.",
+  },
+  {
+    question: "Does the Calculator Work With Different Currencies?",
+    answer:
+      "Yes. The calculator supports 8 currencies: USD ($), GBP (£), CAD (C$), AUD (A$), NZD (NZ$), INR (₹), PHP (₱), and SGD (S$). Your currency is automatically detected based on your browser's location settings, but you can change it at any time using the currency selector at the top of the page. Your preference is saved so you won't need to set it again next time. The currency setting affects how amounts are displayed. The underlying calculation works the same way regardless of which currency you choose.",
   },
 ];
 

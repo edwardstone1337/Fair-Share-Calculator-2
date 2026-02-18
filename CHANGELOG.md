@@ -19,6 +19,7 @@
 
 ### Added
 
+- **Homepage FAQ keyword coverage patch (2026-02-18)**: Added 4 FAQs to homepage (mortgage, gross/net income, currencies, how-to-use). Patched keyword gaps: spouse, bill splitter, divide, equitable, split by percentage, UK geo mention.
 - **Homepage FAQ section restored for SEO (2026-02-16)**: Reintroduced a semantic FAQ section on `/` below the calculator with H2/H3+paragraph Q&A content sourced from current `/faq` copy; added FAQPage JSON-LD on the homepage and retained the dedicated `/faq` page.
 - **FAQ: About This Site + feedback entry (2026-02-12)**: Added a new "About This Site" section at the end of `/faq` with support copy, Buy Me a Coffee link/button, and a dedicated feedback entry linking to the Hotjar survey.
 - **Results screen feedback CTA (2026-02-12)**: Added a secondary "Give us feedback" button in `ResultsFooter` that opens the Hotjar survey in a new tab and tracks `feedback_clicked`.
