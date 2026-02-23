@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- **Fixed /faq canonical URL pointing to homepage instead of /faq (SEO fix)**: The `/faq` page's `alternates.canonical` was set to `https://www.fairsharecalculator.com/` (the homepage) instead of `https://www.fairsharecalculator.com/faq`, causing Google to treat `/faq` as a duplicate of `/`.
 - **Snackbar useEffect dependency array**: Added `[onHide]` dependency to the ref-sync effect to prevent unnecessary reruns every render.
 - **Components inventory publicly reachable**: Gated `/components-inventory` to non-production (`notFound()` in production); added `robots: { index: false, follow: false }` metadata via layout to prevent indexing.
 - **Sitemap missing legal pages**: Added `/privacy` and `/terms` to sitemap entries (priority 0.3, monthly changeFrequency).
