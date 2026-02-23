@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { BackToTopButton } from "@/components/back-to-top-button";
+
+const BUY_ME_A_COFFEE_IMG =
+  "https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=edthedesigner&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff";
 
 export interface HomepageFaqItem {
   question: string;
@@ -7,54 +11,30 @@ export interface HomepageFaqItem {
 
 export const HOMEPAGE_FAQ_ITEMS: HomepageFaqItem[] = [
   {
-    question: "Why Split Bills Based on Income?",
+    question: "How Do I Use the Income-Based Bill Split Calculator?",
     answer:
-      "When one spouse or partner earns more than the other, splitting everything 50/50 can put uneven pressure on the lower earner. Income-based splitting means each person contributes according to what they can afford, so both partners keep a similar proportion of their income after shared costs. It's a straightforward way to keep things fair without overcomplicating your finances.",
+      "Enter both names to personalize the results. Type in your after-tax salaries for accurate income-based calculations. Enter rent, utilities, groceries, or any shared expenses you need to split. Hit Calculate and our calculator automatically determines fair splits based on income percentages. Get a clear breakdown showing exactly how much each person should pay. Send the calculation link to roommates or partners for transparency.",
   },
   {
-    question: "How Is the Income-Based Split Calculated?",
+    question: "How Is Income-Based Bill Splitting Calculated?",
     answer:
-      "The calculator uses a simple proportional formula to split bills by percentage of income: 1. Add both incomes together to get your combined household income. 2. Calculate each person's percentage by dividing each income by the combined total. 3. Apply that percentage to every shared expense. Example: You earn GBP 3,500/month, your partner earns GBP 2,500/month. Combined income: GBP 6,000. Your share: 58%. Your partner's share: 42%. For a GBP 1,200 rent payment: you pay GBP 700, your partner pays GBP 500. The same percentage applies to every expense you add, whether that's rent, utilities, groceries, or anything else you share.",
+      "Our calculator ensures fair bill splitting based on income. Calculate your income percentage: Your Income ÷ (Your Income + Roommate's/Partner's Income) = Your Contribution Percentage. Then multiply each bill by your percentage to find your fair share. Example: You earn $60,000, roommate earns $40,000. Your percentage: 60%. Roommate's percentage: 40%. For $2,000 monthly rent: You pay $1,200, Roommate pays $800.",
   },
   {
-    question: "How Do Couples Split Household Bills Fairly?",
+    question: "Why Is Income-Based Bill Splitting Fair?",
     answer:
-      "There's no single right way. It depends on what works for your relationship. But income-based splitting is one of the most popular and equitable approaches for couples with different salaries because it's transparent and easy to agree on. The idea is simple: instead of splitting everything down the middle, each person contributes a percentage of shared costs that matches their percentage of the household income. The partner who earns more pays a larger share in absolute terms, but both partners give up the same proportion of their income. It's a fair way to divide bills based on income without overcomplicating your finances. This works well for rent, utilities, mortgage payments, groceries, and other recurring household costs. Some couples split everything this way; others use it just for the big shared expenses and handle personal spending separately. The key is having an open conversation about what feels fair to both of you. Having clear numbers to work from makes that conversation much easier.",
+      "Income-based splitting ensures everyone contributes according to their financial ability. This approach is fairer than 50/50 splits when people have different incomes, reducing financial stress for lower earners while maintaining equity. Perfect for roommates, couples, or any shared living situation.",
   },
   {
-    question: "Is Income-Based Splitting Fairer Than 50/50?",
+    question:
+      "Does the Bill Split Calculator Account for Deductions Like Insurance or Savings?",
     answer:
-      "It depends on your situation. If you and your partner earn similar amounts, a 50/50 split might work perfectly well. But when there's a meaningful income gap, splitting everything equally can leave the lower earner with a much tighter budget while the higher earner has more to spare. Income-based splitting adjusts for that difference. Both partners contribute the same proportion of their income, so the financial impact feels more balanced. For example, if one partner earns GBP 60,000 and the other earns GBP 30,000, a 50/50 split on GBP 2,000 of bills means the lower earner spends a much larger share of their take-home pay. Neither approach is objectively better. It's about what feels right for your relationship. Many couples find that proportional splitting reduces money-related stress and makes shared finances feel like a team effort rather than a source of tension.",
+      "Currently, we use after-tax incomes for the most accurate bill splitting calculations. For even more precise results, you can enter your net income after insurance, retirement contributions, and other deductions. This ensures your bill split reflects your actual available income.",
   },
   {
-    question: "How Do You Split Rent Based on Income?",
+    question: "How Can I Provide Feedback or Suggest Features?",
     answer:
-      "Rent is usually the biggest shared expense for couples, so getting it right matters. The process is the same as splitting any other bill: the calculator divides your rent payment based on each person's share of the combined income. Example: Partner A earns $5,000/month, Partner B earns $3,000/month. Combined income: $8,000. Partner A's share: 62.5%. Partner B's share: 37.5%. For $2,200 monthly rent: Partner A pays $1,375, Partner B pays $825. You can enter rent alongside all your other shared expenses (utilities, internet, groceries) and the calculator will apply the same proportional split to everything. That way you get one clear picture of what each person owes across all your shared costs.",
-  },
-  {
-    question: "What Does a 60/40 or 70/30 Split Look Like?",
-    answer:
-      "The split ratio depends entirely on your incomes. Examples: Your income $5,000/mo, Partner's income $5,000/mo - Your share 50%, Their share 50%. Your income $6,000/mo, Partner's income $4,000/mo - Your share 60%, Their share 40%. Your income $7,000/mo, Partner's income $3,000/mo - Your share 70%, Their share 30%. Your income $8,000/mo, Partner's income $2,000/mo - Your share 80%, Their share 20%. What 60/40 looks like in practice: For $2,500 in monthly shared expenses, a 60/40 split means one partner pays $1,500 and the other pays $1,000. What 70/30 looks like: For the same $2,500, one partner pays $1,750 and the other pays $750. You don't need to pick a ratio yourself. Just enter your actual incomes and the calculator works out the exact percentages. The examples above are rounded for simplicity; your real split might be 63/37 or 71/29 depending on your actual salaries.",
-  },
-  {
-    question: "How Do I Use the Fair Share Calculator?",
-    answer:
-      "The calculator works in four simple steps: 1. Enter both incomes, type in your after-tax salaries. The calculator uses these to work out each person's proportional share. 2. Add your shared expenses, enter rent, utilities, groceries, or any bills you split together. You can add as many expenses as you need. 3. Add your names (optional), personalise the results, or leave blank to use the defaults. 4. Hit Calculate, you'll see a clear breakdown showing exactly how much each person pays for every expense. The calculator supports 8 currencies including USD, GBP, AUD, and CAD, and will automatically detect yours based on your location. You can change the currency at any time using the selector at the top of the page.",
-  },
-  {
-    question: "Can I Use This to Split Mortgage Payments?",
-    answer:
-      "Yes. The calculator works for any shared expense, including mortgage payments. Enter your monthly mortgage payment as an expense, and the calculator will split it proportionally based on your incomes, just like rent or utilities. Enter the amount you actually pay each month (principal plus interest). If your payment includes insurance or council tax/property tax held in escrow, you can either include the full amount or enter them as separate expenses. The calculator splits the payment amount. It doesn't account for equity, ownership percentages, or legal obligations. If the split of ownership matters for your situation, it's worth speaking to a financial advisor. You can add your mortgage alongside other household expenses to see a complete picture of how your shared costs break down.",
-  },
-  {
-    question: "Should I Use Gross or Net Income for Bill Splitting?",
-    answer:
-      "We recommend using your net (after-tax) income: the amount that actually hits your bank account each month. This gives you the most accurate split because it reflects what each person genuinely has available to spend. If you want to be even more precise, you can enter your income after all regular deductions: tax, national insurance or social security, pension contributions, health insurance, and any other automatic deductions from your pay. The calculator takes whatever number you enter and uses it directly. It doesn't apply any tax calculations or deductions automatically. That means you're in full control of how precise you want to be. Quick guide: Good enough for most couples, use your monthly take-home pay (after tax). More precise, subtract regular deductions like pension, insurance, and loan repayments first. Keep it consistent, whatever method you choose, make sure both partners calculate their income the same way.",
-  },
-  {
-    question: "Does the Calculator Work With Different Currencies?",
-    answer:
-      "Yes. The calculator supports 8 currencies: USD ($), GBP (£), CAD (C$), AUD (A$), NZD (NZ$), INR (₹), PHP (₱), and SGD (S$). Your currency is automatically detected based on your browser's location settings, but you can change it at any time using the currency selector at the top of the page. Your preference is saved so you won't need to set it again next time. The currency setting affects how amounts are displayed. The underlying calculation works the same way regardless of which currency you choose.",
+      "We'd love to hear from you! Give us a rating and share your feedback via the widget somewhere on the screen. Your insights help us make the income-based bill split calculator even better.",
   },
 ];
 
@@ -76,8 +56,7 @@ const sectionStyle = {
   alignSelf: "stretch",
   background: "var(--faq-bg)",
   color: "var(--faq-text)",
-  paddingTop: "var(--space-8)",
-  paddingBottom: "var(--space-8)",
+  paddingTop: "var(--space-16)",
 } as const;
 
 const contentStyle = {
@@ -86,7 +65,6 @@ const contentStyle = {
   flexDirection: "column",
   margin: "0 auto",
   maxWidth: "var(--faq-max-width)",
-  gap: "var(--space-4)",
 } as const;
 
 const h2Style = {
@@ -94,6 +72,7 @@ const h2Style = {
   fontFamily: "var(--faq-title-family)",
   fontWeight: "var(--faq-title-weight)",
   color: "var(--faq-text)",
+  marginBottom: "var(--space-4)",
 } as const;
 
 const h3Style = {
@@ -101,20 +80,31 @@ const h3Style = {
   fontFamily: "var(--faq-h3-family)",
   fontWeight: "var(--faq-h3-weight)",
   color: "var(--faq-text)",
+  marginTop: "var(--space-5)",
+  marginBottom: "var(--space-4)",
 } as const;
 
 const pStyle = {
   fontSize: "var(--faq-p-size)",
   color: "var(--faq-text)",
   fontFamily: "var(--font-family-body)",
-  lineHeight: "var(--line-height-relaxed)",
-  marginTop: "var(--space-2)",
+  marginBottom: "var(--space-4)",
 } as const;
 
 const hrStyle = {
   border: "none",
-  borderTop: "var(--border-width-default) solid var(--faq-hr-color)",
-  margin: "var(--space-2) 0",
+  borderTop: "1px solid var(--faq-hr-color)",
+  margin: "var(--space-5) 0",
+} as const;
+
+const listStyle = {
+  listStyleType: "disc",
+  paddingLeft: "var(--space-5)",
+  marginBottom: "var(--space-4)",
+} as const;
+
+const liStyle = {
+  marginBottom: "var(--space-2)",
 } as const;
 
 const faqLinkStyle = {
@@ -128,24 +118,214 @@ export function HomepageFaqSection() {
     <section aria-labelledby="homepage-faq-heading" style={sectionStyle}>
       <div style={contentStyle}>
         <h2 id="homepage-faq-heading" style={h2Style}>
-          Frequently Asked Questions
+          How to Split Bills Based on Income
         </h2>
+        <p style={pStyle}>
+          Our income-based bill split calculator helps you divide shared
+          expenses fairly. Whether you&apos;re splitting rent with roommates,
+          sharing bills with a partner, or managing shared living costs, our
+          tool ensures everyone pays their fair share based on what they earn.
+        </p>
+
+        <h3 style={h3Style}>
+          Common Use Cases for Income-Based Bill Splitting:
+        </h3>
+        <ul style={listStyle}>
+          <li style={liStyle}>
+            <strong>Rent Split Calculator:</strong> Split rent based on income
+            when roommates have different salaries
+          </li>
+          <li style={liStyle}>
+            <strong>Utility Bill Splitting:</strong> Divide electricity, water,
+            and internet bills proportionally
+          </li>
+          <li style={liStyle}>
+            <strong>Shared Grocery Costs:</strong> Split food expenses based on
+            income levels
+          </li>
+          <li style={liStyle}>
+            <strong>Joint Savings Goals:</strong> Calculate proportional
+            contributions to shared savings
+          </li>
+          <li style={liStyle}>
+            <strong>Couples Budgeting:</strong> Fair expense sharing for
+            partners with different incomes
+          </li>
+          <li style={liStyle}>
+            <strong>Roommate Expenses:</strong> Split household costs fairly
+            among roommates
+          </li>
+        </ul>
+
+        <h3 style={h3Style}>Why Split Bills Based on Income?</h3>
+        <p style={pStyle}>
+          Income-based bill splitting ensures financial fairness. Instead of
+          splitting everything 50/50, each person contributes based on their
+          ability to pay. This approach reduces financial stress and creates
+          more equitable living arrangements.
+        </p>
 
         <hr style={hrStyle} />
 
-        {HOMEPAGE_FAQ_ITEMS.map((item) => (
-          <article key={item.question}>
-            <h3 style={h3Style}>{item.question}</h3>
-            <p style={pStyle}>{item.answer}</p>
-          </article>
-        ))}
+        <h2 style={h2Style}>Frequently Asked Questions</h2>
+
+        <hr style={hrStyle} />
+
+        <h3 style={h3Style}>
+          How Do I Use the Income-Based Bill Split Calculator?
+        </h3>
+        <ul style={listStyle}>
+          <li style={liStyle}>
+            <strong>Enter Your Names:</strong> Add both names to personalize
+            the bill splitting results.
+          </li>
+          <li style={liStyle}>
+            <strong>Enter Both Incomes:</strong> Type in your after-tax
+            salaries for accurate income-based calculations.
+          </li>
+          <li style={liStyle}>
+            <strong>Add Shared Bills:</strong> Enter rent, utilities,
+            groceries, or any shared expenses you need to split.
+          </li>
+          <li style={liStyle}>
+            <strong>Hit Calculate:</strong> Our calculator automatically
+            determines fair splits based on income percentages.
+          </li>
+          <li style={liStyle}>
+            <strong>See Your Results:</strong> Get a clear breakdown showing
+            exactly how much each person should pay.
+          </li>
+          <li style={liStyle}>
+            <strong>Share Results:</strong> Send the calculation link to
+            roommates or partners for transparency.
+          </li>
+        </ul>
+
+        <hr style={hrStyle} />
+
+        <h3 style={h3Style}>
+          How Is Income-Based Bill Splitting Calculated?
+        </h3>
+        <p style={pStyle}>
+          Our calculator ensures fair bill splitting based on income.
+          Here&apos;s how the calculation works:
+        </p>
+        <ul style={listStyle}>
+          <li style={liStyle}>
+            <strong>Calculate Income Percentages:</strong>
+            <ul style={listStyle}>
+              <li style={liStyle}>
+                Your Income ÷ (Your Income + Roommate&apos;s/Partner&apos;s
+                Income) = Your Contribution Percentage
+              </li>
+            </ul>
+          </li>
+          <li style={liStyle}>
+            <strong>Apply to Bills:</strong>
+            <ul style={listStyle}>
+              <li style={liStyle}>
+                Multiply each bill by your percentage to find your fair share.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <p style={pStyle}>
+          <strong>Rent Split Example:</strong>
+        </p>
+        <ul style={listStyle}>
+          <li style={liStyle}>
+            You earn <strong>$60,000</strong>, roommate earns{" "}
+            <strong>$40,000</strong>.
+          </li>
+          <li style={liStyle}>
+            <strong>Your Percentage:</strong> 60%
+          </li>
+          <li style={liStyle}>
+            <strong>Roommate&apos;s Percentage:</strong> 40%
+          </li>
+          <li style={liStyle}>
+            For <strong>$2,000</strong> monthly rent:
+            <ul style={listStyle}>
+              <li style={liStyle}>
+                <strong>You Pay:</strong> $1,200
+              </li>
+              <li style={liStyle}>
+                <strong>Roommate Pays:</strong> $800
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <hr style={hrStyle} />
+
+        <h3 style={h3Style}>Why Is Income-Based Bill Splitting Fair?</h3>
+        <p style={pStyle}>
+          Income-based splitting ensures everyone contributes according to
+          their financial ability. This approach is fairer than 50/50 splits
+          when people have different incomes, reducing financial stress for
+          lower earners while maintaining equity. Perfect for roommates,
+          couples, or any shared living situation.
+        </p>
+
+        <hr style={hrStyle} />
+
+        <h3 style={h3Style}>
+          Does the Bill Split Calculator Account for Deductions Like Insurance
+          or Savings?
+        </h3>
+        <p style={pStyle}>
+          Currently, we use <strong>after-tax incomes</strong> for the most
+          accurate bill splitting calculations. For even more precise results,
+          you can enter your net income after insurance, retirement
+          contributions, and other deductions. This ensures your bill split
+          reflects your actual available income.
+        </p>
+
+        <hr style={hrStyle} />
+
+        <h3 style={h3Style}>
+          How Can I Provide Feedback or Suggest Features?
+        </h3>
+        <p style={pStyle}>
+          We&apos;d love to hear from you! Give us a rating and share your
+          feedback via the widget somewhere on the screen. Your insights help
+          us make the income-based bill split calculator even better.
+        </p>
+
+        <hr style={hrStyle} />
 
         <p style={pStyle}>
-          Need more detail?{" "}
+          By keeping things simple and transparent, we hope our bill split
+          calculator helps you and your roommates or partners find balance in
+          shared expenses. Whether you&apos;re splitting rent, utilities, or
+          groceries, income-based splitting ensures everyone pays their fair
+          share!
+        </p>
+
+        <a
+          href="https://www.buymeacoffee.com/edthedesigner"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "block", marginBottom: "var(--space-4)" }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={BUY_ME_A_COFFEE_IMG}
+            alt="Buy me a coffee"
+            style={{ border: "none", maxWidth: "100%" }}
+          />
+        </a>
+
+        <hr style={hrStyle} />
+
+        <p style={pStyle}>
+          Want more detail on specific topics?{" "}
           <Link href="/faq" style={faqLinkStyle}>
-            Read the full FAQ.
+            Visit our detailed FAQ page for couples.
           </Link>
         </p>
+
+        <BackToTopButton />
       </div>
     </section>
   );

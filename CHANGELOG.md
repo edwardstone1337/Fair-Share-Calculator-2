@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed
+
+- **Restored V1 FAQ content on homepage for SEO recovery (2026-02-23)**: Replaced the couples-focused homepage FAQ (added 2026-02-16, expanded 2026-02-18) with the original V1 FAQ content that was ranking successfully through Jan 2026. Source: `components/faq-section.tsx` at commit `60e7fd7`. Restores intro sections ("How to Split Bills Based on Income", "Common Use Cases", "Why Split Bills Based on Income?"), 5 original FAQ Q&As, closing copy, and Buy Me a Coffee link. Couples-focused FAQ retained on `/faq` page. Added cross-link to `/faq` at bottom.
+
 ### Fixed
 
 - **Fixed /faq canonical URL pointing to homepage instead of /faq (SEO fix)**: The `/faq` page's `alternates.canonical` was set to `https://www.fairsharecalculator.com/` (the homepage) instead of `https://www.fairsharecalculator.com/faq`, causing Google to treat `/faq` as a duplicate of `/`.
