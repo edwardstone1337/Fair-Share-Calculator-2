@@ -4,6 +4,8 @@ Source data: 90-day GSC organic query export (2026-05-22 → 2026-08-19; 1,001 q
 3,116 clicks, 25,493 impressions) and two Hotjar surveys (51 responses total; 49 rated,
 8 left free text).
 
+**Measuring the shipped change:** see `MEASUREMENT-CHECKPOINT-seo-2026-08.md`.
+
 **Status:** Discussion documents. Nothing here is agreed or scheduled. The "safe wins"
 (commit `8a53481`) shipped separately; everything below was deliberately deferred pending
 discussion.
