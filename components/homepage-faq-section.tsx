@@ -13,7 +13,7 @@ export const HOMEPAGE_FAQ_ITEMS: HomepageFaqItem[] = [
   {
     question: "How Do I Use the Income-Based Bill Split Calculator?",
     answer:
-      "Enter both names to personalize the results. Type in your after-tax salaries for accurate income-based calculations. Enter rent, utilities, groceries, or any shared expenses you need to split. Hit Calculate and our calculator automatically determines fair splits based on income percentages. Get a clear breakdown showing exactly how much each person should pay. Go through the breakdown together with your roommates or partners for full transparency.",
+      "Enter both names to personalize the results. Type in your after-tax salaries for accurate income-based calculations. Enter rent, utilities, groceries, or any shared expenses you need to split. Hit Calculate and our calculator automatically determines fair splits based on income percentages. Get a clear breakdown showing exactly how much each person should pay. Go through the breakdown with your roommates or partners for full transparency.",
   },
   {
     question: "How Is Income-Based Bill Splitting Calculated?",
