@@ -206,6 +206,10 @@ Other notable figures:
 
 ## 7. Revised measurement checkpoint
 
+> **To actually run the check, use `MEASUREMENT-CHECKPOINT-seo-2026-08.md`.** It is
+> self-contained: deploy-date recovery, re-pull instructions, pre-registered success criteria,
+> and the recovery confound. The baselines below are reproduced there.
+
 Re-pull the GSC export around **2026-10-01** (~6 weeks after `8a53481`). Use 16-month
 baselines, not the 90-day figures:
 

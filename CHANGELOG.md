@@ -12,6 +12,7 @@
 
 - **SEO vocabulary additions to homepage FAQ (2026-08-20)**: Additive copy only — no existing text removed or restructured. (1) Intro paragraph gains a sentence covering "split bill calculator", "bill splitter" and "split household bills fairly"; the reversed word order appeared nowhere in visible copy despite 11,184 impressions at 3.23% CTR over 16 months, and "how to split household bills fairly" is the site's 7th-largest impression query with **zero clicks in 16 months** (4,002 impressions, position 9.75). (2) New "Custom Split Ratios" bullet covering 60/40, 70/30, 80/20 and "money split". Homepage title and meta description deliberately unchanged.
 - **`/faq` OG image and Twitter card (2026-08-20)**: `openGraph.images` and an explicit `twitter` block were missing; added, pointing at the existing site-wide `/images/Metadata-Image.jpg`.
+- **Measurement checkpoint for the 2026-08 SEO change**: `docs/issues/MEASUREMENT-CHECKPOINT-seo-2026-08.md` — self-contained instructions for verifying whether the SEO copy change worked, with success criteria pre-registered before results were seen, and the February-recovery confound documented. Check ~6 weeks after PR #2 merges.
 - **Growth analysis docs (2026-08-20)**: `docs/issues/2026-08-20-growth-proposals.md` (split-money-calculator concept, lightweight export, pay-period breakdown, rejected list) and `docs/issues/2026-08-20-addendum-16-month-data.md` (16-month GSC reconstruction of the February incident, partial-recovery finding, GA4 funnel, corrected baselines, 2026-10-01 checkpoint).
 
 ### Changed
