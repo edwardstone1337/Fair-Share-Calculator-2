@@ -103,6 +103,14 @@ export const metadata: Metadata = {
     description:
       "How to split bills fairly as a couple when you earn different amounts. Step-by-step guide to income-based bill splitting for rent, utilities, mortgage, and shared expenses.",
     url: "https://www.fairsharecalculator.com/faq",
+    images: ["/images/Metadata-Image.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "How to Split Bills Based on Income — Fair Share Calculator FAQ",
+    description:
+      "How to split bills fairly as a couple when you earn different amounts. Step-by-step guide to income-based bill splitting for rent, utilities, mortgage, and shared expenses.",
+    images: ["/images/Metadata-Image.jpg"],
   },
   alternates: {
     canonical: "https://www.fairsharecalculator.com/faq",
