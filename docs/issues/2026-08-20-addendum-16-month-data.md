@@ -124,7 +124,7 @@ larger:
 
 **`how to split household bills fairly` is the single best target on the site**: 4,002
 impressions — the 7th-highest impression query overall — and **zero clicks in 16 months** at
-position 9.75. The shipped copy change (`8a53481`) added that exact phrase to the homepage.
+position 9.75. The shipped copy change (`ccf7252`) added that exact phrase to the homepage.
 If any single change in this work pays off, it should be this one.
 
 **The money cluster is roughly 6× larger than the 90-day sample suggested.** The generic
@@ -210,7 +210,7 @@ Other notable figures:
 > self-contained: deploy-date recovery, re-pull instructions, pre-registered success criteria,
 > and the recovery confound. The baselines below are reproduced there.
 
-Re-pull the GSC export around **2026-10-01** (~6 weeks after `8a53481`). Use 16-month
+Re-pull the GSC export around **2026-10-01** (~6 weeks after `ccf7252`). Use 16-month
 baselines, not the 90-day figures:
 
 **Targets of the shipped change:**

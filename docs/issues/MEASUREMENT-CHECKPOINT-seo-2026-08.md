@@ -10,7 +10,7 @@ Related background (optional): `2026-08-20-growth-proposals.md`,
 
 ## 1. What changed, and when
 
-**Change:** PR #2, branch `worktree-seo-survey-safe-wins`. Commits `8a53481`, `6a6029c`
+**Change:** PR #2, branch `worktree-seo-survey-safe-wins`. Commits `ccf7252`, `5cb3de6`
 (code) plus doc commits.
 
 Three phrases were added to homepage body copy in `components/homepage-faq-section.tsx`,
@@ -18,20 +18,23 @@ and one false claim about a removed share feature was reworded. Nothing was dele
 heading, title, meta description, canonical, sitemap or route was touched. `/faq` gained an
 OG image.
 
-**T=0 (deploy date):** the date PR #2 merged to `main`. Vercel auto-deploys from `main`, so
-merge date ≈ deploy date. Recover it with:
+## T=0 — **2026-08-20**
+
+PR #2 was rebase-merged to `main` on **2026-08-20 02:04 UTC**. Vercel auto-deploys from
+`main`, so that is the deploy date. First commit on main: `ccf7252`.
+
+Verify with:
 
 ```bash
-git log --format="%h %ad %s" --date=short --merges main | grep -i "seo-survey-safe-wins"
-# or, if squash-merged:
-git log --format="%h %ad %s" --date=short main | grep 8a53481
+git log --format="%h %ad %s" --date=iso main | grep ccf7252
 ```
 
-**Do not use the commit date (2026-08-20) as T=0** — the work sat on a branch first.
+**Check dates:**
 
-**When to check:** ~6 weeks after T=0 for a first read, ~12 weeks for a confirmed read.
-Google needs several weeks to recrawl and let rankings settle; a check at 2 weeks will be
-noise.
+| Read | Date | Purpose |
+|---|---|---|
+| First | **~2026-10-01** (6 weeks) | Initial signal. Google needs several weeks to recrawl and let rankings settle — a check before this is noise. |
+| Confirm | **~2026-11-12** (12 weeks) | Confirms whatever the first read showed, and separates a real shift from a transient one. |
 
 ---
 

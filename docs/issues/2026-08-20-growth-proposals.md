@@ -7,7 +7,7 @@ Source data: 90-day GSC organic query export (2026-05-22 → 2026-08-19; 1,001 q
 **Measuring the shipped change:** see `MEASUREMENT-CHECKPOINT-seo-2026-08.md`.
 
 **Status:** Discussion documents. Nothing here is agreed or scheduled. The "safe wins"
-(commit `8a53481`) shipped separately; everything below was deliberately deferred pending
+(commit `ccf7252`) shipped separately; everything below was deliberately deferred pending
 discussion.
 
 ---
@@ -134,7 +134,7 @@ we'll have learned the gap is structural and the page is better justified.
 
 ## Proposal 2 — Lightweight export / share
 
-Agreed direction: reword now (**shipped**, `8a53481`), build export later. This is the scope
+Agreed direction: reword now (**shipped**, `ccf7252`), build export later. This is the scope
 for "later".
 
 ### Evidence
@@ -262,7 +262,7 @@ Proposal 1.
 > — and that `/faq` earns 2 organic clicks in 16 months, which changes where content should
 > live. The proposals above stand; their supporting figures are conservative.
 
-Re-pull the GSC query export around **2026-10-01** (~6 weeks after `8a53481`) and check
+Re-pull the GSC query export around **2026-10-01** (~6 weeks after `ccf7252`) and check
 movement on the four terms the shipped copy targets:
 
 | Query | Baseline impressions | Baseline CTR | Baseline position |
