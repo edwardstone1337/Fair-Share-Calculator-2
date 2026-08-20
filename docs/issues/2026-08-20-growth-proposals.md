@@ -252,6 +252,14 @@ Proposal 1.
 
 ## Suggested measurement checkpoint
 
+> **Superseded — see `2026-08-20-addendum-16-month-data.md`.** The baselines below come from
+> a 90-day GA4-sourced sample. Full 16-month Search Console data arrived the same day and is
+> substantially larger (e.g. `how to split household bills fairly` is 4,002 impressions over
+> 16 months, not 411). Use the addendum's baselines. The addendum also establishes that the
+> February incident recovery is only **partial** — clicks are still 15–21% below pre-incident
+> — and that `/faq` earns 2 organic clicks in 16 months, which changes where content should
+> live. The proposals above stand; their supporting figures are conservative.
+
 Re-pull the GSC query export around **2026-10-01** (~6 weeks after `8a53481`) and check
 movement on the four terms the shipped copy targets:
 
