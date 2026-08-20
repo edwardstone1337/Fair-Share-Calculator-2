@@ -1,6 +1,30 @@
 # Decision Log
 
-## [2025-02-07] - Merged Names section into Income (two-card form)
+## [2026-08-20] - Homepage is the load-bearing SEO asset; additive-only content policy
+
+**Context**: 16 months of Search Console data (2025-04-18 → 2026-08-17) settled two open questions. First, the February 2026 ranking incident: January 2026 was the site's best month ever (4,002 clicks) with no pre-existing decline; clicks collapsed from 103 (Feb 9) to 17 (Feb 10), three days after `0bed004` deleted the 462-line FAQ section from the homepage, troughing at 8 clicks on Feb 14 (−88.3% on a 7-day rolling basis). The paraphrased restore (`06f8eea`, Feb 16) produced no recovery; the exact-text restore (`cc66266`, Feb 23) produced recovery four days later. Second, page attribution: the homepage carries 43,578 clicks / 572,666 impressions over 16 months, while `/faq` carries **2 clicks** / 527 impressions.
+
+**Decision**: Treat the homepage as the only page with meaningful organic search value, and adopt an additive-only policy for its content. Content that needs to rank goes on `/`, appended to the existing restored block rather than replacing or restructuring it. Do not delete `/faq` — it serves internal navigation (≥59 users in 7.6 months via `faq_cta_clicked`) and removing it would repeat the content-shuffle pattern that caused the incident — but do not expect it to acquire search traffic, and treat it as the low-risk place to experiment. Do not change the homepage `<title>` or meta description without an isolated, monitored experiment.
+
+**Rationale**: The paraphrase-vs-exact-text sequence is a natural experiment: no algorithm update distinguishes reworded from verbatim content on a schedule matching specific commits. The homepage never lost impressions during the crash, so this was relevance re-scoring, not deindexing or a manual action. With `/faq` at 0.005% of clicks, there is no attribution ambiguity left — effectively every ranking query belongs to the homepage, and any content moved off it is content removed from the index in practice.
+
+**Consequences**: Recovery is only partial — six months on, clicks remain 15–21% below equivalent pre-incident windows and average position is ~1 rank worse (7.88 vs 6.88 at 90 days), so the residual gap needs its own investigation rather than being assumed still in progress. Zero rich results have ever been recorded site-wide, so the FAQPage JSON-LD produces nothing and must not be used to justify future work (keep it; removal is risk for no gain). Full analysis in `docs/issues/2026-08-20-growth-proposals.md` and `docs/issues/2026-08-20-addendum-16-month-data.md`.
+
+---
+
+## [2026-08-20] - Corrected false Share Results promise in homepage FAQ
+
+**Context**: The homepage FAQ told users to "Send the calculation link to roommates or partners for transparency" — both as a visible step and inside the FAQPage JSON-LD. Share Results was removed on 2026-02-07 for 1% usage, but this copy was reintroduced by `cc66266` when V1 content was restored for SEO recovery, so the site was promising a feature that does not exist. Two Hotjar respondents (2026-06-26, 2026-07-21) asked for share/export after the removal.
+
+**Decision**: Reword in place rather than delete, keeping the "roommates / partners / transparency" keyword surface intact. Visible copy and the JSON-LD answer string are kept identical to each other.
+
+**Rationale**: Deleting the sentence would remove text from the recently-restored block that recovered rankings; rewording preserves the keyword surface while making the claim true. 13 words of the 1,018-word restored block were modified (1.28%), nothing deleted, no heading touched.
+
+**Consequences**: If a lightweight export ships (see `docs/issues/2026-08-20-growth-proposals.md`), the original V1 sentence becomes true again and could be restored verbatim, returning that 1.28% to exact match. The visible FAQ list and `HOMEPAGE_FAQ_ITEMS` remain two hand-maintained copies of overlapping text — a latent drift hazard that predates this change.
+
+---
+
+## [2026-02-07] - Merged Names section into Income (two-card form)
 
 **Context**: Calculator had three cards (Income, Names, Expenses) with Calculate and ValidationSummary inside the Names card. We wanted a shorter form and a single primary CTA below the input cards.
 
@@ -12,7 +36,7 @@
 
 ---
 
-## [2025-02-07] - Removed Share Results feature
+## [2026-02-07] - Removed Share Results feature
 
 **Context**: Share Results feature deprecated due to low usage. Usage data: 1% share rate (60 events vs 6,028 results viewed over 5 weeks, Jan 1 – Feb 7 2026). 44 unique users out of 2,067 who viewed results (2.1%). Cloudflare Worker (tight-firefly-c0dd) has 202 stored links and ~6 requests/day.
 
@@ -24,7 +48,7 @@
 
 ---
 
-## [2025-02-07] - validation_error analytics: submit-time only (no blur)
+## [2026-02-07] - validation_error analytics: submit-time only (no blur)
 
 **Context**: GA4 validation_error events were fired on blur in use-input-tracking for salary and expense_amount. ~82% of events were "missing" (user had not finished filling the form), so the 18.4% "error rate" was misleading. We needed signal only when the user actually attempted Calculate and hit validation.
 
@@ -36,7 +60,7 @@
 
 ---
 
-## [2025-02-07] - Floating back-to-top: icon-only FAB (convention over text)
+## [2026-02-07] - Floating back-to-top: icon-only FAB (convention over text)
 
 **Context**: Back-to-top control was inline at bottom of FAQ with "↑ Back to Top" text. We wanted a reusable pattern that matches user expectation and doesn’t clutter content.
 
@@ -48,7 +72,7 @@
 
 ---
 
-## [2025-02-07] - Per-FAQ CTA tracking and secondary style (Phase 2b)
+## [2026-02-07] - Per-FAQ CTA tracking and secondary style (Phase 2b)
 
 **Context**: FAQ page had a single "Try the calculator" CTA pattern. We wanted conversion attribution by FAQ entry (which content drives users to the calculator) and a secondary visual style so CTAs don’t compete with primary actions.
 
@@ -60,7 +84,7 @@
 
 ---
 
-## [2025-02-07] - Wire GA4 tracking into NavBar, Footer, FAQ (Phase 2)
+## [2026-02-07] - Wire GA4 tracking into NavBar, Footer, FAQ (Phase 2)
 
 **Context**: Phase 1 added `lib/analytics/events.ts`, `TrackedLink`, and `TrackedAnchor`. We needed to wire tracking into the three surfaces without changing visuals or converting server components to client unnecessarily.
 
@@ -72,7 +96,7 @@
 
 ---
 
-## [2025-02-07] - Remove How It Works from calculator page; FAQ CTAs as primary buttons
+## [2026-02-07] - Remove How It Works from calculator page; FAQ CTAs as primary buttons
 
 **Context**: After Phase 1, the calculator page had a "How It Works" summary + link to `/faq`; FAQ page had text-styled "Try the calculator →" links. We wanted a leaner calculator page and clearer CTAs on the FAQ page.
 
@@ -84,7 +108,7 @@
 
 ---
 
-## [2025-02-07] - Shared link config for NavBar and Footer
+## [2026-02-07] - Shared link config for NavBar and Footer
 
 **Context**: Footer redesign and nav link parity require a single source of truth for Calculator/FAQ and legal links to prevent label or URL drift between NavBar and Footer.
 
@@ -96,7 +120,7 @@
 
 ---
 
-## [2025-02-07] - Nav title breakpoint lowered to 420px (Phase 2e)
+## [2026-02-07] - Nav title breakpoint lowered to 420px (Phase 2e)
 
 **Context**: Nav title "Fair Share" was visible at ≥480px (`--breakpoint-sm`). We wanted the title visible on more narrow viewports (e.g. small phones in portrait).
 
@@ -108,7 +132,7 @@
 
 ---
 
-## [2025-02-07] - Nav final fixes: reorder, hide auth, accessibility (Phase 2c)
+## [2026-02-07] - Nav final fixes: reorder, hide auth, accessibility (Phase 2c)
 
 **Context**: Nav needed element reorder (Menu far-right on mobile), auth removed from UI for now, and accessibility gaps closed (ARIA, focus, keyboard).
 
@@ -120,7 +144,7 @@
 
 ---
 
-## [2025-02-07] - Nav layout fix: centred links, 640px breakpoint, Menu Button (Phase 2b)
+## [2026-02-07] - Nav layout fix: centred links, 640px breakpoint, Menu Button (Phase 2b)
 
 **Context**: After Phase 2, desktop nav links jumped horizontally when switching between `/` (CurrencySelector visible) and `/faq` (CurrencySelector hidden). Near 480px, links collided with the currency selector. Menu used a raw `<button>` instead of the design system `Button`.
 
@@ -132,7 +156,7 @@
 
 ---
 
-## [2025-02-07] - Navigation redesign: desktop links, mobile menu, conditional currency (Phase 2)
+## [2026-02-07] - Navigation redesign: desktop links, mobile menu, conditional currency (Phase 2)
 
 **Context**: After adding `/faq`, the nav needed direct links to Calculator and FAQ, a mobile-friendly menu, and the currency selector only on the calculator page.
 
@@ -144,7 +168,7 @@
 
 ---
 
-## [2025-02-07] - FAQ moved to dedicated /faq page (Phase 1)
+## [2026-02-07] - FAQ moved to dedicated /faq page (Phase 1)
 
 **Context**: FAQ lived inline on the calculator page; we wanted a dedicated route for SEO (FAQPage JSON-LD, targeted meta), clearer information architecture, and room to refocus content on couples.
 
@@ -156,7 +180,7 @@
 
 ---
 
-## [2025-02-07] - Nav title aria-hidden with persistent aria-label
+## [2026-02-07] - Nav title aria-hidden with persistent aria-label
 
 **Context**: Nav home link shows logo + "Fair Share" title at ≥420px (Phase 2e); below that only the logo is visible. Screen readers need a clear announcement without duplication when both link text and aria-label exist.
 
@@ -168,7 +192,7 @@
 
 ---
 
-## [2025-02-06] - dev:clean script for cache hygiene
+## [2026-02-06] - dev:clean script for cache hygiene
 
 **Context**: After editing `globals.css`, deleting files, or renaming exports, Next.js can serve stale modules from `.next` until the cache is cleared, causing confusing build/runtime errors.
 
@@ -180,7 +204,7 @@
 
 ---
 
-## [2025-02-06] - Removed paddingTop from expense row delete column
+## [2026-02-06] - Removed paddingTop from expense row delete column
 
 **Context**: Expense row delete column had `paddingTop: calc(var(--label-line-height) * var(--label-font-size) + var(--space-1))` to align the delete button with inputs. Expense rows have no labels (unlike FormField layout), so this offset was compensating for non-existent label space.
 
@@ -192,7 +216,7 @@
 
 ---
 
-## [2025-02-06] - Switched from min-height to height for touch-target enforcement
+## [2026-02-06] - Switched from min-height to height for touch-target enforcement
 
 **Context**: Touch targets were specified via `minHeight: var(--touch-target-min-height)` (48px). In practice, padding + content + border already exceeded 48px on Button, Input, and CurrencySelector, so min-height did nothing and rendered heights were inconsistent (e.g. Button ~56–58px, Input/CurrencySelector ~53px). Only IconButton was exactly 48px because it uses an explicit size token.
 
@@ -204,7 +228,7 @@
 
 ---
 
-## [2025-02-06] - Collapsed IconButton to single 48px size
+## [2026-02-06] - Collapsed IconButton to single 48px size
 
 **Context**: IconButton sm and md were both 48px after touch-target standardization, making the size prop redundant.
 
@@ -216,7 +240,7 @@
 
 ---
 
-## [2025-02-06] - Standardized 48px touch target (interactive components)
+## [2026-02-06] - Standardized 48px touch target (interactive components)
 
 **Context**: Mobile usability and visual consistency require a minimum touch-target height across all interactive elements.
 
@@ -228,7 +252,7 @@
 
 ---
 
-## [2025-02-06] - Dashboard design preview route (temporary)
+## [2026-02-06] - Dashboard design preview route (temporary)
 
 **Context**: Need to iterate on dashboard layout and empty/full states without requiring auth or hitting real server actions.
 
@@ -240,7 +264,7 @@
 
 ---
 
-## [2025-02-06] - localStorage migration + currency DB sync (Phase 6e)
+## [2026-02-06] - localStorage migration + currency DB sync (Phase 6e)
 
 **Context**: Anonymous users who tap Save are sent to `/login` with `fairshare_pending_save` and form data in `fairshare_form`. After OAuth they land on `/dashboard` and need that data saved as a configuration. Separately, logged-in users should have currency preference in the DB so it follows them across devices.
 
@@ -252,7 +276,7 @@
 
 ---
 
-## [2025-02-06] - Gate Save button behind auth feature flag (Phase 6d-fix)
+## [2026-02-06] - Gate Save button behind auth feature flag (Phase 6d-fix)
 
 **Context**: Auth is hidden in production via `NEXT_PUBLIC_AUTH_ENABLED` (set to `'true'` only in .env.local). The Save button on results redirects anonymous users to `/login`, which is a dead end when auth is disabled.
 
@@ -264,7 +288,7 @@
 
 ---
 
-## [2025-02-06] - Soft delete + config limit (Phase 6a)
+## [2026-02-06] - Soft delete + config limit (Phase 6a)
 
 **Context**: Need to support "delete" without losing referential integrity or enabling unbounded config growth per household.
 
@@ -276,7 +300,7 @@
 
 ---
 
-## [2025-02-06] - Salary/expense inputs: type="text" + inputMode="numeric"
+## [2026-02-06] - Salary/expense inputs: type="text" + inputMode="numeric"
 
 **Context**: Salary and expense amount fields need numeric entry, optional show/hide (salary), and minimal browser autofill interference.
 
@@ -288,7 +312,7 @@
 
 ---
 
-## [2025-02-06] - Auth error handling (Phase 5e)
+## [2026-02-06] - Auth error handling (Phase 5e)
 
 **Context**: Callback and login could throw (e.g. missing env, network, Supabase failure), leading to 500 or stuck loading with no user feedback.
 
@@ -300,7 +324,7 @@
 
 ---
 
-## [2025-02-06] - Foundation schema (Phase 5b)
+## [2026-02-06] - Foundation schema (Phase 5b)
 
 **Context**: Need a DB model for saved configurations and future multi-user households without blocking auth-only Phase 5c.
 
@@ -312,7 +336,7 @@
 
 ---
 
-## [2025-02-06] - Supabase Auth integration (Phase 5c)
+## [2026-02-06] - Supabase Auth integration (Phase 5c)
 
 **Context**: Need Google OAuth and session handling without blocking the anonymous calculator or adding auth to `/`.
 
@@ -324,7 +348,7 @@
 
 ---
 
-## [2025-02-06] - Currency in context, not in calculator state
+## [2026-02-06] - Currency in context, not in calculator state
 
 **Context**: Users need to choose display currency (e.g. GBP, CAD); currency should persist and travel with share links.
 
@@ -336,7 +360,7 @@
 
 ---
 
-## [2025-02-06] - Analytics: GA4 + Hotjar + Clarity + AdSense
+## [2026-02-06] - Analytics: GA4 + Hotjar + Clarity + AdSense
 
 **Context**: Need product analytics and optional ads without blocking render or breaking on ad blockers.
 
@@ -348,7 +372,7 @@
 
 ---
 
-## [2025-02-06] - Input tracking and prefilled flag
+## [2026-02-06] - Input tracking and prefilled flag
 
 **Context**: Analytics should distinguish first-time vs returning (restored) form state; avoid firing "input_started" when user didn’t type.
 
@@ -360,7 +384,7 @@
 
 ---
 
-## [2025-02-06] - Dynamic sitemap
+## [2026-02-06] - Dynamic sitemap
 
 **Context**: SEO and crawlers expect a sitemap; static file was manual.
 
@@ -372,7 +396,7 @@
 
 ---
 
-## [2025-02-06] - Share via Cloudflare Worker
+## [2026-02-06] - Share via Cloudflare Worker
 
 **Context**: Users need to share calculation links; no DB yet.
 
@@ -384,7 +408,7 @@
 
 ---
 
-## [2025-02-06] - Reducer + localStorage for Calculator State
+## [2026-02-06] - Reducer + localStorage for Calculator State
 
 **Context**: Need predictable form state and persistence without a DB for Phase 2.
 
@@ -396,7 +420,7 @@
 
 ---
 
-## [2025-02-06] - V1 Calculation Parity
+## [2026-02-06] - V1 Calculation Parity
 
 **Context**: Existing users and SEO depend on identical split math.
 
@@ -408,7 +432,7 @@
 
 ---
 
-## [2025-02-06] - Design Tokens Only in globals.css
+## [2026-02-06] - Design Tokens Only in globals.css
 
 **Context**: Consistent look and future theming.
 
@@ -420,7 +444,7 @@
 
 ---
 
-## [2025-02-06] - Pure Calculator Module (no React)
+## [2026-02-06] - Pure Calculator Module (no React)
 
 **Context**: Same logic needed for client form, future server share rendering, and tests.
 

@@ -157,6 +157,7 @@ Fired from `components/calculator/calculator-client.tsx`. GA4 custom params are 
 |-------|------|--------|
 | `feedback_clicked` | Results footer feedback button click (opens Hotjar feedback survey in a new tab). | (none) |
 | `validation_error` | Once per Calculate click when `validateForm(state)` returns errors (before `calculate_attempt` with status error). Not fired on blur. | `error_count`: number; `error_fields`: string (comma-separated field IDs, e.g. `person1Salary,person2Salary`); `error_types`: string (comma-separated unique types: `missing_expense`, `missing`, `invalid_format`, `name_too_long`); `returning_user`: boolean. |
+| `salary_toggle` | User shows/hides a salary field via the visibility toggle in `IncomeSection`. | `field_id`: `"salary1"` \| `"salary2"`; `visibility_state`: `"visible"` \| `"hidden"` (the state being switched **to**). Note: used by ~78% of users who complete a calculation — high-engagement, treat as load-bearing. |
 | `calculate_attempt` | On every Calculate click. | On error: `status: "error"`, `error_type`: `"missing_expense"` \| `"missing_salary"` \| `"validation_error"`, `returning_user`. On success: `status: "success"`, `expense_count`, `has_names`, `has_labels`, `total_expense_bucket`, `time_to_calculate_ms`, `returning_user`. |
 
 ---
