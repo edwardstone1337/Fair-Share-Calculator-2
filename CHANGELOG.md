@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Fixed
+
+- **Homepage FAQ promised a removed Share Results feature (2026-08-20)**: The "How Do I Use..." step list and the matching FAQPage JSON-LD both told users to "Send the calculation link to roommates or partners for transparency". Share Results was removed 2026-02-07, but the copy was reintroduced by `cc66266` during SEO recovery. Reworded in place (visible copy and JSON-LD kept identical), preserving the roommates/partners/transparency keyword surface. 13 of 1,018 words in the restored block changed; nothing deleted, no heading touched.
+- **Decision log misdated by a year (2026-08-20)**: All 36 `DECISION_LOG.md` entries were dated 2025-02-06/07; the repo's first commit is 2026-02-06. Corrected to 2026. Same typo fixed in the CHANGELOG's share-removal entry.
+- **`salary_toggle` undocumented (2026-08-20)**: Event fires in `income-section.tsx` and is used by ~78% of users who complete a calculation, but was absent from `API_REFERENCE.md`. Now documented with its params.
+
+### Added
+
+- **SEO vocabulary additions to homepage FAQ (2026-08-20)**: Additive copy only — no existing text removed or restructured. (1) Intro paragraph gains a sentence covering "split bill calculator", "bill splitter" and "split household bills fairly"; the reversed word order appeared nowhere in visible copy despite 11,184 impressions at 3.23% CTR over 16 months, and "how to split household bills fairly" is the site's 7th-largest impression query with **zero clicks in 16 months** (4,002 impressions, position 9.75). (2) New "Custom Split Ratios" bullet covering 60/40, 70/30, 80/20 and "money split". Homepage title and meta description deliberately unchanged.
+- **`/faq` OG image and Twitter card (2026-08-20)**: `openGraph.images` and an explicit `twitter` block were missing; added, pointing at the existing site-wide `/images/Metadata-Image.jpg`.
+- **Growth analysis docs (2026-08-20)**: `docs/issues/2026-08-20-growth-proposals.md` (split-money-calculator concept, lightweight export, pay-period breakdown, rejected list) and `docs/issues/2026-08-20-addendum-16-month-data.md` (16-month GSC reconstruction of the February incident, partial-recovery finding, GA4 funnel, corrected baselines, 2026-10-01 checkpoint).
+
 ### Changed
 
 - **Restored V1 FAQ content on homepage for SEO recovery (2026-02-23)**: Replaced the couples-focused homepage FAQ (added 2026-02-16, expanded 2026-02-18) with the original V1 FAQ content that was ranking successfully through Jan 2026. Source: `components/faq-section.tsx` at commit `60e7fd7`. Restores intro sections ("How to Split Bills Based on Income", "Common Use Cases", "Why Split Bills Based on Income?"), 5 original FAQ Q&As, closing copy, and Buy Me a Coffee link. Couples-focused FAQ retained on `/faq` page. Added cross-link to `/faq` at bottom.
@@ -16,7 +28,7 @@
 ### Removed
 
 - **NamesSection component** (`components/calculator/names-section.tsx`).
-- **Share Results button and all share-related code (2025-02-07)**: share API client, legacy URL builder, `?id=` and legacy query param loading. Cloudflare Worker to be decommissioned separately.
+- **Share Results button and all share-related code (2026-02-07)**: share API client, legacy URL builder, `?id=` and legacy query param loading. Cloudflare Worker to be decommissioned separately.
 - **Expense name input placeholder**: Removed placeholder text from expense name input — section description already provides examples; empty fields improve usability per NN Group research.
 - **Footer top border**: Removed for cleaner visual separation between main content and footer.
 - **Deleted orphaned legacy icon assets (Hide.svg, Show.svg)**: No longer referenced; app uses Material Icons via the Icon component.
