@@ -13,7 +13,7 @@ export const HOMEPAGE_FAQ_ITEMS: HomepageFaqItem[] = [
   {
     question: "How Do I Use the Income-Based Bill Split Calculator?",
     answer:
-      "Enter both names to personalize the results. Type in your after-tax salaries for accurate income-based calculations. Enter rent, utilities, groceries, or any shared expenses you need to split. Hit Calculate and our calculator automatically determines fair splits based on income percentages. Get a clear breakdown showing exactly how much each person should pay. Send the calculation link to roommates or partners for transparency.",
+      "Enter both names to personalize the results. Type in your after-tax salaries for accurate income-based calculations. Enter rent, utilities, groceries, or any shared expenses you need to split. Hit Calculate and our calculator automatically determines fair splits based on income percentages. Get a clear breakdown showing exactly how much each person should pay. Go through the breakdown together with your roommates or partners for full transparency.",
   },
   {
     question: "How Is Income-Based Bill Splitting Calculated?",
@@ -125,6 +125,9 @@ export function HomepageFaqSection() {
           expenses fairly. Whether you&apos;re splitting rent with roommates,
           sharing bills with a partner, or managing shared living costs, our
           tool ensures everyone pays their fair share based on what they earn.
+          Also known as a split bill calculator or bill splitter, it shows you
+          how to split household bills fairly when you and your partner earn
+          different amounts.
         </p>
 
         <h3 style={h3Style}>
@@ -154,6 +157,10 @@ export function HomepageFaqSection() {
           <li style={liStyle}>
             <strong>Roommate Expenses:</strong> Split household costs fairly
             among roommates
+          </li>
+          <li style={liStyle}>
+            <strong>Custom Split Ratios:</strong> Works for any ratio &mdash;
+            60/40, 70/30, or 80/20 &mdash; not just an even 50/50 money split
           </li>
         </ul>
 
@@ -196,8 +203,8 @@ export function HomepageFaqSection() {
             exactly how much each person should pay.
           </li>
           <li style={liStyle}>
-            <strong>Share Results:</strong> Send the calculation link to
-            roommates or partners for transparency.
+            <strong>Review Results Together:</strong> Go through the
+            breakdown with your roommates or partners for full transparency.
           </li>
         </ul>
 
